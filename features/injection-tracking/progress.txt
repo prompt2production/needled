@@ -94,3 +94,9 @@ Completed: 2026-01-23T15:04:00Z
 Files changed: src/components/injection/InjectionHistory.tsx
 Notes: Created history component with loading/error/empty states, date formatting (EEEE, MMM d), and site labels.
 ---
+---
+Story: INJ-017 Create injection page
+Completed: 2026-01-23T15:06:00Z
+Files changed: src/app/injection/page.tsx
+Notes: Created dedicated injection page with InjectionCardConnected, site rotation summary grid, and InjectionHistory. Responsive layout with lg:grid-cols-2.
+---

@@ -246,7 +246,7 @@
         "Shows InjectionHistory component",
         "Styled per DESIGN_SYSTEM.md page layout"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "INJ-018",
