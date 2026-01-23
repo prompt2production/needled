@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Scale, User, Syringe, Menu } from 'lucide-react'
+import { Home, Scale, User, Syringe, Menu, Activity } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -18,6 +18,7 @@ const NAV_ITEMS = [
   { href: '/home', icon: Home, label: 'Home' },
   { href: '/weigh-in', icon: Scale, label: 'Weight' },
   { href: '/injection', icon: Syringe, label: 'Injection' },
+  { href: '/habits', icon: Activity, label: 'Habits' },
   { href: '/profile', icon: User, label: 'Profile' },
 ]
 

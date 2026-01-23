@@ -205,7 +205,7 @@
         "Active state shows when on /habits route",
         "Link appears in both desktop nav and mobile hamburger menu"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "HAB-015",

@@ -76,3 +76,9 @@ Completed: 2026-01-23T16:06:00Z
 Files changed: src/app/habits/page.tsx
 Notes: Dedicated habits page with header 'Habits', HabitsCard for today's check-ins, and HabitsWeekView in a card showing 'This Week'. Redirects to landing if no userId in localStorage.
 ---
+---
+Story: HAB-014 Add Habits to header navigation
+Completed: 2026-01-23T16:08:00Z
+Files changed: src/components/navigation/Header.tsx
+Notes: Added 'Habits' link with Activity icon to NAV_ITEMS array. Appears in both desktop and mobile nav. Positioned between Injection and Profile links.
+---
