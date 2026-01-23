@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Scale, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { InjectionCardConnected } from '@/components/injection/InjectionCardConnected'
+import { HabitsCard } from '@/components/habits/HabitsCard'
 
 const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
@@ -79,30 +80,38 @@ export default function HomePage() {
           </p>
         </header>
 
-        {/* Quick Actions */}
-        <div className="grid gap-4 md:grid-cols-2">
-          <Link
-            href="/weigh-in"
-            className="block bg-card rounded-xl border border-border p-4 hover:bg-card-elevated transition-colors"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-lime/10 flex items-center justify-center">
-                <Scale className="h-6 w-6 text-lime" />
+        {/* Dashboard Grid */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* Left column */}
+          <div className="space-y-6">
+            <Link
+              href="/weigh-in"
+              className="block bg-card rounded-xl border border-border p-4 hover:bg-card-elevated transition-colors"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-lime/10 flex items-center justify-center">
+                  <Scale className="h-6 w-6 text-lime" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-medium text-white">Weekly Weigh-in</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Track your progress
+                  </p>
+                </div>
               </div>
-              <div className="flex-1">
-                <h3 className="font-medium text-white">Weekly Weigh-in</h3>
-                <p className="text-sm text-muted-foreground">
-                  Track your progress
-                </p>
-              </div>
-            </div>
-          </Link>
+            </Link>
 
-          <InjectionCardConnected
-            userId={user.id}
-            medicationName={MEDICATION_NAMES[user.medication] || 'medication'}
-            injectionDayName={DAY_NAMES[user.injectionDay]}
-          />
+            <InjectionCardConnected
+              userId={user.id}
+              medicationName={MEDICATION_NAMES[user.medication] || 'medication'}
+              injectionDayName={DAY_NAMES[user.injectionDay]}
+            />
+          </div>
+
+          {/* Right column */}
+          <div>
+            <HabitsCard userId={user.id} />
+          </div>
         </div>
       </div>
     </main>

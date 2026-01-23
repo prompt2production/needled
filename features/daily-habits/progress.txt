@@ -58,3 +58,9 @@ Completed: 2026-01-23T16:00:00Z
 Files changed: src/components/habits/HabitsCard.tsx
 Notes: Card component with three HabitRows (water, nutrition, exercise). Fetches today's habits on mount, supports optimistic updates with revert on error. Shows toasts for success/error. Loading state with skeleton placeholders.
 ---
+---
+Story: HAB-011 Add HabitsCard to home page
+Completed: 2026-01-23T16:02:00Z
+Files changed: src/app/home/page.tsx
+Notes: Added HabitsCard to home page in 2-column grid layout. Left column has weigh-in link and injection card, right column has habits card. Uses lg:grid-cols-2 for responsive layout (stacks on mobile).
+---
