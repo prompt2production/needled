@@ -90,7 +90,7 @@
         "Returns 200 with { success: true }",
         "Works even if no session exists (idempotent)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "LOGIN-008",

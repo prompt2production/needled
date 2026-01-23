@@ -34,3 +34,9 @@ Completed: 2026-01-23T22:02:00Z
 Files changed: src/app/api/auth/login/route.ts, tests/unit/api/auth-login.test.ts
 Notes: POST /api/auth/login endpoint validates email/password, verifies credentials, creates session, sets cookie. Returns 401 for invalid credentials, handles users without passwordHash. All 8 login tests pass.
 ---
+---
+Story: LOGIN-007 Create logout API endpoint
+Completed: 2026-01-23T22:05:00Z
+Files changed: src/app/api/auth/logout/route.ts
+Notes: POST /api/auth/logout endpoint deletes session from DB and clears cookie. Returns 200 with { success: true } always (idempotent). Handles errors gracefully.
+---
