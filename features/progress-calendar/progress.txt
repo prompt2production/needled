@@ -52,3 +52,9 @@ Completed: 2026-01-23T21:14:00Z
 Files changed: src/components/calendar/CalendarHeader.tsx
 Notes: Shows month/year, prev/next month buttons, Today button. Disables next/today when on current month. Uses date-fns format.
 ---
+---
+Story: CAL-010 Create DayDetailDialog component
+Completed: 2026-01-23T21:15:00Z
+Files changed: src/components/calendar/DayDetailDialog.tsx
+Notes: Uses shadcn Dialog, shows full date, relative context, habits with check/x icons, weigh-in with change, injection with site. Loading and empty states.
+---
