@@ -41,7 +41,7 @@
         "getDaysOverdue(date: Date, injectionDay: number): number returns days past injection day (0 if not overdue)",
         "npm run test passes for injection week utility tests"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "INJ-004",

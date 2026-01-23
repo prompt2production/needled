@@ -20,7 +20,7 @@ Based on the project brief, here are the recommended features in build order.
 
 ## Phase 4: Polish
 
-- [ ] **notifications** — Push notifications for injection reminders and daily habit prompts
+- [ ] **notifications** — As this is a web app, users should opt to receive notifications via email (SendGrid)
 - [ ] **settings** — Edit profile, change injection day, adjust goals, export data
 
 ---
