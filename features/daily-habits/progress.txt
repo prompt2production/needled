@@ -4,3 +4,9 @@ Completed: 2026-01-23T15:45:00Z
 Files changed: prisma/schema.prisma, prisma/migrations/20260123154149_add_daily_habit_model/migration.sql
 Notes: Added DailyHabit model with water, nutrition, exercise boolean fields. Used @db.Date for date-only storage. Had to kill dev server (port 2810) to run prisma generate due to file lock on Windows.
 ---
+---
+Story: HAB-002 Create habit validation schemas
+Completed: 2026-01-23T15:47:00Z
+Files changed: src/lib/validations/habit.ts, tests/unit/validations/habit.test.ts
+Notes: Created habitTypeEnum with water/nutrition/exercise, toggleHabitSchema for toggling habits, and getHabitsSchema for fetching habits with date range. 28 tests pass.
+---

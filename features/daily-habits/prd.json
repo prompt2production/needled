@@ -27,7 +27,7 @@
         "getHabitsSchema validates: userId (required string), startDate (optional ISO date string), endDate (optional ISO date string)",
         "npm run test passes for validation schema tests"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "HAB-003",
