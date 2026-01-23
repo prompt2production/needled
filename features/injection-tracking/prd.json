@@ -26,7 +26,7 @@
         "Schema validates notes: optional, string, max 500 characters",
         "npm run test passes for validation schema tests"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "INJ-003",

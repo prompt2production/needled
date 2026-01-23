@@ -4,3 +4,9 @@ Completed: 2026-01-23T14:45:00Z
 Files changed: prisma/schema.prisma, prisma/migrations/20260123144357_add_injection_model/migration.sql
 Notes: Added InjectionSite enum with 6 body locations and Injection model with user relation. Migration and client generation completed successfully.
 ---
+---
+Story: INJ-002 Create injection validation schema
+Completed: 2026-01-23T14:47:00Z
+Files changed: src/lib/validations/injection.ts, tests/unit/validations/injection.test.ts
+Notes: Created Zod validation schema with injectionSiteEnum and createInjectionSchema. 18 tests covering all validation rules.
+---
