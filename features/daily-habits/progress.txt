@@ -52,3 +52,9 @@ Completed: 2026-01-23T15:58:00Z
 Files changed: src/components/habits/HabitWeekGrid.tsx
 Notes: Weekly grid showing 7 HabitIndicators with M-T-W-T-F-S-S labels. Uses habit-dates utilities to determine state. Only today's indicator is clickable.
 ---
+---
+Story: HAB-010 Create HabitsCard component
+Completed: 2026-01-23T16:00:00Z
+Files changed: src/components/habits/HabitsCard.tsx
+Notes: Card component with three HabitRows (water, nutrition, exercise). Fetches today's habits on mount, supports optimistic updates with revert on error. Shows toasts for success/error. Loading state with skeleton placeholders.
+---

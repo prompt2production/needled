@@ -152,7 +152,7 @@
         "Toast shown on toggle: 'Water logged' / 'Water removed' etc.",
         "Styled per DESIGN_SYSTEM.md card patterns"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "HAB-011",
