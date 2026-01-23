@@ -151,7 +151,7 @@
         "Primary lime 'Log Weight' button opens WeighInInput drawer",
         "No trend data shown (nothing to compare to)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "WEIGH-012",

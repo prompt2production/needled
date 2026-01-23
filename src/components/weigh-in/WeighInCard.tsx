@@ -18,6 +18,8 @@ interface WeighInCardProps {
   isLoading?: boolean
   weighIn?: WeighInData | null
   weekChange?: number | null
+  startWeight?: number
+  isFirstTime?: boolean
 }
 
 export function WeighInCard({
@@ -27,6 +29,8 @@ export function WeighInCard({
   isLoading = false,
   weighIn,
   weekChange,
+  startWeight,
+  isFirstTime = false,
 }: WeighInCardProps) {
   const [drawerOpen, setDrawerOpen] = useState(false)
 
@@ -75,6 +79,47 @@ export function WeighInCard({
           )}
         </div>
       </div>
+    )
+  }
+
+  // First Time state (WEIGH-011)
+  if (isFirstTime && !weighIn) {
+    return (
+      <>
+        <div className="bg-card rounded-xl border border-border p-4">
+          <div className="flex items-start gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-lime/10">
+              <Scale className="h-6 w-6 text-lime" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-base font-medium text-white">
+                Track your first weigh-in
+              </h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                {startWeight
+                  ? `You started at ${startWeight.toFixed(1)} ${weightUnit}`
+                  : 'Start tracking your progress'}
+              </p>
+            </div>
+          </div>
+
+          <Button
+            onClick={() => setDrawerOpen(true)}
+            className="bg-lime text-black hover:bg-lime-muted font-medium w-full mt-4"
+            disabled={isLoading}
+          >
+            Log Weight
+          </Button>
+        </div>
+
+        <WeighInInput
+          open={drawerOpen}
+          onOpenChange={setDrawerOpen}
+          onSubmit={onSubmit}
+          weightUnit={weightUnit}
+          isLoading={isLoading}
+        />
+      </>
     )
   }
 
