@@ -182,7 +182,7 @@
         "Renders ProgressCalendar component",
         "Follows DESIGN_SYSTEM.md page structure"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "CAL-013",

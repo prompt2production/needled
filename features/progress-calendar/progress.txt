@@ -64,3 +64,9 @@ Completed: 2026-01-23T21:17:00Z
 Files changed: src/components/calendar/ProgressCalendar.tsx
 Notes: Composes Header, Grid, DayCell, Dialog. Manages month/year and selected day state. Uses useMemo for data lookup maps. Loading skeleton for grid.
 ---
+---
+Story: CAL-012 Create calendar page
+Completed: 2026-01-23T21:18:00Z
+Files changed: src/app/calendar/page.tsx
+Notes: Created calendar page with standard layout (px-6 py-6 max-w-5xl mx-auto). Page title 'Progress Calendar' with subtitle. Auth check via localStorage userId with loading skeleton.
+---
