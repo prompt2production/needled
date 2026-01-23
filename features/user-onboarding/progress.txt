@@ -28,3 +28,9 @@ Completed: 2026-01-23T11:27:00Z
 Files changed: src/app/onboarding/page.tsx
 Notes: Full-screen dark page with dot progress indicator. useState manages steps 1-5. Back button hidden on step 1. Placeholder step content renders per current step.
 ---
+---
+Story: ONBOARD-006 Create Step 1: Welcome screen
+Completed: 2026-01-23T11:28:00Z
+Files changed: src/components/onboarding/WelcomeStep.tsx, src/app/onboarding/page.tsx
+Notes: WelcomeStep displays Needled branding with syringe icon, tagline, subtext, and lime Get Started button. Integrated into onboarding page as step 1.
+---

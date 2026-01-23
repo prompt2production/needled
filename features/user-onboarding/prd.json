@@ -80,7 +80,7 @@
         "Primary lime 'Get Started' button triggers onNext callback",
         "Styled per DESIGN_SYSTEM.md (dark bg, lime accent, centered content)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ONBOARD-007",

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { ChevronLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { WelcomeStep } from '@/components/onboarding/WelcomeStep'
 
 const TOTAL_STEPS = 5
 
@@ -62,11 +63,7 @@ export default function OnboardingPage() {
         {/* Step content area */}
         <div className="flex-1 flex flex-col justify-center pb-20">
           {currentStep === 1 && (
-            <StepContent
-              title="Welcome"
-              description="This is Step 1"
-              onNext={handleNext}
-            />
+            <WelcomeStep onNext={handleNext} />
           )}
           {currentStep === 2 && (
             <StepContent
