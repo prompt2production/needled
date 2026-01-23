@@ -164,7 +164,7 @@
         "On successful weigh-in submission, card updates to show logged state",
         "Success toast shown after logging: 'Weight logged' with trend if available"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "WEIGH-013",

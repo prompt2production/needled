@@ -64,3 +64,9 @@ Completed: 2026-01-23T13:04:00Z
 Files changed: src/components/weigh-in/WeighInCard.tsx
 Notes: Added isFirstTime and startWeight props. Shows welcome message and starting weight reference for new users.
 ---
+---
+Story: WEIGH-012 Integrate WeighInCard with API
+Completed: 2026-01-23T13:06:00Z
+Files changed: src/components/weigh-in/WeighInCardConnected.tsx, src/components/weigh-in/index.ts
+Notes: Created WeighInCardConnected that handles data fetching, submission, loading skeleton, error state with retry, and success toast.
+---
