@@ -7,6 +7,7 @@ import { WelcomeStep } from '@/components/onboarding/WelcomeStep'
 import { NameStep } from '@/components/onboarding/NameStep'
 import { StartWeightStep } from '@/components/onboarding/StartWeightStep'
 import { GoalWeightStep } from '@/components/onboarding/GoalWeightStep'
+import { MedicationStep } from '@/components/onboarding/MedicationStep'
 
 const TOTAL_STEPS = 5
 
@@ -120,38 +121,17 @@ export default function OnboardingPage() {
             />
           )}
           {currentStep === 5 && (
-            <StepContent
-              title="Medication"
-              description="This is Step 5"
-              onNext={handleNext}
+            <MedicationStep
+              onNext={(data) => {
+                updateFormData(data)
+                handleNext()
+              }}
+              defaultMedication={formData.medication}
+              defaultDay={formData.injectionDay}
             />
           )}
         </div>
       </div>
     </main>
-  )
-}
-
-// Temporary placeholder component - will be replaced with actual step components
-function StepContent({
-  title,
-  description,
-  onNext,
-}: {
-  title: string
-  description: string
-  onNext: () => void
-}) {
-  return (
-    <div className="text-center space-y-6">
-      <h1 className="text-2xl font-semibold text-white">{title}</h1>
-      <p className="text-muted-foreground">{description}</p>
-      <Button
-        onClick={onNext}
-        className="bg-lime text-black hover:bg-lime-muted font-medium"
-      >
-        Continue
-      </Button>
-    </div>
   )
 }

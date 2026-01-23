@@ -140,7 +140,7 @@
         "Complete Setup button disabled until both selected",
         "onNext callback receives { medication: string, injectionDay: number }"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ONBOARD-011",

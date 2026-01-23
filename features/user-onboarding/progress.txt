@@ -52,3 +52,9 @@ Completed: 2026-01-23T11:31:00Z
 Files changed: src/components/onboarding/GoalWeightStep.tsx, src/app/onboarding/page.tsx
 Notes: GoalWeightStep shows difference to lose. Validates goal < startWeight. Skip link for optional goal.
 ---
+---
+Story: ONBOARD-010 Create Step 5: Medication and injection day selection
+Completed: 2026-01-23T11:32:00Z
+Files changed: src/components/onboarding/MedicationStep.tsx, src/app/onboarding/page.tsx
+Notes: MedicationStep with 5 medication choices as button group. Day picker as circular buttons M-S. Removed placeholder StepContent function.
+---
