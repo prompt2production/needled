@@ -163,7 +163,7 @@
         "Tests habit completion percentage calculation",
         "Tests edge cases: no goal weight, no weigh-ins, future dates"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DASH-014",

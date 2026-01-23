@@ -59,3 +59,8 @@ Completed: 2026-01-23T14:35:00Z
 Files changed: src/app/home/page.tsx
 Notes: Full loading skeleton with header and card placeholders using animate-pulse
 ---
+Story: DASH-013 Add unit tests for dashboard API
+Completed: 2026-01-23T14:45:00Z
+Files changed: tests/unit/api/dashboard.test.ts
+Notes: 19 tests covering progress percentage, week number, habit completion, weight data, and edge cases
+---
