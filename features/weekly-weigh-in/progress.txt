@@ -22,3 +22,9 @@ Completed: 2026-01-23T12:52:00Z
 Files changed: src/app/api/weigh-ins/route.ts, tests/unit/api/weigh-ins.test.ts
 Notes: Enforces weekly constraint by checking for existing weigh-in in current week before creating. Returns 409 if already logged this week.
 ---
+---
+Story: WEIGH-005 Create GET /api/weigh-ins endpoint
+Completed: 2026-01-23T12:54:00Z
+Files changed: src/app/api/weigh-ins/route.ts, tests/unit/api/weigh-ins.test.ts
+Notes: Added GET handler with pagination (limit/offset). Default limit 10, max 100. Returns weigh-ins ordered by date descending.
+---

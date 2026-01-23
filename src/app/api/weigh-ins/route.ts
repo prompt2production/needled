@@ -4,6 +4,40 @@ import { createWeighInSchema } from '@/lib/validations/weigh-in'
 import { getWeekStart, getWeekEnd } from '@/lib/week'
 import { z } from 'zod'
 
+const DEFAULT_LIMIT = 10
+const MAX_LIMIT = 100
+
+export async function GET(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const userId = searchParams.get('userId')
+    const limit = Math.min(
+      parseInt(searchParams.get('limit') || String(DEFAULT_LIMIT), 10),
+      MAX_LIMIT
+    )
+    const offset = parseInt(searchParams.get('offset') || '0', 10)
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'userId is required' },
+        { status: 400 }
+      )
+    }
+
+    const weighIns = await prisma.weighIn.findMany({
+      where: { userId },
+      orderBy: { date: 'desc' },
+      take: limit,
+      skip: offset,
+    })
+
+    return NextResponse.json(weighIns)
+  } catch (error) {
+    console.error('Failed to fetch weigh-ins:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()

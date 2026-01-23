@@ -67,7 +67,7 @@
         "Returns 400 if userId is missing",
         "npm run test passes for API route tests"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "WEIGH-006",
