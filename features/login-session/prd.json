@@ -49,7 +49,7 @@
         "Sessions expire 30 days from creation",
         "Unit tests pass in tests/unit/auth.test.ts"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "LOGIN-005",
