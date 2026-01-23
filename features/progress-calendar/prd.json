@@ -13,7 +13,7 @@
         "Schema for calendar day response (date, optional habit, optional weighIn, optional injection)",
         "All schemas are exported"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "CAL-002",

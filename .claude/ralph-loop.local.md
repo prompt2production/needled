@@ -3,7 +3,7 @@ active: true
 iteration: 1
 max_iterations: 50
 completion_promise: "COMPLETE"
-started_at: "2026-01-23T20:46:59Z"
+started_at: "2026-01-23T21:04:37Z"
 ---
 
 You are working on this project.
@@ -12,7 +12,7 @@ You are working on this project.
   1. Read CLAUDE.md for project context
   2. Read DESIGN_SYSTEM.md for UI patterns
   3. Read LEARNINGS.md for lessons from previous work
-  4. Read features/dashboard/prd.json and find the first story with passes: false
+  4. Read features/progress-calendar/prd.json and find the first story with passes: false
 
   YOUR TASK:
   1. Implement the story following all acceptance criteria
@@ -28,8 +28,8 @@ You are working on this project.
   Note: Any running dev server will need restarting to pick up schema changes.
 
   WHEN STORY COMPLETE:
-  1. Update features/dashboard/prd.json - set passes: true
-  2. Append to features/dashboard/progress.txt with format:
+  1. Update features/progress-calendar/prd.json - set passes: true
+  2. Append to features/progress-calendar/progress.txt with format:
      ---
      Story: [ID] [Title]
      Completed: [ISO 8601 timestamp, e.g. 2025-01-14T10:30:00Z]
@@ -41,7 +41,7 @@ You are working on this project.
 
   WHEN ALL STORIES COMPLETE:
   1. Update FEATURES.md (if it exists):
-     - Find the line with this feature name (dashboard)
+     - Find the line with this feature name (progress-calendar)
      - Change '- [ ]' to '- [x]' to mark it complete
   2. Update CLAUDE.md Current Status section:
      - Set Current Feature to 'None'

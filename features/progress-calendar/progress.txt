@@ -1,0 +1,6 @@
+---
+Story: CAL-001 Create calendar validation schemas
+Completed: 2026-01-23T21:06:00Z
+Files changed: src/lib/validations/calendar.ts
+Notes: Created Zod schemas for calendar month params, day params, month response, and day response. All schemas exported with TypeScript types.
+---
