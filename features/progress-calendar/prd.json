@@ -101,7 +101,7 @@
         "Calculates and displays correct days including overflow from adjacent months",
         "Applies muted styling to days outside current month"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "CAL-008",

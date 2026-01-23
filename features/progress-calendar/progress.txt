@@ -34,3 +34,9 @@ Completed: 2026-01-23T21:11:00Z
 Files changed: src/hooks/useCalendarDay.ts
 Notes: Hook accepts date (string or null) and userId. Only fetches when date is provided. Returns data, loading, error states.
 ---
+---
+Story: CAL-007 Create CalendarGrid component
+Completed: 2026-01-23T21:12:00Z
+Files changed: src/components/calendar/CalendarGrid.tsx
+Notes: Renders 7-column grid with M-S headers. Uses date-fns to calculate days including overflow. Accepts renderDay prop for custom day rendering.
+---
