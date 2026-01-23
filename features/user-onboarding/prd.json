@@ -109,7 +109,7 @@
         "Continue button disabled until valid",
         "onNext callback receives { startWeight: number, weightUnit: 'kg' | 'lbs' }"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ONBOARD-009",

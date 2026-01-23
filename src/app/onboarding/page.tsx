@@ -5,6 +5,7 @@ import { ChevronLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { WelcomeStep } from '@/components/onboarding/WelcomeStep'
 import { NameStep } from '@/components/onboarding/NameStep'
+import { StartWeightStep } from '@/components/onboarding/StartWeightStep'
 
 const TOTAL_STEPS = 5
 
@@ -97,10 +98,13 @@ export default function OnboardingPage() {
             />
           )}
           {currentStep === 3 && (
-            <StepContent
-              title="Starting Weight"
-              description="This is Step 3"
-              onNext={handleNext}
+            <StartWeightStep
+              onNext={(data) => {
+                updateFormData(data)
+                handleNext()
+              }}
+              defaultWeight={formData.startWeight}
+              defaultUnit={formData.weightUnit}
             />
           )}
           {currentStep === 4 && (
