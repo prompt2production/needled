@@ -34,3 +34,9 @@ Completed: 2026-01-23T14:51:30Z
 Files changed: src/app/api/injections/route.ts, tests/unit/api/injections.test.ts
 Notes: Created GET endpoint with userId parameter, pagination support (limit/offset), and date descending order. Implemented in same file as POST.
 ---
+---
+Story: INJ-007 Create GET /api/injections/status endpoint
+Completed: 2026-01-23T14:54:30Z
+Files changed: src/app/api/injections/status/route.ts, tests/unit/api/injections-status.test.ts
+Notes: Created status endpoint returning status (due/done/overdue/upcoming), daysUntil, daysOverdue, lastInjection, and suggestedSite. Status logic uses calendar position relative to injection day.
+---

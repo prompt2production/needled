@@ -100,7 +100,7 @@
         "Returns suggestedSite: next site in rotation",
         "npm run test passes for API route tests"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "INJ-008",
