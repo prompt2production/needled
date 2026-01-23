@@ -8,7 +8,7 @@ Based on the project brief, here are the recommended features in build order.
 
 ## Phase 2: Core Tracking
 
-- [ ] **weekly-weigh-in** — Log weight once per week with enforced timing, view weight trend over time
+- [x] **weekly-weigh-in** — Log weight once per week with enforced timing, view weight trend over time
 - [ ] **injection-tracking** — Mark weekly injection as done, track schedule, send due reminders
 - [ ] **daily-habits** — Daily yes/no check-in for water, nutrition, and exercise habits
 
