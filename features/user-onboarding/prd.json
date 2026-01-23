@@ -67,7 +67,7 @@
         "Back button navigates to previous step (hidden on step 1)",
         "Step content area renders based on current step"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ONBOARD-006",

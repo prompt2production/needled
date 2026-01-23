@@ -22,3 +22,9 @@ Completed: 2026-01-23T11:26:00Z
 Files changed: src/lib/weight.ts, tests/unit/lib/weight.test.ts
 Notes: kgToLbs, lbsToKg, and formatWeight functions. 14 tests covering conversions and formatting.
 ---
+---
+Story: ONBOARD-005 Create onboarding page layout and step navigation
+Completed: 2026-01-23T11:27:00Z
+Files changed: src/app/onboarding/page.tsx
+Notes: Full-screen dark page with dot progress indicator. useState manages steps 1-5. Back button hidden on step 1. Placeholder step content renders per current step.
+---
