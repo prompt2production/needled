@@ -135,7 +135,7 @@
         "Disables next button when viewing current month",
         "Follows DESIGN_SYSTEM.md button styling"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "CAL-010",

@@ -46,3 +46,9 @@ Completed: 2026-01-23T21:13:00Z
 Files changed: src/components/calendar/CalendarDayCell.tsx
 Notes: Button element with day number, 3 habit dots, Scale icon, Syringe icon. Lime ring on today, hover state, keyboard accessible.
 ---
+---
+Story: CAL-009 Create CalendarHeader component
+Completed: 2026-01-23T21:14:00Z
+Files changed: src/components/calendar/CalendarHeader.tsx
+Notes: Shows month/year, prev/next month buttons, Today button. Disables next/today when on current month. Uses date-fns format.
+---
