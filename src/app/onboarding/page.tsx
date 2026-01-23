@@ -9,6 +9,7 @@ import { StartWeightStep } from '@/components/onboarding/StartWeightStep'
 import { GoalWeightStep } from '@/components/onboarding/GoalWeightStep'
 import { MedicationStep } from '@/components/onboarding/MedicationStep'
 import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
 
 const TOTAL_STEPS = 5
 const STORAGE_KEY = 'needled_onboarding_progress'
@@ -37,14 +38,22 @@ const defaultFormData: OnboardingData = {
 }
 
 export default function OnboardingPage() {
+  const router = useRouter()
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isComplete, setIsComplete] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [formData, setFormData] = useState<OnboardingData>(defaultFormData)
 
-  // Load saved progress on mount
+  // Load saved progress on mount and check for existing user
   useEffect(() => {
+    // Check if user already has a profile
+    const userId = localStorage.getItem('userId')
+    if (userId) {
+      router.replace('/')
+      return
+    }
+
     try {
       const saved = localStorage.getItem(STORAGE_KEY)
       if (saved) {
@@ -56,7 +65,17 @@ export default function OnboardingPage() {
       // Ignore parsing errors, start fresh
     }
     setIsLoading(false)
-  }, [])
+  }, [router])
+
+  // Auto-redirect after success
+  useEffect(() => {
+    if (isComplete) {
+      const timer = setTimeout(() => {
+        router.replace('/')
+      }, 2000)
+      return () => clearTimeout(timer)
+    }
+  }, [isComplete, router])
 
   // Save progress when step or data changes
   const saveProgress = (step: number, data: OnboardingData) => {

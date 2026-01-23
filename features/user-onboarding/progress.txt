@@ -70,3 +70,9 @@ Completed: 2026-01-23T11:34:00Z
 Files changed: src/app/onboarding/page.tsx
 Notes: Progress saved to localStorage on every step/data change. Restored on page load via useEffect. Cleared after successful completion. Initial loading state while checking storage.
 ---
+---
+Story: ONBOARD-013 Add redirect to home after onboarding
+Completed: 2026-01-23T11:36:00Z
+Files changed: src/app/onboarding/page.tsx
+Notes: Added useRouter from next/navigation. Check for existing userId on mount and redirect if present. Auto-redirect via setTimeout(2000) after success screen appears.
+---

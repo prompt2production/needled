@@ -176,7 +176,7 @@
         "Redirect goes to '/' (home page)",
         "If user already has profile (userId in localStorage), redirect from /onboarding to /"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ONBOARD-014",
