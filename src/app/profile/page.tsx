@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { User, LogOut, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { BottomNav } from '@/components/navigation/BottomNav'
 
 interface UserData {
   id: string
@@ -65,14 +64,14 @@ export default function ProfilePage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <div className="px-4 pt-safe pb-24">
+      <div className="px-6 py-6 max-w-5xl mx-auto">
         {/* Header */}
-        <header className="py-6">
+        <header className="mb-6">
           <h1 className="text-2xl font-semibold text-white">Profile</h1>
         </header>
 
-        {/* Profile Info */}
-        <div className="space-y-4">
+        {/* Profile Info - centered with max-width for readability */}
+        <div className="max-w-xl mx-auto space-y-4">
           <div className="bg-card rounded-xl border border-border p-4">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-14 h-14 rounded-full bg-lime/10 flex items-center justify-center">
@@ -116,8 +115,6 @@ export default function ProfilePage() {
           </Button>
         </div>
       </div>
-
-      <BottomNav />
     </main>
   )
 }

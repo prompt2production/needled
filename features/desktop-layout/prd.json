@@ -114,7 +114,7 @@
         "Content is centered on desktop",
         "Page renders well at 1280px viewport"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DESK-009",

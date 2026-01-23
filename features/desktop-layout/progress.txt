@@ -40,3 +40,9 @@ Completed: 2026-01-23T14:07:00Z
 Files changed: src/app/weigh-in/page.tsx
 Notes: Removed BottomNav, updated padding to px-6 py-6, removed pt-safe and pb-24, added max-w-5xl mx-auto container. WeighInCard stays full width, Progress and History cards now in lg:grid-cols-2 grid for side-by-side layout on desktop.
 ---
+---
+Story: DESK-008 Update Profile page layout for desktop
+Completed: 2026-01-23T14:08:00Z
+Files changed: src/app/profile/page.tsx
+Notes: Removed BottomNav, updated padding to px-6 py-6, removed pt-safe and pb-24, added max-w-5xl mx-auto outer container and max-w-xl mx-auto inner container for profile content to maintain readability at wide viewports.
+---
