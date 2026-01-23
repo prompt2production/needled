@@ -40,6 +40,7 @@ user-onboarding
 
 ## Notes
 
+- **Desktop-First Approach:** All features should be designed for desktop (1280px+) with responsive mobile support. Use Dialog instead of Drawer, Header navigation instead of bottom navigation.
 - **user-onboarding** must come first as all other features depend on having a user profile
 - **Core tracking** features (weigh-in, injection, habits) can be built in any order after onboarding
 - **dashboard** and **progress-calendar** need tracking data to display, so they come after core tracking
@@ -49,4 +50,4 @@ user-onboarding
 
 ## Next Step
 
-Start building with: `Plan feature: user-onboarding`
+Continue building with: `Plan feature: injection-tracking`

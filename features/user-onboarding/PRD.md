@@ -2,7 +2,7 @@
 
 ## Overview
 
-A mobile-first onboarding wizard that welcomes new users, collects essential information for their weight loss journey, and creates their profile. The flow should feel premium and motivating—not like a medical intake form.
+A desktop-first onboarding wizard that welcomes new users, collects essential information for their weight loss journey, and creates their profile. The flow should feel premium and motivating—not like a medical intake form. The design works well on desktop (1280px+) with responsive support for mobile.
 
 ## User Stories
 
@@ -212,4 +212,4 @@ Retrieve user profile (for future use).
 - [ ] User redirected to home page
 - [ ] Unit tests pass
 - [ ] E2E test passes
-- [ ] Mobile responsive (375px+)
+- [ ] Works on desktop (1280px+) and degrades gracefully to mobile (375px+)

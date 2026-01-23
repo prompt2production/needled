@@ -86,20 +86,21 @@ List of previous weigh-ins for the progress/history view.
 - Optional: small spark line showing recent trend
 
 #### WeighInInput
-Bottom sheet/drawer for entering a new weigh-in.
+Centered dialog for entering a new weigh-in (desktop-first pattern).
 
 **Elements:**
 - Large numeric input with unit suffix
 - Current date displayed (read-only)
 - "Log Weight" primary button
 - Cancel button
+- Dialog can be closed by clicking outside or pressing Escape
 
 ### UI/UX Flow
 
 1. User opens app → sees WeighInCard on dashboard
 2. If can weigh in: Card shows "Log your weight" prompt with button
-3. User taps button → WeighInInput bottom sheet opens
-4. User enters weight → taps "Log Weight"
+3. User clicks button → WeighInInput dialog opens (centered on desktop)
+4. User enters weight → clicks "Log Weight"
 5. Success toast shows with trend ("Down 0.8 kg from last week!")
 6. Card updates to show logged weight with trend
 

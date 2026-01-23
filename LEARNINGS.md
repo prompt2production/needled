@@ -22,10 +22,11 @@ Lessons learned during development that should inform future work. Ralph reads t
 
 ## UI Components
 
-<!-- Example:
-- shadcn Dialog needs `onOpenChange` handler to control open state
-- Use `getByRole` in tests for better accessibility coverage
--->
+- Use Dialog instead of Drawer for desktop-first modals (Drawer is for native mobile apps)
+- Header navigation with hamburger menu on mobile (< md breakpoint) replaces bottom navigation
+- Use AppShell pattern to conditionally render Header on authenticated routes only
+- Sheet component from shadcn works well for mobile hamburger slide-out menus
+- When checking for null OR undefined in TypeScript, use `!= null` (loose equality) instead of `!== null` (strict equality)
 
 ## Forms & Validation
 
@@ -48,6 +49,17 @@ Lessons learned during development that should inform future work. Ralph reads t
 - Use React Query for server state that needs caching
 -->
 
+## Layout
+
+- Desktop-first approach: design for 1280px+ viewport, then add responsive breakpoints
+- Use `max-w-5xl mx-auto` for main content containers on authenticated pages
+- Use `max-w-md` or `max-w-lg` for centered form content (onboarding, login)
+- Fixed header needs `pt-16` on content to avoid overlap
+- Use responsive grids: `grid gap-6 lg:grid-cols-2` for side-by-side cards on desktop
+- Public routes (landing, login, onboarding) don't show the Header navigation
+
 ## Other
 
-<!-- Anything that doesn't fit above categories -->
+- Next.js 16 removed the `next lint` command - use `eslint` directly instead
+- ESLint 9 flat config with eslint-config-next can have circular reference issues - use native typescript-eslint and react-hooks plugins directly
+- Unused catch clause variables should use empty catch `catch {` instead of `catch (e) {` to avoid linter warnings

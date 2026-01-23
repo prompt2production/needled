@@ -99,10 +99,10 @@ Use Tailwind's spacing scale consistently:
 | `space-8` | 32px | Major section breaks |
 
 ### Component Spacing
-- Card padding: `p-4` (mobile) / `p-5` (desktop)
+- Card padding: `p-4` (standard) / `p-5` (spacious)
 - Form field gap: `space-y-4`
 - Habit grid gap: `gap-2`
-- Safe area padding (mobile): `px-4 pb-safe`
+- Page padding: `px-6` (consistent on all breakpoints)
 
 ---
 
@@ -602,17 +602,19 @@ transition: stroke-dashoffset 600ms ease-out
 - Use the lime accent sparingly for maximum impact
 - Keep cards minimal—one clear purpose per card
 - Make numbers large and glanceable
-- Use haptic feedback for completions
-- Design for one-handed use
-- Test on actual devices in dark environments
+- Design for desktop viewport first (1280px+)
+- Use responsive grid layouts (lg:grid-cols-2, md:grid-cols-3)
+- Test at multiple viewport sizes (1280px, 1024px, 768px, 375px)
+- Use Dialog for modals, Sheet for mobile slide-outs
 
 ### Don't
 - Overuse lime (it should highlight, not overwhelm)
 - Create dense, clinical-looking interfaces
 - Use light backgrounds anywhere
 - Add unnecessary decorative elements
-- Make users scroll to complete daily actions
+- Use Drawer/bottom sheets on desktop (use Dialog instead)
 - Forget empty states
+- Use fixed bottom navigation (use Header instead)
 
 ---
 
