@@ -22,3 +22,15 @@ Completed: 2026-01-23T14:50:00Z
 Files changed: src/lib/injection-site.ts, tests/unit/lib/injection-site.test.ts
 Notes: Created site rotation utilities with SITE_ROTATION_ORDER constant, getNextSite, and getSiteLabel functions. 15 tests covering all functions.
 ---
+---
+Story: INJ-005 Create POST /api/injections endpoint
+Completed: 2026-01-23T14:51:30Z
+Files changed: src/app/api/injections/route.ts, tests/unit/api/injections.test.ts
+Notes: Created POST endpoint with validation, user lookup, injection week constraint check based on user's injectionDay, and injection creation.
+---
+---
+Story: INJ-006 Create GET /api/injections endpoint
+Completed: 2026-01-23T14:51:30Z
+Files changed: src/app/api/injections/route.ts, tests/unit/api/injections.test.ts
+Notes: Created GET endpoint with userId parameter, pagination support (limit/offset), and date descending order. Implemented in same file as POST.
+---

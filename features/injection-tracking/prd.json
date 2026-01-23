@@ -70,7 +70,7 @@
         "Injection is created in database via Prisma",
         "npm run test passes for API route tests"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "INJ-006",
@@ -84,7 +84,7 @@
         "Returns 400 if userId is missing",
         "npm run test passes for API route tests"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "INJ-007",
