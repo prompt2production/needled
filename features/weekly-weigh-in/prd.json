@@ -124,7 +124,7 @@
         "Primary lime 'Log Weight' button opens WeighInInput drawer",
         "Card styled per DESIGN_SYSTEM.md (bg-card, rounded-xl, border-border)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "WEIGH-010",

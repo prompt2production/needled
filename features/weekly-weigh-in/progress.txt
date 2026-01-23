@@ -46,3 +46,9 @@ Completed: 2026-01-23T12:58:00Z
 Files changed: src/components/weigh-in/WeighInInput.tsx
 Notes: Bottom sheet using shadcn Drawer. Shows date, weight input with unit suffix, validation for 40-300 range, lime submit button.
 ---
+---
+Story: WEIGH-009 Create WeighInCard component - Can Weigh In state
+Completed: 2026-01-23T13:00:00Z
+Files changed: src/components/weigh-in/WeighInCard.tsx
+Notes: Card with Scale icon, heading, subtext, and lime button. Opens WeighInInput drawer when clicked. Styled per DESIGN_SYSTEM.md.
+---
