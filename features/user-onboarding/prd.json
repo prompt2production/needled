@@ -94,7 +94,7 @@
         "Input styled per DESIGN_SYSTEM.md (bg-input, border-border, h-12)",
         "onNext callback receives { name: string }"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ONBOARD-008",

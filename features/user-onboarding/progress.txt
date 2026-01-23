@@ -34,3 +34,9 @@ Completed: 2026-01-23T11:28:00Z
 Files changed: src/components/onboarding/WelcomeStep.tsx, src/app/onboarding/page.tsx
 Notes: WelcomeStep displays Needled branding with syringe icon, tagline, subtext, and lime Get Started button. Integrated into onboarding page as step 1.
 ---
+---
+Story: ONBOARD-007 Create Step 2: Name input
+Completed: 2026-01-23T11:29:00Z
+Files changed: src/components/onboarding/NameStep.tsx, src/app/onboarding/page.tsx
+Notes: NameStep with heading, name input, and Continue button. Button disabled until 2+ chars. Form data state added to onboarding page.
+---

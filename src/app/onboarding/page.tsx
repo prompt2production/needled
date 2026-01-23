@@ -4,11 +4,29 @@ import { useState } from 'react'
 import { ChevronLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { WelcomeStep } from '@/components/onboarding/WelcomeStep'
+import { NameStep } from '@/components/onboarding/NameStep'
 
 const TOTAL_STEPS = 5
 
+interface OnboardingData {
+  name: string
+  startWeight: number | null
+  goalWeight: number | null
+  weightUnit: 'kg' | 'lbs'
+  medication: string | null
+  injectionDay: number | null
+}
+
 export default function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState(1)
+  const [formData, setFormData] = useState<OnboardingData>({
+    name: '',
+    startWeight: null,
+    goalWeight: null,
+    weightUnit: 'kg',
+    medication: null,
+    injectionDay: null,
+  })
 
   const handleNext = () => {
     if (currentStep < TOTAL_STEPS) {
@@ -20,6 +38,10 @@ export default function OnboardingPage() {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1)
     }
+  }
+
+  const updateFormData = (data: Partial<OnboardingData>) => {
+    setFormData((prev) => ({ ...prev, ...data }))
   }
 
   return (
@@ -66,10 +88,12 @@ export default function OnboardingPage() {
             <WelcomeStep onNext={handleNext} />
           )}
           {currentStep === 2 && (
-            <StepContent
-              title="Name"
-              description="This is Step 2"
-              onNext={handleNext}
+            <NameStep
+              onNext={(data) => {
+                updateFormData(data)
+                handleNext()
+              }}
+              defaultValue={formData.name}
             />
           )}
           {currentStep === 3 && (
