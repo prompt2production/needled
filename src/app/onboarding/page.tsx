@@ -1,13 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeft, Check, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { WelcomeStep } from '@/components/onboarding/WelcomeStep'
 import { NameStep } from '@/components/onboarding/NameStep'
 import { StartWeightStep } from '@/components/onboarding/StartWeightStep'
 import { GoalWeightStep } from '@/components/onboarding/GoalWeightStep'
 import { MedicationStep } from '@/components/onboarding/MedicationStep'
+import { toast } from 'sonner'
 
 const TOTAL_STEPS = 5
 
@@ -22,6 +23,8 @@ interface OnboardingData {
 
 export default function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState(1)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isComplete, setIsComplete] = useState(false)
   const [formData, setFormData] = useState<OnboardingData>({
     name: '',
     startWeight: null,
@@ -45,6 +48,78 @@ export default function OnboardingPage() {
 
   const updateFormData = (data: Partial<OnboardingData>) => {
     setFormData((prev) => ({ ...prev, ...data }))
+  }
+
+  const handleSubmit = async (medicationData: { medication: string; injectionDay: number }) => {
+    const finalData = { ...formData, ...medicationData }
+
+    setIsSubmitting(true)
+
+    try {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: finalData.name,
+          startWeight: finalData.startWeight,
+          goalWeight: finalData.goalWeight,
+          weightUnit: finalData.weightUnit,
+          medication: finalData.medication,
+          injectionDay: finalData.injectionDay,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to create profile')
+      }
+
+      const user = await response.json()
+
+      // Store user ID in localStorage
+      localStorage.setItem('userId', user.id)
+
+      // Show success screen
+      setIsComplete(true)
+    } catch (error) {
+      toast.error('Something went wrong', {
+        description: 'Could not save your profile. Please try again.',
+      })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  // Success screen
+  if (isComplete) {
+    return (
+      <main className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
+        <div className="text-center space-y-6">
+          <div className="w-20 h-20 rounded-full bg-lime/10 flex items-center justify-center mx-auto">
+            <Check className="h-10 w-10 text-lime" />
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-2xl font-semibold text-white">
+              You're all set, {formData.name}!
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              Your profile is ready. Let's start your journey.
+            </p>
+          </div>
+        </div>
+      </main>
+    )
+  }
+
+  // Loading screen during submission
+  if (isSubmitting) {
+    return (
+      <main className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-10 w-10 text-lime animate-spin mx-auto" />
+          <p className="text-muted-foreground text-sm">Setting up your profile...</p>
+        </div>
+      </main>
+    )
   }
 
   return (
@@ -122,10 +197,7 @@ export default function OnboardingPage() {
           )}
           {currentStep === 5 && (
             <MedicationStep
-              onNext={(data) => {
-                updateFormData(data)
-                handleNext()
-              }}
+              onNext={handleSubmit}
               defaultMedication={formData.medication}
               defaultDay={formData.injectionDay}
             />

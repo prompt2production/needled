@@ -58,3 +58,9 @@ Completed: 2026-01-23T11:32:00Z
 Files changed: src/components/onboarding/MedicationStep.tsx, src/app/onboarding/page.tsx
 Notes: MedicationStep with 5 medication choices as button group. Day picker as circular buttons M-S. Removed placeholder StepContent function.
 ---
+---
+Story: ONBOARD-011 Create success screen and API submission
+Completed: 2026-01-23T11:33:00Z
+Files changed: src/app/onboarding/page.tsx
+Notes: Added handleSubmit function for API call. Loading state with spinner. Success screen with check icon and personalized greeting. Error toast via Sonner. UserId stored in localStorage.
+---
