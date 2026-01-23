@@ -45,7 +45,7 @@
         "For weighIn, also fetches previous weighIn to calculate change",
         "Returns habit object (null if none), weighIn object with change (null if none), injection object (null if none)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "CAL-004",

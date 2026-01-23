@@ -10,3 +10,9 @@ Completed: 2026-01-23T21:07:00Z
 Files changed: src/app/api/calendar/[year]/[month]/route.ts
 Notes: API endpoint queries DailyHabit, WeighIn, and Injection for the month date range. Returns formatted date strings (YYYY-MM-DD) for each entry.
 ---
+---
+Story: CAL-003 Create GET /api/calendar/day/[date] endpoint
+Completed: 2026-01-23T21:08:00Z
+Files changed: src/app/api/calendar/day/[date]/route.ts
+Notes: API endpoint returns habit, weighIn (with change from previous), and injection data for a specific day. All fields nullable when data doesn't exist.
+---
