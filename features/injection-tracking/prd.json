@@ -259,7 +259,7 @@
         "Active state shows when on /injection route",
         "Link appears in both desktop nav and mobile hamburger menu"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "INJ-019",

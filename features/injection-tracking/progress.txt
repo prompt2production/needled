@@ -100,3 +100,9 @@ Completed: 2026-01-23T15:06:00Z
 Files changed: src/app/injection/page.tsx
 Notes: Created dedicated injection page with InjectionCardConnected, site rotation summary grid, and InjectionHistory. Responsive layout with lg:grid-cols-2.
 ---
+---
+Story: INJ-018 Add Injection to header navigation
+Completed: 2026-01-23T15:07:30Z
+Files changed: src/components/navigation/Header.tsx
+Notes: Added Injection nav item with Syringe icon to NAV_ITEMS array. Appears in both desktop and mobile navigation.
+---

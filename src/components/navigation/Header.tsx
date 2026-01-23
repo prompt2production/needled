@@ -17,6 +17,7 @@ import { useState } from 'react'
 const NAV_ITEMS = [
   { href: '/home', icon: Home, label: 'Home' },
   { href: '/weigh-in', icon: Scale, label: 'Weight' },
+  { href: '/injection', icon: Syringe, label: 'Injection' },
   { href: '/profile', icon: User, label: 'Profile' },
 ]
 
