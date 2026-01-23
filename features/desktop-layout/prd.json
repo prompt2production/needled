@@ -28,7 +28,7 @@
         "Header has dark background with border-bottom",
         "Uses Link from next/link for navigation"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DESK-003",
