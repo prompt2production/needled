@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Scale, Syringe, Loader2 } from 'lucide-react'
 import Link from 'next/link'
-import { BottomNav } from '@/components/navigation/BottomNav'
 
 interface User {
   id: string
@@ -58,9 +57,9 @@ export default function HomePage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <div className="px-4 pt-safe pb-24">
+      <div className="px-6 py-6 max-w-5xl mx-auto">
         {/* Header */}
-        <header className="py-6">
+        <header className="mb-6">
           <h1 className="text-2xl font-semibold text-white">
             Hey, {user.name}
           </h1>
@@ -70,7 +69,7 @@ export default function HomePage() {
         </header>
 
         {/* Quick Actions */}
-        <div className="space-y-4">
+        <div className="grid gap-4 md:grid-cols-2">
           <Link
             href="/weigh-in"
             className="block bg-card rounded-xl border border-border p-4 hover:bg-card-elevated transition-colors"
@@ -103,8 +102,6 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-
-      <BottomNav />
     </main>
   )
 }

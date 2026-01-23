@@ -71,7 +71,7 @@
         "Quick action cards can display in a grid on desktop (grid-cols-2 on md:)",
         "Page looks good at both desktop and mobile widths"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DESK-006",

@@ -22,3 +22,9 @@ Completed: 2026-01-23T14:04:00Z
 Files changed: src/app/layout.tsx, src/components/navigation/AppShell.tsx (new)
 Notes: Created AppShell component that conditionally renders Header based on route. Public routes (/, /login, /onboarding) don't show header. Removed max-w-md constraint from layout, added pt-16 padding for header space. Individual pages will set their own max-width.
 ---
+---
+Story: DESK-005 Update Home page layout for desktop
+Completed: 2026-01-23T14:05:00Z
+Files changed: src/app/home/page.tsx
+Notes: Removed BottomNav import and usage, changed padding from px-4 to px-6, removed pt-safe and pb-24, added max-w-5xl mx-auto container, changed quick actions from vertical stack to responsive grid (md:grid-cols-2).
+---
