@@ -41,8 +41,8 @@ export function WeighInCard({
     const isToday = new Date().toDateString() === loggedDate.toDateString()
     const dateDisplay = isToday ? 'Today' : `Logged ${relativeDate}`
 
-    const isLoss = weekChange !== null && weekChange < 0
-    const isGain = weekChange !== null && weekChange > 0
+    const isLoss = weekChange != null && weekChange < 0
+    const isGain = weekChange != null && weekChange > 0
 
     return (
       <div className="bg-card rounded-xl border border-border p-4">
@@ -57,7 +57,7 @@ export function WeighInCard({
             <span className="text-lg ml-1 text-muted-foreground">{weightUnit}</span>
           </p>
 
-          {weekChange !== null && weekChange !== 0 && (
+          {weekChange != null && weekChange !== 0 && (
             <p
               className={`text-sm flex items-center justify-center gap-1 mt-2 ${
                 isLoss ? 'text-green-500' : isGain ? 'text-red-500' : 'text-muted-foreground'

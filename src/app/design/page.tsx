@@ -1010,27 +1010,29 @@ function BottomNavigation() {
   ]
 
   return (
-    <Section title="Bottom Navigation">
-      <div className="bg-card rounded-2xl border border-border p-2">
-        <div className="flex items-center justify-around">
-          {items.map(({ id, icon: Icon, label }) => (
-            <button
-              key={id}
-              onClick={() => setActive(id)}
-              className={cn(
-                'flex flex-col items-center gap-1 px-6 py-2 rounded-xl transition-all',
-                active === id && 'bg-lime text-black',
-                active !== id && 'text-muted-foreground hover:text-white'
-              )}
-            >
-              <Icon className="h-5 w-5" />
-              <span className="text-xs font-medium">{label}</span>
-            </button>
-          ))}
+    <Section title="Bottom Navigation (Deprecated)">
+      <div className="opacity-50">
+        <div className="bg-card rounded-2xl border border-border p-2">
+          <div className="flex items-center justify-around">
+            {items.map(({ id, icon: Icon, label }) => (
+              <button
+                key={id}
+                onClick={() => setActive(id)}
+                className={cn(
+                  'flex flex-col items-center gap-1 px-6 py-2 rounded-xl transition-all',
+                  active === id && 'bg-lime text-black',
+                  active !== id && 'text-muted-foreground hover:text-white'
+                )}
+              >
+                <Icon className="h-5 w-5" />
+                <span className="text-xs font-medium">{label}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
-      <p className="text-xs text-muted-foreground mt-2">
-        Fixed to bottom of screen in actual app with backdrop blur.
+      <p className="text-xs text-amber-400 mt-2">
+        Deprecated: Use Header navigation instead. This pattern was replaced with a fixed top header for desktop-first layout.
       </p>
     </Section>
   )

@@ -64,3 +64,9 @@ Completed: 2026-01-23T14:11:00Z
 Files changed: src/app/login/page.tsx
 Notes: Updated login page for desktop. Content centered with max-w-md mx-auto, removed pt-safe, updated padding to px-6, changed bottom padding from pb-20 to py-8.
 ---
+---
+Story: DESK-012 Remove BottomNav component
+Completed: 2026-01-23T14:14:00Z
+Files changed: src/components/navigation/BottomNav.tsx (deleted), src/app/design/page.tsx, src/components/weigh-in/WeighInCard.tsx
+Notes: Deleted BottomNav component file. Updated design page to mark BottomNavigation section as deprecated with visual indicator and explanatory note. Fixed TypeScript error in WeighInCard (weekChange undefined check). Build passes.
+---
