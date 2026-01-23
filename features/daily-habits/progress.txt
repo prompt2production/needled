@@ -64,3 +64,9 @@ Completed: 2026-01-23T16:02:00Z
 Files changed: src/app/home/page.tsx
 Notes: Added HabitsCard to home page in 2-column grid layout. Left column has weigh-in link and injection card, right column has habits card. Uses lg:grid-cols-2 for responsive layout (stacks on mobile).
 ---
+---
+Story: HAB-012 Create HabitsWeekView component
+Completed: 2026-01-23T16:04:00Z
+Files changed: src/components/habits/HabitsWeekView.tsx
+Notes: Component showing three HabitWeekGrids for weekly overview. Fetches habits for current week (Monday-Sunday), supports toggle on today's habits. Loading state with skeleton grid.
+---

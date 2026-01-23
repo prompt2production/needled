@@ -179,7 +179,7 @@
         "Loading state shows skeleton grid",
         "Styled per DESIGN_SYSTEM.md"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "HAB-013",
