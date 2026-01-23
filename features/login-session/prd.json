@@ -77,7 +77,7 @@
         "Sets session cookie on successful login",
         "Unit tests pass"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "LOGIN-007",
