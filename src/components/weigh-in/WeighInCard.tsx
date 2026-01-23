@@ -1,15 +1,23 @@
 'use client'
 
 import { useState } from 'react'
-import { Scale } from 'lucide-react'
+import { Scale, TrendingDown, TrendingUp } from 'lucide-react'
+import { formatDistanceToNow } from 'date-fns'
 import { Button } from '@/components/ui/button'
 import { WeighInInput } from './WeighInInput'
+
+interface WeighInData {
+  weight: number
+  date: Date | string
+}
 
 interface WeighInCardProps {
   canWeighIn: boolean
   weightUnit: 'kg' | 'lbs'
   onSubmit: (weight: number) => Promise<void>
   isLoading?: boolean
+  weighIn?: WeighInData | null
+  weekChange?: number | null
 }
 
 export function WeighInCard({
@@ -17,14 +25,60 @@ export function WeighInCard({
   weightUnit,
   onSubmit,
   isLoading = false,
+  weighIn,
+  weekChange,
 }: WeighInCardProps) {
   const [drawerOpen, setDrawerOpen] = useState(false)
 
-  if (!canWeighIn) {
-    // Will be implemented in WEIGH-010
-    return null
+  // Already Logged state (WEIGH-010)
+  if (!canWeighIn && weighIn) {
+    const loggedDate = new Date(weighIn.date)
+    const relativeDate = formatDistanceToNow(loggedDate, { addSuffix: true })
+    const isToday = new Date().toDateString() === loggedDate.toDateString()
+    const dateDisplay = isToday ? 'Today' : `Logged ${relativeDate}`
+
+    const isLoss = weekChange !== null && weekChange < 0
+    const isGain = weekChange !== null && weekChange > 0
+
+    return (
+      <div className="bg-card rounded-xl border border-border p-4">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm text-muted-foreground">This week</span>
+          <span className="text-xs text-muted-foreground">{dateDisplay}</span>
+        </div>
+
+        <div className="text-center py-4">
+          <p className="text-4xl font-bold text-white">
+            {weighIn.weight.toFixed(1)}
+            <span className="text-lg ml-1 text-muted-foreground">{weightUnit}</span>
+          </p>
+
+          {weekChange !== null && weekChange !== 0 && (
+            <p
+              className={`text-sm flex items-center justify-center gap-1 mt-2 ${
+                isLoss ? 'text-green-500' : isGain ? 'text-red-500' : 'text-muted-foreground'
+              }`}
+            >
+              {isLoss ? (
+                <TrendingDown className="h-4 w-4" />
+              ) : (
+                <TrendingUp className="h-4 w-4" />
+              )}
+              {weekChange > 0 ? '+' : ''}{weekChange.toFixed(1)} {weightUnit} from last week
+            </p>
+          )}
+
+          {weekChange === 0 && (
+            <p className="text-sm text-muted-foreground mt-2">
+              Same as last week
+            </p>
+          )}
+        </div>
+      </div>
+    )
   }
 
+  // Can Weigh In state (WEIGH-009)
   return (
     <>
       <div className="bg-card rounded-xl border border-border p-4">

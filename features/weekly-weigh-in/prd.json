@@ -138,7 +138,7 @@
         "Shows 'This week' or relative date ('Logged X days ago')",
         "No Log Weight button visible in this state"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "WEIGH-011",
