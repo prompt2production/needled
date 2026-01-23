@@ -22,3 +22,9 @@ Completed: 2026-01-23T21:58:00Z
 Files changed: src/lib/auth.ts, tests/unit/auth.test.ts
 Notes: Added createSession, validateSession, and deleteSession functions. Sessions expire 30 days from creation. Expired sessions are automatically cleaned up. All 15 auth tests pass.
 ---
+---
+Story: LOGIN-005 Create cookie utilities
+Completed: 2026-01-23T22:00:00Z
+Files changed: src/lib/cookies.ts
+Notes: Created setSessionCookie, clearSessionCookie, and getSessionToken utilities. Cookie is HTTP-only, SameSite=Lax, Secure in production, 30-day maxAge.
+---

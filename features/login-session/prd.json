@@ -62,7 +62,7 @@
         "Cookie has SameSite=Lax, Secure in production, maxAge of 30 days",
         "getSessionToken() function extracts token from request cookies"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "LOGIN-006",
