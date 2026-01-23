@@ -70,3 +70,9 @@ Completed: 2026-01-23T13:06:00Z
 Files changed: src/components/weigh-in/WeighInCardConnected.tsx, src/components/weigh-in/index.ts
 Notes: Created WeighInCardConnected that handles data fetching, submission, loading skeleton, error state with retry, and success toast.
 ---
+---
+Story: WEIGH-013 Create weigh-in page
+Completed: 2026-01-23T13:08:00Z
+Files changed: src/app/weigh-in/page.tsx, src/app/api/users/[id]/route.ts
+Notes: Full-page layout with header, WeighInCard, progress summary (total change, % to goal), and history list. Also added GET /api/users/[id] endpoint.
+---

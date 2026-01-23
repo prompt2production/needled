@@ -178,7 +178,7 @@
         "Lists recent weigh-ins with date, weight, and change from previous",
         "Styled per DESIGN_SYSTEM.md mobile layout"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "WEIGH-014",
