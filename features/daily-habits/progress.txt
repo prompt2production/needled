@@ -40,3 +40,9 @@ Completed: 2026-01-23T15:54:00Z
 Files changed: src/components/habits/HabitIndicator.tsx
 Notes: Circular indicator component with 4 states (completed, today, past, future). Uses button element for accessibility with onClick handling. Styled per design system.
 ---
+---
+Story: HAB-008 Create HabitRow component
+Completed: 2026-01-23T15:56:00Z
+Files changed: src/components/habits/HabitRow.tsx
+Notes: Row component with icon, label, and toggleable circle indicator. Uses button element wrapping entire row for 56px min-height touch target. Shows Check icon when completed.
+---

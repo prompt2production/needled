@@ -119,7 +119,7 @@
         "Minimum 44x44px touch target per DESIGN_SYSTEM.md",
         "Styled per DESIGN_SYSTEM.md"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "HAB-009",
