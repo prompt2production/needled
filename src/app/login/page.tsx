@@ -31,7 +31,7 @@ export default function LoginPage() {
 
   if (hasAccount) {
     return (
-      <main className="min-h-screen bg-background flex items-center justify-center px-4">
+      <main className="min-h-screen bg-background flex items-center justify-center px-6">
         <div className="text-center space-y-4">
           <Loader2 className="h-8 w-8 text-lime animate-spin mx-auto" />
           <p className="text-muted-foreground text-sm">Redirecting to your dashboard...</p>
@@ -42,7 +42,7 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen bg-background flex flex-col">
-      <div className="flex-1 flex flex-col px-4 pt-safe">
+      <div className="flex-1 flex flex-col px-6 max-w-md mx-auto w-full">
         {/* Header */}
         <header className="py-4">
           <Button
@@ -58,7 +58,7 @@ export default function LoginPage() {
         </header>
 
         {/* Content */}
-        <div className="flex-1 flex flex-col justify-center pb-20">
+        <div className="flex-1 flex flex-col justify-center py-8">
           <div className="text-center space-y-6">
             <div className="w-16 h-16 rounded-full bg-card border border-border flex items-center justify-center mx-auto">
               <AlertCircle className="h-8 w-8 text-muted-foreground" />
