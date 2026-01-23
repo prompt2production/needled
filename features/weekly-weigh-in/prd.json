@@ -24,7 +24,7 @@
         "Schema validates userId: required, string",
         "npm run test passes for validation schema tests"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "WEIGH-003",

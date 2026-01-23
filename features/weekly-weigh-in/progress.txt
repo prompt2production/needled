@@ -4,3 +4,9 @@ Completed: 2026-01-23T12:45:00Z
 Files changed: prisma/schema.prisma
 Notes: Added WeighIn model with userId foreign key, User relation, and index on userId+date. Migration applied successfully. Prisma generate had Windows file lock issues but types are working.
 ---
+---
+Story: WEIGH-002 Create weigh-in validation schema
+Completed: 2026-01-23T12:48:00Z
+Files changed: src/lib/validations/weigh-in.ts, tests/unit/validations/weigh-in.test.ts
+Notes: Created Zod schema with userId and weight validation. Weight validated for positive number in 40-300 range.
+---
