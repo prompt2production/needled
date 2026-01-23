@@ -86,7 +86,7 @@
         "Form validation still works correctly",
         "Install shadcn dialog if not present: npx shadcn@latest add dialog"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DESK-007",

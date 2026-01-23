@@ -28,3 +28,9 @@ Completed: 2026-01-23T14:05:00Z
 Files changed: src/app/home/page.tsx
 Notes: Removed BottomNav import and usage, changed padding from px-4 to px-6, removed pt-safe and pb-24, added max-w-5xl mx-auto container, changed quick actions from vertical stack to responsive grid (md:grid-cols-2).
 ---
+---
+Story: DESK-006 Convert WeighInInput from Drawer to Dialog
+Completed: 2026-01-23T14:06:00Z
+Files changed: src/components/weigh-in/WeighInInput.tsx
+Notes: Replaced Drawer with Dialog for centered desktop experience. Preserved all form validation, loading states, and error handling. Added DialogDescription for accessibility. Dialog uses max-w-md and can be closed by X, clicking outside, or pressing Escape.
+---

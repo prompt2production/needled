@@ -6,13 +6,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-} from '@/components/ui/drawer'
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog'
 
 interface WeighInInputProps {
   open: boolean
@@ -60,14 +60,16 @@ export function WeighInInput({
   const today = format(new Date(), 'EEEE, d MMMM yyyy')
 
   return (
-    <Drawer open={open} onOpenChange={onOpenChange}>
-      <DrawerContent className="bg-card-elevated border-t border-border">
-        <DrawerHeader>
-          <DrawerTitle className="text-white text-lg">Log your weight</DrawerTitle>
-          <p className="text-muted-foreground text-sm">{today}</p>
-        </DrawerHeader>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="bg-card-elevated border-border max-w-md">
+        <DialogHeader>
+          <DialogTitle className="text-white text-lg">Log your weight</DialogTitle>
+          <DialogDescription className="text-muted-foreground">
+            {today}
+          </DialogDescription>
+        </DialogHeader>
 
-        <div className="p-4 space-y-4">
+        <div className="py-4 space-y-4">
           <div className="space-y-2">
             <Label htmlFor="weight" className="text-sm text-muted-foreground">
               Weight
@@ -99,25 +101,24 @@ export function WeighInInput({
           </div>
         </div>
 
-        <DrawerFooter>
+        <DialogFooter className="flex flex-col-reverse sm:flex-row gap-2">
+          <Button
+            variant="ghost"
+            onClick={() => onOpenChange(false)}
+            className="w-full sm:w-auto text-muted-foreground hover:text-white hover:bg-white/5"
+            disabled={isLoading}
+          >
+            Cancel
+          </Button>
           <Button
             onClick={handleSubmit}
             disabled={!isValid || isLoading}
-            className="bg-lime text-black hover:bg-lime-muted font-medium w-full"
+            className="bg-lime text-black hover:bg-lime-muted font-medium w-full sm:w-auto"
           >
             {isLoading ? 'Saving...' : 'Log Weight'}
           </Button>
-          <DrawerClose asChild>
-            <Button
-              variant="ghost"
-              className="w-full text-muted-foreground hover:text-white hover:bg-white/5"
-              disabled={isLoading}
-            >
-              Cancel
-            </Button>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
