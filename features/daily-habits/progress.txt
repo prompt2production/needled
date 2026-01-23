@@ -10,3 +10,9 @@ Completed: 2026-01-23T15:47:00Z
 Files changed: src/lib/validations/habit.ts, tests/unit/validations/habit.test.ts
 Notes: Created habitTypeEnum with water/nutrition/exercise, toggleHabitSchema for toggling habits, and getHabitsSchema for fetching habits with date range. 28 tests pass.
 ---
+---
+Story: HAB-003 Create habit date utilities
+Completed: 2026-01-23T15:48:00Z
+Files changed: src/lib/habit-dates.ts, tests/unit/lib/habit-dates.test.ts
+Notes: Created getWeekDates (Monday-Sunday), getDateString (YYYY-MM-DD format), isToday, isFuture, isPast utilities. Uses date-fns for date manipulation. 23 tests pass.
+---

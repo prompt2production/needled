@@ -42,7 +42,7 @@
         "isPast(date: Date): boolean checks if date is before today",
         "npm run test passes for date utility tests"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "HAB-004",
