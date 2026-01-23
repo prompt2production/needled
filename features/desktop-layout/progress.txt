@@ -76,3 +76,9 @@ Completed: 2026-01-23T14:16:00Z
 Files changed: tests/e2e/weigh-in.spec.ts
 Notes: E2E tests already configured for desktop viewport (Desktop Chrome, 1280x720). Tests don't reference BottomNav and work with Header navigation. Updated comments in weigh-in.spec.ts to say "dialog" instead of "drawer". All 13 E2E tests pass.
 ---
+---
+Story: DESK-014 Final visual review and polish
+Completed: 2026-01-23T14:22:00Z
+Files changed: eslint.config.mjs, package.json, src/app/dev/progress/page.tsx, src/app/onboarding/page.tsx, src/components/weigh-in/WeighInInput.tsx
+Notes: Fixed ESLint configuration - replaced broken next/core-web-vitals with native flat config using typescript-eslint and react-hooks plugins. Fixed 3 unused variable warnings. Updated lint script in package.json. Build passes, lint passes, 117 unit tests pass, 13 E2E tests pass. All pages render correctly with responsive desktop-first layout.
+---

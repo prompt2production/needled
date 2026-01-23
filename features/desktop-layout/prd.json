@@ -192,7 +192,7 @@
         "npm run build completes without errors",
         "npm run lint passes"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }

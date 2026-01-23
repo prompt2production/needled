@@ -254,7 +254,7 @@ export default function ProgressDashboard() {
       if (data.currentFeature) {
         setExpandedFeatures(prev => new Set([...prev, data.currentFeature.folderName]))
       }
-    } catch (e) {
+    } catch {
       setError('Failed to load progress data')
     } finally {
       setLoading(false)

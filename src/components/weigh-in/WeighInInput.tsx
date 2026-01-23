@@ -47,7 +47,7 @@ export function WeighInInput({
       await onSubmit(weightNum)
       setWeight('')
       onOpenChange(false)
-    } catch (err) {
+    } catch {
       setError('Failed to save. Please try again.')
     }
   }

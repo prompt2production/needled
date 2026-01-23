@@ -153,7 +153,7 @@ export default function OnboardingPage() {
 
       // Show success screen
       setIsComplete(true)
-    } catch (error) {
+    } catch {
       toast.error('Something went wrong', {
         description: 'Could not save your profile. Please try again.',
       })
