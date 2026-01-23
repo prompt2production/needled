@@ -3,254 +3,302 @@
   "stories": [
     {
       "id": "LOGIN-001",
-      "title": "Add email field to User model",
-      "description": "Add email field to the Prisma User model as a unique, required string field",
+      "title": "Add Session model to Prisma schema",
+      "description": "Create Session model for server-side session management",
       "acceptance_criteria": [
-        "prisma/schema.prisma has email field on User model with @unique constraint",
-        "Migration created and applied successfully",
-        "npx prisma generate completes without errors"
+        "Session model exists in prisma/schema.prisma with fields: id, token (unique), userId, expiresAt, createdAt",
+        "Session has relation to User model",
+        "Migration runs successfully with: npx prisma migrate dev --name add-session-model",
+        "Prisma client is regenerated"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "LOGIN-002",
-      "title": "Create Session model in Prisma",
-      "description": "Add Session model to store user sessions with token, expiry, and user relation",
+      "title": "Add passwordHash field to User model",
+      "description": "Update User model to store hashed passwords",
       "acceptance_criteria": [
-        "prisma/schema.prisma has Session model with id, userId, token (@unique), expiresAt, createdAt fields",
-        "Session has relation to User with onDelete: Cascade",
-        "Session has indexes on token and userId",
-        "User model has sessions relation",
-        "Migration created and applied successfully"
+        "User model in prisma/schema.prisma has passwordHash field (String, optional for migration)",
+        "Migration runs successfully with: npx prisma migrate dev --name add-user-password",
+        "Prisma client is regenerated"
       ],
       "passes": false
     },
     {
       "id": "LOGIN-003",
-      "title": "Create session utility functions",
-      "description": "Create utility functions for generating session tokens and managing cookies",
+      "title": "Create auth utility functions",
+      "description": "Create authentication helper functions for password hashing and session management",
       "acceptance_criteria": [
-        "src/lib/session.ts exists",
-        "generateSessionToken() returns a cryptographically random base64 string",
-        "SESSION_COOKIE_NAME constant is 'needled_session'",
-        "SESSION_MAX_AGE constant is 30 days in seconds (2592000)",
-        "createSessionCookie(token) returns cookie options object with HttpOnly, Secure (in prod), SameSite: Lax, Path: /, MaxAge",
-        "Unit tests in tests/unit/lib/session.test.ts pass"
+        "File src/lib/auth.ts exists",
+        "hashPassword(password: string) function uses bcrypt with cost factor 12",
+        "verifyPassword(password: string, hash: string) function compares password to hash",
+        "generateSessionToken() function returns 32-byte hex string",
+        "bcrypt package is installed (npm install bcrypt @types/bcrypt)",
+        "Unit tests pass in tests/unit/auth.test.ts"
       ],
       "passes": false
     },
     {
       "id": "LOGIN-004",
-      "title": "Create login validation schema",
-      "description": "Create Zod validation schema for login requests",
+      "title": "Create session management utilities",
+      "description": "Add functions to create, validate, and delete sessions",
       "acceptance_criteria": [
-        "src/lib/validations/auth.ts exists",
-        "loginSchema validates email as required string with .email() validation",
-        "Export LoginInput type inferred from schema",
-        "Unit tests in tests/unit/validations/auth.test.ts validate email formats"
+        "createSession(userId: string) function in src/lib/auth.ts creates session in DB, returns token",
+        "validateSession(token: string) function returns user if valid session, null if invalid/expired",
+        "deleteSession(token: string) function removes session from DB",
+        "Sessions expire 30 days from creation",
+        "Unit tests pass in tests/unit/auth.test.ts"
       ],
       "passes": false
     },
     {
       "id": "LOGIN-005",
-      "title": "Create POST /api/auth/login endpoint",
-      "description": "API endpoint to authenticate users by email and create a session",
+      "title": "Create cookie utilities",
+      "description": "Add utilities for setting and clearing session cookies",
       "acceptance_criteria": [
-        "src/app/api/auth/login/route.ts exists",
-        "POST validates email using loginSchema",
-        "Returns 400 with validation errors for invalid email format",
-        "Returns 404 with error message if no user found with email",
-        "On success: creates Session in database with 30-day expiry",
-        "On success: sets needled_session cookie with session token",
-        "On success: returns 200 with user data (id, name, email)",
-        "Unit tests in tests/unit/api/auth-login.test.ts pass"
+        "File src/lib/cookies.ts exists",
+        "setSessionCookie(token: string) function sets HTTP-only cookie named 'needled_session'",
+        "clearSessionCookie() function clears the session cookie",
+        "Cookie has SameSite=Lax, Secure in production, maxAge of 30 days",
+        "getSessionToken() function extracts token from request cookies"
       ],
       "passes": false
     },
     {
       "id": "LOGIN-006",
-      "title": "Create POST /api/auth/logout endpoint",
-      "description": "API endpoint to log out user by clearing session",
+      "title": "Create login API endpoint",
+      "description": "API endpoint for user authentication",
       "acceptance_criteria": [
-        "src/app/api/auth/logout/route.ts exists",
-        "POST reads session token from cookie",
-        "Deletes session from database if exists",
-        "Clears needled_session cookie (sets MaxAge to 0)",
-        "Returns 200 OK regardless of whether session existed",
-        "Unit tests in tests/unit/api/auth-logout.test.ts pass"
+        "POST /api/auth/login endpoint exists in src/app/api/auth/login/route.ts",
+        "Accepts { email, password } in request body",
+        "Validates email and password with Zod schema",
+        "Returns 401 with { error: 'Invalid credentials' } for wrong email/password",
+        "Returns 200 with user data (excluding passwordHash) on success",
+        "Sets session cookie on successful login",
+        "Unit tests pass"
       ],
       "passes": false
     },
     {
       "id": "LOGIN-007",
-      "title": "Create GET /api/auth/session endpoint",
-      "description": "API endpoint to validate current session and return user data",
+      "title": "Create logout API endpoint",
+      "description": "API endpoint to end user session",
       "acceptance_criteria": [
-        "src/app/api/auth/session/route.ts exists",
-        "GET reads session token from needled_session cookie",
-        "Returns 401 if no cookie present",
-        "Returns 401 if session not found in database",
-        "Returns 401 if session is expired",
-        "Deletes expired sessions when encountered",
-        "On valid session: returns 200 with user data (id, name, email, plus other profile fields)",
-        "Unit tests in tests/unit/api/auth-session.test.ts pass"
+        "POST /api/auth/logout endpoint exists in src/app/api/auth/logout/route.ts",
+        "Deletes session from database",
+        "Clears session cookie",
+        "Returns 200 with { success: true }",
+        "Works even if no session exists (idempotent)"
       ],
       "passes": false
     },
     {
       "id": "LOGIN-008",
-      "title": "Update user creation to require email and create session",
-      "description": "Modify POST /api/users to require email field and automatically create session on signup",
+      "title": "Create session check API endpoint",
+      "description": "API endpoint to verify current authentication status",
       "acceptance_criteria": [
-        "src/lib/validations/user.ts createUserSchema includes email field with .email() validation",
-        "POST /api/users validates email uniqueness and returns 409 if email already exists",
-        "On successful user creation, creates Session in database",
-        "Sets needled_session cookie in response",
-        "Returns user data including email",
-        "Unit tests updated in tests/unit/api/users.test.ts"
+        "GET /api/auth/session endpoint exists in src/app/api/auth/session/route.ts",
+        "Returns user data (excluding passwordHash) if valid session",
+        "Returns 401 with { error: 'Not authenticated' } if no valid session",
+        "Used by client to check auth state"
       ],
       "passes": false
     },
     {
       "id": "LOGIN-009",
-      "title": "Create useAuth hook",
-      "description": "Create React hook to manage authentication state client-side",
+      "title": "Update user creation API to require email and password",
+      "description": "Modify POST /api/users to handle authentication fields",
       "acceptance_criteria": [
-        "src/hooks/useAuth.ts exists",
-        "Hook fetches /api/auth/session on mount",
-        "Returns { user, isLoading, isAuthenticated, logout }",
-        "user is null when not authenticated",
-        "isLoading is true during initial fetch",
-        "isAuthenticated derived from user !== null",
-        "logout() calls /api/auth/logout and clears state",
-        "Hook handles fetch errors gracefully"
+        "POST /api/users requires email field (string, valid email format)",
+        "POST /api/users requires password field (string, min 8 characters)",
+        "Password is hashed before storing",
+        "Session is created after user creation",
+        "Session cookie is set in response",
+        "Returns user data without passwordHash",
+        "Returns 409 if email already exists"
       ],
       "passes": false
     },
     {
       "id": "LOGIN-010",
-      "title": "Update onboarding form to collect email",
-      "description": "Add email input field to onboarding flow",
+      "title": "Create email and password validation schema",
+      "description": "Add Zod schema for auth-related validations",
       "acceptance_criteria": [
-        "Onboarding page has email input field after name field",
-        "Label is 'Email'",
-        "Placeholder is 'you@example.com'",
-        "Field is required with email validation",
-        "Error message displays 'Please enter a valid email address' for invalid input",
-        "Email is sent to POST /api/users on form submission",
-        "Remove localStorage.setItem('userId') call - session cookie handles auth now"
+        "File src/lib/validations/auth.ts exists",
+        "loginSchema validates { email: string (email format), password: string (min 1) }",
+        "registerSchema validates { email: string (email format), password: string (min 8) }",
+        "Schemas are exported and used in relevant API routes"
       ],
       "passes": false
     },
     {
       "id": "LOGIN-011",
-      "title": "Rebuild login page with email form",
-      "description": "Replace static 'no account found' page with functional login form",
+      "title": "Create Login page UI",
+      "description": "Build the login page with email/password form",
       "acceptance_criteria": [
-        "src/app/login/page.tsx has email input form",
-        "Form has 'Log in' primary button (lime)",
-        "Shows loading spinner while submitting",
-        "On success: redirects to /home",
-        "On 404: shows 'No account found with this email' error",
-        "Has link to /onboarding for new users",
-        "Back button returns to landing page",
-        "Follows DESIGN_SYSTEM.md form patterns"
+        "Page exists at src/app/login/page.tsx",
+        "Form has email input with label and validation",
+        "Form has password input with label and type='password'",
+        "Submit button says 'Log in' with loading state",
+        "Link to /onboarding for new users: 'New here? Create an account'",
+        "Error message displays for invalid credentials",
+        "Follows DESIGN_SYSTEM.md patterns (Card wrapper, proper spacing)",
+        "Page is responsive (centered card on desktop)"
       ],
       "passes": false
     },
     {
       "id": "LOGIN-012",
-      "title": "Update landing page to check session",
-      "description": "Replace localStorage check with session API call",
+      "title": "Implement login form submission",
+      "description": "Wire up login form to API endpoint",
       "acceptance_criteria": [
-        "src/app/page.tsx uses useAuth hook or fetches /api/auth/session",
-        "Remove localStorage.getItem('userId') check",
-        "If valid session, redirect to /home",
-        "If no session, show landing page with Get Started and Login buttons",
-        "Loading state shown while checking session"
+        "Form submits to POST /api/auth/login",
+        "Shows loading spinner on button during submission",
+        "Displays toast notification on successful login",
+        "Redirects to /dashboard on success",
+        "Displays inline error message on failure",
+        "Disables submit button while loading"
       ],
       "passes": false
     },
     {
       "id": "LOGIN-013",
-      "title": "Add logout button to profile page",
-      "description": "Add ability to log out from profile page",
+      "title": "Update onboarding to collect email and password",
+      "description": "Add authentication fields to user onboarding flow",
       "acceptance_criteria": [
-        "Profile page (/profile) has 'Log out' button at bottom",
-        "Button styled as ghost/destructive variant",
-        "Clicking shows confirmation dialog: 'Are you sure you want to log out?'",
-        "Confirming calls logout and redirects to landing page",
-        "Cancelling closes dialog"
+        "Onboarding form includes email field (required, email format)",
+        "Onboarding form includes password field (required, min 8 chars)",
+        "Onboarding form includes password confirmation field",
+        "Validation shows error if passwords don't match",
+        "Email field has clear label and placeholder",
+        "Password requirements shown as helper text"
       ],
       "passes": false
     },
     {
       "id": "LOGIN-014",
-      "title": "Create AuthGuard component for protected routes",
-      "description": "Create wrapper component that redirects unauthenticated users",
+      "title": "Update onboarding form schema and submission",
+      "description": "Update validation schema and API call for onboarding",
       "acceptance_criteria": [
-        "src/components/auth/AuthGuard.tsx exists",
-        "Component uses useAuth hook",
-        "Shows loading spinner while checking auth",
-        "Redirects to /login if not authenticated",
-        "Renders children if authenticated",
-        "Can be used to wrap page content"
+        "User schema in src/lib/validations/user.ts includes email and password",
+        "Password confirmation validation works client-side",
+        "Form submits email and password to POST /api/users",
+        "User is automatically logged in after onboarding",
+        "Redirects to /dashboard on success"
       ],
       "passes": false
     },
     {
       "id": "LOGIN-015",
-      "title": "Protect authenticated routes",
-      "description": "Add auth protection to dashboard and feature pages",
+      "title": "Create authentication middleware",
+      "description": "Protect routes requiring authentication",
       "acceptance_criteria": [
-        "src/app/home/page.tsx uses AuthGuard or equivalent protection",
-        "src/app/weigh-in/page.tsx uses AuthGuard",
-        "src/app/injection/page.tsx uses AuthGuard",
-        "src/app/habits/page.tsx uses AuthGuard",
-        "src/app/profile/page.tsx uses AuthGuard",
-        "src/app/calendar/page.tsx uses AuthGuard",
-        "Unauthenticated users are redirected to /login"
+        "Middleware file exists at src/middleware.ts",
+        "Protected routes (/dashboard, /weigh-in, /injection, /habits, /calendar, /settings) require valid session",
+        "Unauthenticated requests to protected routes redirect to /login",
+        "Public routes (/, /login, /onboarding) work without session",
+        "/api/auth/* routes are not protected by middleware"
       ],
       "passes": false
     },
     {
       "id": "LOGIN-016",
-      "title": "Handle localStorage migration",
-      "description": "Migrate existing users from localStorage to session-based auth",
+      "title": "Add home page redirect for authenticated users",
+      "description": "Redirect logged-in users from home page to dashboard",
       "acceptance_criteria": [
-        "Create src/app/migrate/page.tsx for migration flow",
-        "If user has localStorage userId but no session cookie, show migration prompt",
-        "Prompt collects email address",
-        "On submit: updates user with email, creates session, clears localStorage",
-        "Landing page detects localStorage userId and redirects to /migrate",
-        "After migration, user is logged in and redirected to /home"
+        "Authenticated users visiting / are redirected to /dashboard",
+        "Unauthenticated users see normal home page",
+        "Redirect happens server-side (no flash of home page)",
+        "Middleware handles this redirect"
       ],
       "passes": false
     },
     {
       "id": "LOGIN-017",
-      "title": "E2E test: onboarding and login flow",
-      "description": "End-to-end tests for user registration and login",
+      "title": "Add logout button to header navigation",
+      "description": "Allow users to log out from the app header",
       "acceptance_criteria": [
-        "tests/e2e/auth.spec.ts exists",
-        "Test: new user completes onboarding with email, lands on dashboard",
-        "Test: user logs out, then logs back in with same email",
-        "Test: login with non-existent email shows error message",
-        "Test: invalid email format shows validation error",
-        "All tests pass with npx playwright test tests/e2e/auth.spec.ts"
+        "Logout button/link visible in header navigation",
+        "Clicking logout calls POST /api/auth/logout",
+        "Shows toast notification on successful logout",
+        "Redirects to home page (/) after logout",
+        "Button is styled consistently with header design"
       ],
       "passes": false
     },
     {
       "id": "LOGIN-018",
-      "title": "E2E test: protected routes and session persistence",
-      "description": "End-to-end tests for route protection and session handling",
+      "title": "Create useAuth hook for client-side auth state",
+      "description": "React hook to manage authentication state",
       "acceptance_criteria": [
-        "Test: unauthenticated user visiting /home is redirected to /login",
-        "Test: unauthenticated user visiting /profile is redirected to /login",
-        "Test: session persists after page reload (user stays logged in)",
-        "Test: logout clears session (user cannot access protected routes)",
-        "All tests added to tests/e2e/auth.spec.ts and pass"
+        "Hook exists at src/hooks/useAuth.ts",
+        "Returns { user, isLoading, isAuthenticated, logout }",
+        "Fetches session status from GET /api/auth/session",
+        "logout() function calls API and redirects",
+        "Used in header component for logout functionality"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-019",
+      "title": "Handle existing users without passwords",
+      "description": "Migration path for users created before auth was added",
+      "acceptance_criteria": [
+        "Login fails gracefully for users with null passwordHash",
+        "Error message suggests re-registering if account has no password",
+        "No server errors when checking users without passwords"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-020",
+      "title": "Add login page redirect for authenticated users",
+      "description": "Redirect already logged-in users away from login page",
+      "acceptance_criteria": [
+        "Authenticated users visiting /login are redirected to /dashboard",
+        "Middleware handles this redirect",
+        "No flash of login page for authenticated users"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-021",
+      "title": "E2E test: New user registration and auto-login",
+      "description": "Test complete onboarding flow with authentication",
+      "acceptance_criteria": [
+        "Test file exists at tests/e2e/login-session.spec.ts",
+        "Test completes onboarding with email and password",
+        "Verifies user is redirected to dashboard after onboarding",
+        "Verifies user remains logged in on page refresh",
+        "Test passes with npx playwright test login-session"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-022",
+      "title": "E2E test: Login and logout flow",
+      "description": "Test login and logout for existing users",
+      "acceptance_criteria": [
+        "Test creates a user via API with email/password",
+        "Test navigates to /login and submits credentials",
+        "Verifies redirect to dashboard",
+        "Test clicks logout button",
+        "Verifies redirect to home page",
+        "Verifies protected route redirects to login after logout",
+        "Test passes with npx playwright test login-session"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-023",
+      "title": "E2E test: Protected route access",
+      "description": "Test that unauthenticated users cannot access protected routes",
+      "acceptance_criteria": [
+        "Test attempts to visit /dashboard without session",
+        "Verifies redirect to /login",
+        "Test attempts to visit /calendar without session",
+        "Verifies redirect to /login",
+        "Test passes with npx playwright test login-session"
       ],
       "passes": false
     }
