@@ -190,7 +190,7 @@
         "Test verifies redirect to home page",
         "npx playwright test tests/e2e/onboarding.spec.ts passes"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }

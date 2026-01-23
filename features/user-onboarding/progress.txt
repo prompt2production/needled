@@ -76,3 +76,9 @@ Completed: 2026-01-23T11:36:00Z
 Files changed: src/app/onboarding/page.tsx
 Notes: Added useRouter from next/navigation. Check for existing userId on mount and redirect if present. Auto-redirect via setTimeout(2000) after success screen appears.
 ---
+---
+Story: ONBOARD-014 E2E test for complete onboarding flow
+Completed: 2026-01-23T11:38:00Z
+Files changed: tests/e2e/onboarding.spec.ts
+Notes: 7 e2e tests covering full flow, skip goal weight, persistence, back navigation, existing user redirect, name validation, weight validation. All pass.
+---
