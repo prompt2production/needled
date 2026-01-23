@@ -86,7 +86,7 @@
         "Only fetches when date is provided",
         "Fetches from /api/calendar/day/[date]"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "CAL-007",

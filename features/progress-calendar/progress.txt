@@ -28,3 +28,9 @@ Completed: 2026-01-23T21:10:00Z
 Files changed: src/hooks/useCalendarMonth.ts
 Notes: Hook accepts year, month, and userId. Returns data, loading, error states and refetch function. Re-fetches on dependency change via useCallback.
 ---
+---
+Story: CAL-006 Create useCalendarDay hook
+Completed: 2026-01-23T21:11:00Z
+Files changed: src/hooks/useCalendarDay.ts
+Notes: Hook accepts date (string or null) and userId. Only fetches when date is provided. Returns data, loading, error states.
+---
