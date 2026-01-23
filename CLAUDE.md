@@ -587,7 +587,7 @@ A feature is complete when:
 **Project:** Needled - Weight Loss Journey Companion
 **Design:** Complete (desktop-first)
 **Features:** Planned (8 features across 4 phases)
-**Current Feature:** None
+**Current Feature:** injection-tracking (20 stories)
 
 ### Completed Features
 - **user-onboarding** (14 stories) — User profile creation with name, weight, goal, medication, injection day
@@ -595,4 +595,4 @@ A feature is complete when:
 - **desktop-layout** (14 stories) — Convert from mobile-first to desktop-first layout with top navigation
 
 ### Next Step
-`Plan feature: injection-tracking`
+Run Ralph to implement injection-tracking

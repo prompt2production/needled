@@ -1,0 +1,296 @@
+{
+  "feature": "Injection Tracking",
+  "stories": [
+    {
+      "id": "INJ-001",
+      "title": "Create Injection database model",
+      "description": "Add the Injection model and InjectionSite enum to Prisma schema with relationship to User",
+      "acceptance_criteria": [
+        "prisma/schema.prisma contains InjectionSite enum with values: ABDOMEN_LEFT, ABDOMEN_RIGHT, THIGH_LEFT, THIGH_RIGHT, UPPER_ARM_LEFT, UPPER_ARM_RIGHT",
+        "prisma/schema.prisma contains Injection model with fields: id, userId, date, site (InjectionSite), notes (optional), createdAt",
+        "Injection model has relation to User model (userId foreign key)",
+        "User model has injections relation (one-to-many)",
+        "npx prisma migrate dev runs successfully",
+        "npx prisma generate completes without errors"
+      ],
+      "passes": true
+    },
+    {
+      "id": "INJ-002",
+      "title": "Create injection validation schema",
+      "description": "Create Zod validation schema for injection creation",
+      "acceptance_criteria": [
+        "src/lib/validations/injection.ts exists",
+        "Schema validates userId: required, string",
+        "Schema validates site: required, must be valid InjectionSite enum value",
+        "Schema validates notes: optional, string, max 500 characters",
+        "npm run test passes for validation schema tests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "INJ-003",
+      "title": "Create injection week utilities",
+      "description": "Utility functions to calculate injection week boundaries based on user's injection day preference",
+      "acceptance_criteria": [
+        "src/lib/injection-week.ts exists",
+        "getInjectionWeekStart(date: Date, injectionDay: number): Date returns the start of the injection week containing the given date",
+        "getInjectionWeekEnd(date: Date, injectionDay: number): Date returns the end of the injection week",
+        "isInjectionDay(date: Date, injectionDay: number): boolean checks if date is the injection day",
+        "getDaysUntilInjection(date: Date, injectionDay: number): number returns days until next injection day (0 if today)",
+        "getDaysOverdue(date: Date, injectionDay: number): number returns days past injection day (0 if not overdue)",
+        "npm run test passes for injection week utility tests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "INJ-004",
+      "title": "Create site rotation utility",
+      "description": "Utility function to suggest the next injection site based on history",
+      "acceptance_criteria": [
+        "src/lib/injection-site.ts exists",
+        "SITE_ROTATION_ORDER constant defines rotation: ABDOMEN_LEFT -> ABDOMEN_RIGHT -> THIGH_LEFT -> THIGH_RIGHT -> UPPER_ARM_LEFT -> UPPER_ARM_RIGHT",
+        "getNextSite(lastSite: InjectionSite | null): InjectionSite returns next site in rotation (ABDOMEN_LEFT if null)",
+        "getSiteLabel(site: InjectionSite): string returns human-readable label (e.g., 'Left Abdomen')",
+        "npm run test passes for site rotation utility tests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "INJ-005",
+      "title": "Create POST /api/injections endpoint",
+      "description": "API endpoint to create a new injection record with weekly constraint enforcement",
+      "acceptance_criteria": [
+        "src/app/api/injections/route.ts exists with POST handler",
+        "Endpoint requires userId and site in request body",
+        "Validates request body using Zod schema",
+        "Returns 409 Conflict if injection already exists for current injection week (based on user's injectionDay)",
+        "Returns 201 with created injection on success",
+        "Returns 400 with validation errors on invalid input",
+        "Injection is created in database via Prisma",
+        "npm run test passes for API route tests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "INJ-006",
+      "title": "Create GET /api/injections endpoint",
+      "description": "API endpoint to fetch injection history for a user",
+      "acceptance_criteria": [
+        "GET handler added to src/app/api/injections/route.ts",
+        "Requires userId query parameter",
+        "Returns array of injections ordered by date descending",
+        "Supports limit and offset query parameters for pagination",
+        "Returns 400 if userId is missing",
+        "npm run test passes for API route tests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "INJ-007",
+      "title": "Create GET /api/injections/status endpoint",
+      "description": "API endpoint to get current injection status including due/done/overdue state",
+      "acceptance_criteria": [
+        "src/app/api/injections/status/route.ts exists with GET handler",
+        "Requires userId query parameter",
+        "Returns status: 'due' (today is injection day, not done), 'done' (logged this week), 'overdue' (past injection day, not done), 'upcoming' (before injection day)",
+        "Returns daysUntil: number (days until injection day, 0 if due/overdue/done)",
+        "Returns daysOverdue: number (days past injection day, 0 if not overdue)",
+        "Returns lastInjection: latest injection record or null",
+        "Returns suggestedSite: next site in rotation",
+        "npm run test passes for API route tests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "INJ-008",
+      "title": "Create InjectionSiteSelector component",
+      "description": "Component for selecting injection site with visual body map or grid",
+      "acceptance_criteria": [
+        "src/components/injection/InjectionSiteSelector.tsx exists",
+        "Shows 6 selectable site options in a grid layout",
+        "Each option shows site name and visual indicator (left/right)",
+        "Highlights suggested site with lime accent",
+        "Dims last used site with 'Used last' label",
+        "Selected site has lime border/background",
+        "Minimum 44x44px touch targets per DESIGN_SYSTEM.md",
+        "Styled per DESIGN_SYSTEM.md"
+      ],
+      "passes": false
+    },
+    {
+      "id": "INJ-009",
+      "title": "Create InjectionDialog component",
+      "description": "Dialog for logging a new injection with site selection",
+      "acceptance_criteria": [
+        "src/components/injection/InjectionDialog.tsx exists",
+        "Uses shadcn Dialog component (not Drawer per DESIGN_SYSTEM.md)",
+        "Dialog title: 'Log Injection'",
+        "Contains InjectionSiteSelector component",
+        "Optional notes textarea field",
+        "Primary lime 'Log Injection' button submits",
+        "Ghost 'Cancel' button closes dialog",
+        "Submit button disabled until site is selected",
+        "Styled per DESIGN_SYSTEM.md"
+      ],
+      "passes": false
+    },
+    {
+      "id": "INJ-010",
+      "title": "Create InjectionCard - Due Today state",
+      "description": "Card component showing injection is due today",
+      "acceptance_criteria": [
+        "src/components/injection/InjectionCard.tsx exists",
+        "When status is 'due', card has accent styling: bg-lime/10 border-lime/20",
+        "Shows Syringe icon with lime color",
+        "Heading: 'Injection Day'",
+        "Subtext: 'Time to take your [medication name]'",
+        "Primary lime 'Log Injection' button opens InjectionDialog",
+        "Card styled per DESIGN_SYSTEM.md accent card variant"
+      ],
+      "passes": false
+    },
+    {
+      "id": "INJ-011",
+      "title": "Create InjectionCard - Done state",
+      "description": "Card component showing injection completed this week",
+      "acceptance_criteria": [
+        "When status is 'done', card has standard styling (bg-card)",
+        "Shows Check icon with lime color",
+        "Heading: 'Injection Done'",
+        "Shows date injection was logged (e.g., 'Logged Monday')",
+        "Shows site used (e.g., 'Left Abdomen')",
+        "No Log Injection button visible",
+        "'View History' link visible"
+      ],
+      "passes": false
+    },
+    {
+      "id": "INJ-012",
+      "title": "Create InjectionCard - Overdue state",
+      "description": "Card component showing injection is overdue",
+      "acceptance_criteria": [
+        "When status is 'overdue', card has warning styling: border-amber-500/30 or border-red-500/30",
+        "Shows AlertCircle or AlertTriangle icon with amber/red color",
+        "Heading: 'Injection Overdue'",
+        "Subtext: 'X days overdue' with actual count",
+        "Primary 'Log Injection' button still available (can still log late)",
+        "Styled to draw attention without being alarming"
+      ],
+      "passes": false
+    },
+    {
+      "id": "INJ-013",
+      "title": "Create InjectionCard - Upcoming state",
+      "description": "Card component showing injection is upcoming",
+      "acceptance_criteria": [
+        "When status is 'upcoming', card has muted/subtle styling",
+        "Shows Syringe icon with muted color",
+        "Heading: 'Next Injection'",
+        "Subtext: 'In X days' or 'Tomorrow' with countdown",
+        "Shows user's injection day name (e.g., 'Wednesday')",
+        "No Log Injection button visible (or disabled/ghost variant)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "INJ-014",
+      "title": "Integrate InjectionCard with API",
+      "description": "Connect InjectionCard to fetch status and submit injections via API",
+      "acceptance_criteria": [
+        "InjectionCard fetches status on mount via /api/injections/status",
+        "Loading skeleton shown while fetching",
+        "Error state handled with retry option",
+        "InjectionDialog submits to /api/injections on confirm",
+        "On successful submission, card updates to show 'done' state",
+        "Success toast shown: 'Injection logged' with site name"
+      ],
+      "passes": false
+    },
+    {
+      "id": "INJ-015",
+      "title": "Add InjectionCard to home page",
+      "description": "Display InjectionCard on the home page dashboard",
+      "acceptance_criteria": [
+        "src/app/home/page.tsx includes InjectionCard component",
+        "Card positioned appropriately in the dashboard grid",
+        "Card fetches and displays current injection status",
+        "Responsive layout works on desktop and mobile"
+      ],
+      "passes": false
+    },
+    {
+      "id": "INJ-016",
+      "title": "Create injection history list component",
+      "description": "Component displaying past injection records",
+      "acceptance_criteria": [
+        "src/components/injection/InjectionHistory.tsx exists",
+        "Fetches injection history from /api/injections",
+        "Shows list of injections with: date, site, notes (if any)",
+        "Dates formatted nicely (e.g., 'Monday, Jan 15')",
+        "Sites shown with human-readable labels",
+        "Empty state when no history: 'No injections logged yet'",
+        "Styled per DESIGN_SYSTEM.md"
+      ],
+      "passes": false
+    },
+    {
+      "id": "INJ-017",
+      "title": "Create injection page",
+      "description": "Dedicated page for injection tracking with history",
+      "acceptance_criteria": [
+        "src/app/injection/page.tsx exists",
+        "Page header shows 'Injection' title",
+        "Shows InjectionCard at top",
+        "Shows site rotation summary (which sites used recently)",
+        "Shows InjectionHistory component",
+        "Styled per DESIGN_SYSTEM.md page layout"
+      ],
+      "passes": false
+    },
+    {
+      "id": "INJ-018",
+      "title": "Add Injection to header navigation",
+      "description": "Add navigation link for injection page to header",
+      "acceptance_criteria": [
+        "Header component includes 'Injection' nav link",
+        "Link uses Syringe icon per DESIGN_SYSTEM.md",
+        "Link href is '/injection'",
+        "Active state shows when on /injection route",
+        "Link appears in both desktop nav and mobile hamburger menu"
+      ],
+      "passes": false
+    },
+    {
+      "id": "INJ-019",
+      "title": "E2E test for injection logging happy path",
+      "description": "End-to-end test covering logging an injection and seeing results",
+      "acceptance_criteria": [
+        "tests/e2e/injection.spec.ts exists",
+        "Test creates user with injection day set to today (or navigates on correct day)",
+        "Test navigates to home page",
+        "Test verifies InjectionCard shows 'due' state",
+        "Test clicks 'Log Injection' button",
+        "Test selects an injection site",
+        "Test submits the injection",
+        "Test verifies success toast appears",
+        "Test verifies card updates to show 'done' state",
+        "npx playwright test tests/e2e/injection.spec.ts passes"
+      ],
+      "passes": false
+    },
+    {
+      "id": "INJ-020",
+      "title": "E2E test for weekly constraint",
+      "description": "End-to-end test verifying user cannot log injection twice in same week",
+      "acceptance_criteria": [
+        "Test added to tests/e2e/injection.spec.ts",
+        "Test logs an injection for current week",
+        "Test verifies 'Log Injection' button is not visible after logging",
+        "Test verifies card shows 'done' state with logged date and site",
+        "npx playwright test tests/e2e/injection.spec.ts passes"
+      ],
+      "passes": false
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+---
+Story: INJ-001 Create Injection database model
+Completed: 2026-01-23T14:45:00Z
+Files changed: prisma/schema.prisma, prisma/migrations/20260123144357_add_injection_model/migration.sql
+Notes: Added InjectionSite enum with 6 body locations and Injection model with user relation. Migration and client generation completed successfully.
+---
