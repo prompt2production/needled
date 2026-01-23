@@ -94,7 +94,7 @@
         "calculateProgress(current: number, start: number, goal: number | null): number | null returns percentage",
         "npm run test passes for trend utility tests"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "WEIGH-008",

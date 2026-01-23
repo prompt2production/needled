@@ -34,3 +34,9 @@ Completed: 2026-01-23T12:55:00Z
 Files changed: src/app/api/weigh-ins/latest/route.ts, tests/unit/api/weigh-ins-latest.test.ts
 Notes: Returns latest weigh-in with weekChange and totalChange. Includes canWeighIn flag based on weekly constraint.
 ---
+---
+Story: WEIGH-007 Create trend calculation utilities
+Completed: 2026-01-23T12:56:00Z
+Files changed: src/lib/trends.ts, tests/unit/lib/trends.test.ts
+Notes: Created calculateWeekChange, calculateTotalChange, and calculateProgress utilities. All values rounded to 1 decimal.
+---
