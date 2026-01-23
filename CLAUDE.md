@@ -1,6 +1,6 @@
 # Needled
 
-A mobile-first weight loss journey companion app for people using GLP-1 medications (Ozempic, Wegovy, Mounjaro). The app combines injection tracking, weekly weigh-ins, and daily habit check-ins into a single, focused experience.
+A desktop-first weight loss journey companion web app for people using GLP-1 medications (Ozempic, Wegovy, Mounjaro). The app combines injection tracking, weekly weigh-ins, and daily habit check-ins into a single, focused experience. Native mobile apps are being developed separately.
 
 **Target Audience:** People on weight loss injection journeys who want structure without complexity—those who find comprehensive health apps overwhelming but need more than a simple weight tracker.
 
@@ -9,6 +9,10 @@ A mobile-first weight loss journey companion app for people using GLP-1 medicati
 - Maintain injection schedule consistency with reminders
 - Build daily mindfulness around three foundational habits: hydration, nutrition, movement
 - Provide visual progress feedback that motivates rather than overwhelms
+
+**Platform Strategy:**
+- Web app: Desktop-first experience with responsive mobile support
+- Native apps: Separate iOS/Android development (not this codebase)
 
 ## Prompt2Production Workflow
 
@@ -574,20 +578,23 @@ A feature is complete when:
 4. ✅ Unit tests pass
 5. ✅ E2E tests pass
 6. ✅ No console errors in browser
-7. ✅ Works on mobile viewport (375px+)
+7. ✅ Works on desktop viewport (1280px+) and degrades gracefully to mobile (375px+)
 
 ---
 
 ## Current Status
 
 **Project:** Needled - Weight Loss Journey Companion
-**Design:** Complete
+**Design:** Complete (updating for desktop-first)
 **Features:** Planned (8 features across 4 phases)
-**Current Feature:** None
+**Current Feature:** desktop-layout
 
 ### Completed Features
 - **user-onboarding** (14 stories) — User profile creation with name, weight, goal, medication, injection day
 - **weekly-weigh-in** (15 stories) — Log weight once per week with enforced timing, view weight trend over time
 
+### In Progress
+- **desktop-layout** (14 stories) — Convert from mobile-first to desktop-first layout with top navigation
+
 ### Next Step
-`Plan feature: injection-tracking`
+After desktop-layout: `Plan feature: injection-tracking`

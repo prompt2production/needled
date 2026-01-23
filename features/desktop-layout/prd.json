@@ -1,0 +1,198 @@
+{
+  "feature": "Desktop Layout",
+  "stories": [
+    {
+      "id": "DESK-001",
+      "title": "Update Design System documentation for desktop-first",
+      "description": "Update DESIGN_SYSTEM.md to reflect the desktop-first approach, including new layout patterns, header navigation, and responsive breakpoint strategy",
+      "acceptance_criteria": [
+        "DESIGN_SYSTEM.md layout section describes desktop-first approach",
+        "Header navigation pattern is documented with code examples",
+        "Mobile hamburger menu pattern is documented",
+        "Responsive breakpoints updated (desktop default, md: for tablet, mobile fallback)",
+        "Bottom navigation section is removed or marked as deprecated",
+        "Dialog pattern is documented instead of Drawer for forms"
+      ],
+      "passes": true
+    },
+    {
+      "id": "DESK-002",
+      "title": "Create Header navigation component",
+      "description": "Create a new Header component for desktop navigation with logo, navigation links, and support for mobile hamburger menu",
+      "acceptance_criteria": [
+        "File exists at src/components/navigation/Header.tsx",
+        "Header displays Needled logo (Syringe icon + text) on the left",
+        "Navigation links (Home, Weight, Profile) displayed horizontally",
+        "Current page has active state with lime accent",
+        "Header has fixed positioning at top of viewport",
+        "Header has dark background with border-bottom",
+        "Uses Link from next/link for navigation"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DESK-003",
+      "title": "Add mobile hamburger menu to Header",
+      "description": "Implement responsive behaviour for the Header - collapse to hamburger menu on screens smaller than 768px",
+      "acceptance_criteria": [
+        "Navigation links hidden on screens < md (768px)",
+        "Hamburger icon (Menu) visible on screens < md",
+        "Clicking hamburger opens a slide-out or dropdown menu",
+        "Mobile menu contains same navigation links",
+        "Mobile menu can be closed by clicking outside or X button",
+        "Logo remains visible on mobile",
+        "Install shadcn sheet component if needed: npx shadcn@latest add sheet"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DESK-004",
+      "title": "Update root layout for desktop",
+      "description": "Modify the root layout to support wider desktop content and include the Header component",
+      "acceptance_criteria": [
+        "src/app/layout.tsx imports and renders Header component",
+        "Header only renders for authenticated routes (not landing, onboarding, login)",
+        "Main content container uses max-w-5xl instead of max-w-md",
+        "Content is centered with mx-auto",
+        "Top padding accounts for fixed header height (pt-16 or pt-20)",
+        "Mobile safe area classes removed from layout"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DESK-005",
+      "title": "Update Home page layout for desktop",
+      "description": "Update the Home page to use the new desktop layout with Header and wider content",
+      "acceptance_criteria": [
+        "src/app/home/page.tsx no longer imports or uses BottomNav",
+        "Page uses desktop-appropriate padding (px-6 instead of px-4)",
+        "Safe area padding classes (pt-safe, pb-24) removed",
+        "Content renders well at 1280px viewport width",
+        "Quick action cards can display in a grid on desktop (grid-cols-2 on md:)",
+        "Page looks good at both desktop and mobile widths"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DESK-006",
+      "title": "Convert WeighInInput from Drawer to Dialog",
+      "description": "Replace the mobile slide-up Drawer with a centered Dialog for weight input",
+      "acceptance_criteria": [
+        "src/components/weigh-in/WeighInInput.tsx uses Dialog instead of Drawer",
+        "Dialog appears centered on screen (not slide-up from bottom)",
+        "Form fields and buttons work the same as before",
+        "Dialog has appropriate max-width for desktop (max-w-md)",
+        "Dialog can be closed with X button or clicking outside",
+        "Form validation still works correctly",
+        "Install shadcn dialog if not present: npx shadcn@latest add dialog"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DESK-007",
+      "title": "Update Weigh-in page layout for desktop",
+      "description": "Update the Weigh-in page to use desktop layout with wider content and grid layout",
+      "acceptance_criteria": [
+        "src/app/weigh-in/page.tsx no longer imports or uses BottomNav",
+        "Page uses desktop-appropriate padding",
+        "Safe area padding classes removed",
+        "Progress and History cards display side-by-side on desktop (grid-cols-2 on lg:)",
+        "WeighInCard remains full width above the grid",
+        "Page renders well at 1280px viewport"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DESK-008",
+      "title": "Update Profile page layout for desktop",
+      "description": "Update the Profile page to use desktop layout",
+      "acceptance_criteria": [
+        "src/app/profile/page.tsx no longer imports or uses BottomNav",
+        "Page uses desktop-appropriate padding",
+        "Safe area padding classes removed",
+        "Profile card has max-width constraint for readability (max-w-xl)",
+        "Content is centered on desktop",
+        "Page renders well at 1280px viewport"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DESK-009",
+      "title": "Update Landing page layout for desktop",
+      "description": "Update the landing page to look great on desktop screens",
+      "acceptance_criteria": [
+        "src/app/page.tsx uses desktop-appropriate layout",
+        "Hero section is centered with proper max-width",
+        "Feature cards display in a horizontal grid on desktop (grid-cols-3 on md:)",
+        "CTA buttons have max-width for better desktop appearance",
+        "Safe area padding classes removed",
+        "Page renders well at 1280px viewport"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DESK-010",
+      "title": "Update Onboarding page layout for desktop",
+      "description": "Update the onboarding flow to look great on desktop",
+      "acceptance_criteria": [
+        "src/app/onboarding/page.tsx uses desktop-appropriate layout",
+        "Form content centered with comfortable max-width (max-w-md or max-w-lg)",
+        "Safe area padding classes removed",
+        "Progress dots and back button properly positioned",
+        "Step content has proper vertical centering",
+        "Page renders well at 1280px viewport"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DESK-011",
+      "title": "Update Login page layout for desktop",
+      "description": "Update the login page to look great on desktop",
+      "acceptance_criteria": [
+        "src/app/login/page.tsx uses desktop-appropriate layout",
+        "Content centered with proper max-width",
+        "Safe area padding classes removed",
+        "Page renders well at 1280px viewport"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DESK-012",
+      "title": "Remove BottomNav component",
+      "description": "Delete the BottomNav component after all pages have been migrated to use the Header",
+      "acceptance_criteria": [
+        "File src/components/navigation/BottomNav.tsx is deleted",
+        "No imports of BottomNav remain in the codebase",
+        "Application builds without errors (npm run build)",
+        "TypeScript compiles without errors"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DESK-013",
+      "title": "Update E2E tests for desktop layout",
+      "description": "Ensure E2E tests work with the new desktop layout",
+      "acceptance_criteria": [
+        "Existing E2E tests in tests/e2e/ pass",
+        "Tests use Header navigation instead of BottomNav",
+        "Viewport size appropriate for desktop testing",
+        "npx playwright test passes"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DESK-014",
+      "title": "Final visual review and polish",
+      "description": "Review all pages at various viewport sizes and make final adjustments",
+      "acceptance_criteria": [
+        "All pages render correctly at 1280px, 1024px, 768px, and 375px viewports",
+        "Header navigation works at all breakpoints",
+        "Hamburger menu functions correctly on mobile",
+        "No layout shifts or overflow issues",
+        "npm run build completes without errors",
+        "npm run lint passes"
+      ],
+      "passes": false
+    }
+  ]
+}

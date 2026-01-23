@@ -52,7 +52,7 @@ test.describe('User Onboarding', () => {
     await expect(page.getByText('Your profile is ready')).toBeVisible()
 
     // Verify redirect to home page (wait for navigation)
-    await expect(page).toHaveURL('/', { timeout: 5000 })
+    await expect(page).toHaveURL('/home', { timeout: 5000 })
   })
 
   test('should skip goal weight when clicking skip link', async ({ page }) => {
@@ -110,7 +110,7 @@ test.describe('User Onboarding', () => {
     await page.reload()
 
     // Should redirect to home
-    await expect(page).toHaveURL('/', { timeout: 5000 })
+    await expect(page).toHaveURL('/home', { timeout: 5000 })
   })
 
   test('should disable Continue until name is 2+ characters', async ({ page }) => {

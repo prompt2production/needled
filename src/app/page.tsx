@@ -1,27 +1,127 @@
-import Link from 'next/link'
-import { ArrowRight, Sparkles } from 'lucide-react'
+'use client'
 
-export default function Home() {
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white flex items-center justify-center">
-      <div className="text-center px-6">
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-700 rounded-full text-sm font-medium mb-8">
-          <Sparkles className="w-4 h-4" />
-          Starter Template
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { Syringe, Scale, Droplets, ChevronRight, Loader2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+
+export default function LandingPage() {
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(true)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  useEffect(() => {
+    const userId = localStorage.getItem('userId')
+    if (userId) {
+      setIsLoggedIn(true)
+      router.replace('/home')
+    } else {
+      setIsLoading(false)
+    }
+  }, [router])
+
+  if (isLoading && !isLoggedIn) {
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-lime animate-spin" />
+      </main>
+    )
+  }
+
+  if (isLoggedIn) {
+    return (
+      <main className="min-h-screen bg-background flex items-center justify-center px-4">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-8 w-8 text-lime animate-spin mx-auto" />
+          <p className="text-muted-foreground text-sm">Redirecting to your dashboard...</p>
         </div>
-        <h1 className="text-6xl font-bold text-slate-900 mb-4">
-          Prompt2Production
-        </h1>
-        <p className="text-xl text-slate-600 max-w-md mx-auto mb-8">
-          Your application homepage will go here.
-        </p>
-        <Link
-          href="/dev"
-          className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-medium"
-        >
-          View Developer Guide
-          <ArrowRight className="w-5 h-5" />
-        </Link>
+      </main>
+    )
+  }
+
+  return (
+    <main className="min-h-screen bg-background flex flex-col">
+      <div className="flex-1 flex flex-col px-4 pt-safe">
+        {/* Hero Section */}
+        <div className="flex-1 flex flex-col justify-center py-12">
+          {/* Brand */}
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-lime/10 mb-6">
+              <Syringe className="h-8 w-8 text-lime" />
+            </div>
+            <h1 className="text-4xl font-bold text-white mb-3">
+              Needled
+            </h1>
+            <p className="text-lg text-muted-foreground">
+              Your GLP-1 journey companion
+            </p>
+          </div>
+
+          {/* Value Props */}
+          <div className="space-y-4 mb-12">
+            <FeatureItem
+              icon={<Syringe className="h-5 w-5" />}
+              title="Track your injections"
+              description="Never miss a dose with smart reminders"
+            />
+            <FeatureItem
+              icon={<Scale className="h-5 w-5" />}
+              title="Weekly weigh-ins"
+              description="See your progress without obsessing"
+            />
+            <FeatureItem
+              icon={<Droplets className="h-5 w-5" />}
+              title="Build healthy habits"
+              description="Daily check-ins for hydration, nutrition & movement"
+            />
+          </div>
+        </div>
+
+        {/* CTAs */}
+        <div className="pb-8 space-y-3">
+          <Button
+            asChild
+            className="w-full h-12 bg-lime text-black hover:bg-lime-muted font-medium text-base"
+          >
+            <Link href="/onboarding">
+              Get Started
+              <ChevronRight className="h-5 w-5 ml-1" />
+            </Link>
+          </Button>
+
+          <Button
+            asChild
+            variant="ghost"
+            className="w-full h-12 text-muted-foreground hover:text-white hover:bg-white/5"
+          >
+            <Link href="/login">
+              I already have an account
+            </Link>
+          </Button>
+        </div>
+      </div>
+    </main>
+  )
+}
+
+function FeatureItem({
+  icon,
+  title,
+  description,
+}: {
+  icon: React.ReactNode
+  title: string
+  description: string
+}) {
+  return (
+    <div className="flex items-start gap-4 p-4 rounded-xl bg-card border border-border">
+      <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-lime/10 flex items-center justify-center text-lime">
+        {icon}
+      </div>
+      <div>
+        <h3 className="font-medium text-white mb-0.5">{title}</h3>
+        <p className="text-sm text-muted-foreground">{description}</p>
       </div>
     </div>
   )

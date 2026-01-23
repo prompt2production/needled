@@ -56,7 +56,7 @@ export function MedicationStep({
       </div>
 
       {/* Medication selection */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         <label className="text-sm text-muted-foreground">
           Which medication are you taking?
         </label>
@@ -79,7 +79,7 @@ export function MedicationStep({
       </div>
 
       {/* Injection day selection */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         <label className="text-sm text-muted-foreground">
           What day do you take your injection?
         </label>

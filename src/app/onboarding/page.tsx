@@ -50,7 +50,7 @@ export default function OnboardingPage() {
     // Check if user already has a profile
     const userId = localStorage.getItem('userId')
     if (userId) {
-      router.replace('/')
+      router.replace('/home')
       return
     }
 
@@ -71,7 +71,7 @@ export default function OnboardingPage() {
   useEffect(() => {
     if (isComplete) {
       const timer = setTimeout(() => {
-        router.replace('/')
+        router.replace('/home')
       }, 2000)
       return () => clearTimeout(timer)
     }

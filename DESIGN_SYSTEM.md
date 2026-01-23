@@ -141,39 +141,61 @@ shadow-lime: 0 0 20px rgba(191, 255, 0, 0.3);
 
 ## Layout
 
-### Mobile-First Approach
-Needled is designed for mobile use. The primary viewport is 375px (iPhone SE) to 428px (iPhone 14 Pro Max).
+### Desktop-First Approach
+Needled web is designed for desktop use with responsive support for mobile. The primary viewport is 1280px+ with graceful degradation to mobile (375px).
 
-### Page Structure
+**Platform Strategy:**
+- Web app: Desktop-first experience optimized for laptop/desktop screens
+- Native apps: Separate iOS/Android development (not this codebase)
+
+### Page Structure (Authenticated Routes)
 ```tsx
 <main className="min-h-screen bg-background">
-  {/* Safe area for notch/home indicator */}
-  <div className="px-4 pt-safe pb-20">
-    {/* Greeting */}
-    <header className="py-6">
-      <h1 className="text-2xl font-semibold text-white">Hey, Chris</h1>
-      <p className="text-muted-foreground text-sm">Let's check in</p>
-    </header>
+  {/* Fixed header navigation */}
+  <Header />
 
-    {/* Main content - card stack */}
-    <div className="space-y-4">
-      <Card>...</Card>
-      <Card>...</Card>
+  {/* Main content with top padding for header */}
+  <div className="pt-16 px-6">
+    <div className="max-w-5xl mx-auto py-6">
+      {/* Page greeting/title */}
+      <header className="mb-6">
+        <h1 className="text-2xl font-semibold text-white">Hey, Chris</h1>
+        <p className="text-muted-foreground text-sm">Let's check in</p>
+      </header>
+
+      {/* Main content - card grid on desktop, stack on mobile */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Card>...</Card>
+        <Card>...</Card>
+      </div>
     </div>
   </div>
+</main>
+```
 
-  {/* Bottom navigation - fixed */}
-  <nav className="fixed bottom-0 inset-x-0 bg-card border-t border-border pb-safe">
-    ...
-  </nav>
+### Page Structure (Public Routes: Landing, Login, Onboarding)
+```tsx
+<main className="min-h-screen bg-background">
+  {/* No header on public routes */}
+  <div className="min-h-screen flex flex-col items-center justify-center px-6">
+    <div className="w-full max-w-md">
+      {/* Centered content */}
+    </div>
+  </div>
 </main>
 ```
 
 ### Responsive Breakpoints
-- `default` — Mobile (375px+)
+- `default` — Desktop (1280px+) - primary design target
+- `lg:` — Large desktop / alternative layouts (1024px+)
+- `md:` — Tablet / hamburger menu breakpoint (768px+)
 - `sm:` — Large phones (640px+)
-- `md:` — Tablets (768px+) - unlikely use case
-- `max-w-md` — Content max-width on larger screens
+- `< md` — Mobile: hamburger menu, stacked layouts
+
+### Content Width
+- `max-w-5xl` — Main content container (authenticated pages)
+- `max-w-md` — Forms, login, onboarding content
+- `max-w-xl` — Profile and single-column content
 
 ---
 
@@ -344,57 +366,131 @@ Dark inputs with subtle borders:
 
 ---
 
-### Bottom Navigation
+### Header Navigation
 
-Fixed bottom nav with pill-shaped active indicator:
+Fixed top navigation with logo and horizontal links on desktop, hamburger menu on mobile:
 
 ```tsx
-<nav className="fixed bottom-0 inset-x-0 bg-card/80 backdrop-blur-lg border-t border-border">
-  <div className="flex items-center justify-around py-2 pb-safe">
-    <NavItem icon={Home} label="Home" active />
-    <NavItem icon={Calendar} label="Calendar" />
-    <NavItem icon={User} label="Profile" />
-  </div>
-</nav>
+// Header component structure
+<header className="fixed top-0 inset-x-0 h-16 bg-card border-b border-border z-50">
+  <div className="max-w-5xl mx-auto h-full px-6 flex items-center justify-between">
+    {/* Logo */}
+    <Link href="/home" className="flex items-center gap-2">
+      <Syringe className="h-6 w-6 text-lime" />
+      <span className="text-lg font-semibold text-white">Needled</span>
+    </Link>
 
-function NavItem({ icon: Icon, label, active }) {
+    {/* Desktop navigation - hidden on mobile */}
+    <nav className="hidden md:flex items-center gap-1">
+      <NavLink href="/home" icon={Home}>Home</NavLink>
+      <NavLink href="/weigh-in" icon={Scale}>Weight</NavLink>
+      <NavLink href="/profile" icon={User}>Profile</NavLink>
+    </nav>
+
+    {/* Mobile hamburger - visible on mobile only */}
+    <Sheet>
+      <SheetTrigger asChild className="md:hidden">
+        <Button variant="ghost" size="icon">
+          <Menu className="h-5 w-5" />
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="right" className="bg-card border-border">
+        {/* Mobile menu links */}
+      </SheetContent>
+    </Sheet>
+  </div>
+</header>
+
+// Navigation link with active state
+function NavLink({ href, icon: Icon, children, active }) {
   return (
-    <button className={cn(
-      "flex flex-col items-center gap-1 px-4 py-2 rounded-xl",
-      active && "bg-lime text-black",
-      !active && "text-muted-foreground"
-    )}>
-      <Icon className="h-5 w-5" />
-      <span className="text-xs font-medium">{label}</span>
-    </button>
+    <Link
+      href={href}
+      className={cn(
+        "flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+        active
+          ? "bg-lime text-black"
+          : "text-muted-foreground hover:text-white hover:bg-white/5"
+      )}
+    >
+      <Icon className="h-4 w-4" />
+      {children}
+    </Link>
   )
 }
 ```
 
----
+**Header positioning:**
+- Height: `h-16` (64px)
+- Content pages need `pt-16` to account for fixed header
+- Background: `bg-card` with `border-b border-border`
 
-### Dialogs & Bottom Sheets
+### Mobile Hamburger Menu
 
-Use bottom sheets on mobile for a native feel:
+Uses shadcn Sheet component for slide-out menu on screens < 768px:
 
 ```tsx
-<Drawer>
-  <DrawerContent className="bg-card-elevated border-t border-border">
-    <DrawerHeader>
-      <DrawerTitle className="text-white">Log Today's Weight</DrawerTitle>
-    </DrawerHeader>
-    <div className="p-4">
-      {/* Content */}
-    </div>
-    <DrawerFooter>
-      <Button className="bg-lime text-black w-full">Save</Button>
-      <DrawerClose asChild>
-        <Button variant="ghost" className="w-full">Cancel</Button>
-      </DrawerClose>
-    </DrawerFooter>
-  </DrawerContent>
-</Drawer>
+<Sheet>
+  <SheetTrigger asChild>
+    <Button variant="ghost" size="icon" className="md:hidden">
+      <Menu className="h-5 w-5" />
+    </Button>
+  </SheetTrigger>
+  <SheetContent side="right" className="bg-card border-l border-border w-64">
+    <SheetHeader>
+      <SheetTitle className="flex items-center gap-2 text-white">
+        <Syringe className="h-5 w-5 text-lime" />
+        Needled
+      </SheetTitle>
+    </SheetHeader>
+    <nav className="mt-6 flex flex-col gap-2">
+      <MobileNavLink href="/home" icon={Home}>Home</MobileNavLink>
+      <MobileNavLink href="/weigh-in" icon={Scale}>Weight</MobileNavLink>
+      <MobileNavLink href="/profile" icon={User}>Profile</MobileNavLink>
+    </nav>
+  </SheetContent>
+</Sheet>
 ```
+
+### Bottom Navigation (DEPRECATED)
+
+> **Note:** Bottom navigation is deprecated for the web app. Use Header navigation instead. Bottom navigation may be used in native mobile apps.
+
+---
+
+### Dialogs
+
+Use centered Dialog for all modal interactions on desktop:
+
+```tsx
+<Dialog open={open} onOpenChange={setOpen}>
+  <DialogContent className="bg-card-elevated border-border max-w-md">
+    <DialogHeader>
+      <DialogTitle className="text-white">Log Today's Weight</DialogTitle>
+      <DialogDescription className="text-muted-foreground">
+        Enter your current weight
+      </DialogDescription>
+    </DialogHeader>
+    <div className="py-4">
+      {/* Form content */}
+    </div>
+    <DialogFooter>
+      <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+      <Button className="bg-lime text-black">Save</Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
+```
+
+**Dialog guidelines:**
+- Use `max-w-md` for form dialogs
+- Use `max-w-lg` for content-heavy dialogs
+- Always include DialogTitle for accessibility
+- Dialogs can be closed by clicking outside or pressing Escape
+
+### Drawer (DEPRECATED)
+
+> **Note:** Drawer/bottom sheets are deprecated for the web app. Use Dialog instead. Drawers may be used in native mobile apps for a more native feel.
 
 ---
 

@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { format } from 'date-fns'
-import { Scale, TrendingDown, TrendingUp, ChevronLeft } from 'lucide-react'
-import Link from 'next/link'
+import { Scale, TrendingDown, TrendingUp } from 'lucide-react'
 import { WeighInCardConnected } from '@/components/weigh-in'
+import { BottomNav } from '@/components/navigation/BottomNav'
 import { calculateProgress } from '@/lib/trends'
 
 interface User {
@@ -96,18 +96,10 @@ export default function WeighInPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <div className="px-4 pt-safe pb-20">
+      <div className="px-4 pt-safe pb-24">
         {/* Header */}
         <header className="py-6">
-          <div className="flex items-center gap-2">
-            <Link
-              href="/"
-              className="p-2 -ml-2 text-muted-foreground hover:text-white transition-colors"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Link>
-            <h1 className="text-2xl font-semibold text-white">Weight</h1>
-          </div>
+          <h1 className="text-2xl font-semibold text-white">Weight</h1>
         </header>
 
         {/* Main content */}
@@ -209,6 +201,8 @@ export default function WeighInPage() {
           )}
         </div>
       </div>
+
+      <BottomNav />
     </main>
   )
 }

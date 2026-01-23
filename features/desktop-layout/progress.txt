@@ -1,0 +1,6 @@
+---
+Story: DESK-001 Update Design System documentation for desktop-first
+Completed: 2026-01-23T14:01:00Z
+Files changed: DESIGN_SYSTEM.md
+Notes: Updated layout section for desktop-first approach, added Header navigation and mobile hamburger menu patterns with code examples, updated responsive breakpoints, marked bottom navigation as deprecated, documented Dialog pattern instead of Drawer.
+---
