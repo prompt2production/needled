@@ -4,3 +4,9 @@ Completed: 2026-01-23T11:22:00Z
 Files changed: prisma/schema.prisma, prisma/migrations/20260123112131_add_user_model/migration.sql
 Notes: Added User model with WeightUnit and Medication enums. Migration applied successfully.
 ---
+---
+Story: ONBOARD-002 Create user validation schema
+Completed: 2026-01-23T11:24:00Z
+Files changed: src/lib/validations/user.ts, tests/unit/validations/user.test.ts
+Notes: Created Zod schema with all business rules. 29 tests covering name, weight, unit, medication, and injection day validation.
+---

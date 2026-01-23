@@ -26,7 +26,7 @@
         "Schema validates injectionDay: required, 0-6 range",
         "npm run test passes for validation schema tests"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ONBOARD-003",
