@@ -40,3 +40,9 @@ Completed: 2026-01-23T22:05:00Z
 Files changed: src/app/api/auth/logout/route.ts
 Notes: POST /api/auth/logout endpoint deletes session from DB and clears cookie. Returns 200 with { success: true } always (idempotent). Handles errors gracefully.
 ---
+---
+Story: LOGIN-008 Create session check API endpoint
+Completed: 2026-01-23T22:07:00Z
+Files changed: src/app/api/auth/session/route.ts
+Notes: GET /api/auth/session validates session from cookie, returns user data without passwordHash if valid. Returns 401 with 'Not authenticated' if no session or expired session.
+---

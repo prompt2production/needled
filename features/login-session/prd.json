@@ -102,7 +102,7 @@
         "Returns 401 with { error: 'Not authenticated' } if no valid session",
         "Used by client to check auth state"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "LOGIN-009",
