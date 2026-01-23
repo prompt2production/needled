@@ -587,7 +587,7 @@ A feature is complete when:
 **Project:** Needled - Weight Loss Journey Companion
 **Design:** Complete (desktop-first)
 **Features:** Planned (8 features across 4 phases)
-**Current Feature:** progress-calendar (14 stories)
+**Current Feature:** None
 
 ### Completed Features
 - **user-onboarding** (14 stories) — User profile creation with name, weight, goal, medication, injection day
@@ -595,6 +595,7 @@ A feature is complete when:
 - **desktop-layout** (14 stories) — Convert from mobile-first to desktop-first layout with top navigation
 - **injection-tracking** (20 stories) — Weekly injection logging with site rotation, status tracking, and history
 - **daily-habits** (16 stories) — Daily yes/no check-in for water, nutrition, and exercise habits
+- **dashboard** (14 stories) — Home screen with weight progress ring, journey stats, integrated with dashboard API
 
 ### Next Step
-Run Ralph to implement the progress-calendar feature
+Next feature: progress-calendar - To continue, run: Plan feature: progress-calendar

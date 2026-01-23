@@ -15,7 +15,7 @@ Based on the project brief, here are the recommended features in build order.
 
 ## Phase 3: Visualization
 
-- [ ] **dashboard** — Home screen showing weight progress, habit streaks, injection status at a glance
+- [x] **dashboard** — Home screen showing weight progress, habit streaks, injection status at a glance
 - [ ] **progress-calendar** — Calendar view showing habit completion patterns and weigh-in history
 
 ## Phase 4: Polish
@@ -50,4 +50,4 @@ user-onboarding
 
 ## Next Step
 
-Continue building with: `Plan feature: dashboard`
+Continue building with: `Plan feature: progress-calendar`
