@@ -74,7 +74,7 @@
         "Uses lime color for progress, white/10 for background track",
         "Children render centered inside the ring"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DASH-007",
@@ -88,7 +88,7 @@
         "Shows 'Log This Week's Weight' button when canWeighIn is true",
         "Button links to /weigh-in page"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DASH-008",
@@ -99,7 +99,7 @@
         "When isLoading is true, displays skeleton with animate-pulse",
         "Skeleton includes circular placeholder for ring, text placeholders for weight"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DASH-009",
@@ -111,7 +111,7 @@
         "Shows encouraging message to log first weigh-in",
         "CTA button still links to /weigh-in"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DASH-010",
@@ -124,7 +124,7 @@
         "Displays total weigh-ins logged count",
         "Uses muted styling per DESIGN_SYSTEM.md"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DASH-011",
@@ -138,7 +138,7 @@
         "Desktop layout: 2-column grid per DESIGN_SYSTEM.md",
         "Mobile layout: Single column stack"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DASH-012",
@@ -150,7 +150,7 @@
         "JourneyStatsCard shows loading skeleton",
         "Loading state uses animate-pulse per DESIGN_SYSTEM.md"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DASH-013",

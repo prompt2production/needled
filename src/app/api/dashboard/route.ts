@@ -115,6 +115,7 @@ export async function GET(request: NextRequest) {
         goalWeight: user.goalWeight,
         weightUnit: user.weightUnit,
         medication: user.medication,
+        injectionDay: user.injectionDay,
         createdAt: user.createdAt.toISOString(),
       },
       weight: {

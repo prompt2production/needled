@@ -24,3 +24,38 @@ Completed: 2026-01-23T14:30:00Z
 Files changed: src/app/api/dashboard/route.ts
 Notes: Habit completion calculates only days up to and including today
 ---
+Story: DASH-006 Create ProgressRing component
+Completed: 2026-01-23T14:35:00Z
+Files changed: src/components/dashboard/ProgressRing.tsx
+Notes: Reusable SVG progress ring with stroke-dasharray animation, lime color, configurable size
+---
+Story: DASH-007 Create WeightProgressCard component
+Completed: 2026-01-23T14:35:00Z
+Files changed: src/components/dashboard/WeightProgressCard.tsx
+Notes: Card with progress ring, current weight, week change with trend icons, CTA button
+---
+Story: DASH-008 Create WeightProgressCard loading state
+Completed: 2026-01-23T14:35:00Z
+Files changed: src/components/dashboard/WeightProgressCard.tsx
+Notes: Added isLoading prop and skeleton with circular ring placeholder and text placeholders
+---
+Story: DASH-009 Create WeightProgressCard empty state
+Completed: 2026-01-23T14:35:00Z
+Files changed: src/components/dashboard/WeightProgressCard.tsx
+Notes: Shows starting weight with label when no weigh-ins, encouraging message, 0% progress ring
+---
+Story: DASH-010 Create JourneyStatsCard component
+Completed: 2026-01-23T14:35:00Z
+Files changed: src/components/dashboard/JourneyStatsCard.tsx
+Notes: Displays week number, habit completion %, and total weigh-ins with muted styling
+---
+Story: DASH-011 Integrate dashboard components into home page
+Completed: 2026-01-23T14:35:00Z
+Files changed: src/app/home/page.tsx, src/lib/validations/dashboard.ts, src/app/api/dashboard/route.ts
+Notes: Home page now uses dashboard API, added injectionDay to response, 2-column grid layout
+---
+Story: DASH-012 Add dashboard page loading state
+Completed: 2026-01-23T14:35:00Z
+Files changed: src/app/home/page.tsx
+Notes: Full loading skeleton with header and card placeholders using animate-pulse
+---

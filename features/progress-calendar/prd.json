@@ -1,0 +1,219 @@
+{
+  "feature": "Progress Calendar",
+  "stories": [
+    {
+      "id": "CAL-001",
+      "title": "Create calendar validation schemas",
+      "description": "Create Zod schemas for validating calendar API parameters and responses",
+      "acceptance_criteria": [
+        "File exists: src/lib/validations/calendar.ts",
+        "Schema for calendar month params (year 1900-2100, month 1-12)",
+        "Schema for calendar day params (valid ISO date string)",
+        "Schema for calendar month response (habits array, weighIns array, injections array)",
+        "Schema for calendar day response (date, optional habit, optional weighIn, optional injection)",
+        "All schemas are exported"
+      ],
+      "passes": false
+    },
+    {
+      "id": "CAL-002",
+      "title": "Create GET /api/calendar/[year]/[month] endpoint",
+      "description": "API endpoint that returns all habits, weigh-ins, and injections for a given month",
+      "acceptance_criteria": [
+        "File exists: src/app/api/calendar/[year]/[month]/route.ts",
+        "GET handler validates year and month parameters",
+        "Returns 400 for invalid year/month",
+        "Queries DailyHabit, WeighIn, and Injection for the month date range",
+        "Returns habits array with date, water, nutrition, exercise for each day",
+        "Returns weighIns array with date and weight",
+        "Returns injections array with date and site",
+        "Returns 200 with correct response schema"
+      ],
+      "passes": false
+    },
+    {
+      "id": "CAL-003",
+      "title": "Create GET /api/calendar/day/[date] endpoint",
+      "description": "API endpoint that returns detailed data for a specific day",
+      "acceptance_criteria": [
+        "File exists: src/app/api/calendar/day/[date]/route.ts",
+        "GET handler validates date parameter as valid ISO date",
+        "Returns 400 for invalid date format",
+        "Queries DailyHabit for the specific date",
+        "Queries WeighIn for the specific date",
+        "Queries Injection for the specific date",
+        "For weighIn, also fetches previous weighIn to calculate change",
+        "Returns habit object (null if none), weighIn object with change (null if none), injection object (null if none)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "CAL-004",
+      "title": "Add unit tests for calendar API endpoints",
+      "description": "Create unit tests for the calendar API validation and logic",
+      "acceptance_criteria": [
+        "File exists: tests/unit/calendar.test.ts",
+        "Tests calendar month param validation (valid and invalid)",
+        "Tests calendar day param validation (valid and invalid)",
+        "Tests month response schema",
+        "Tests day response schema",
+        "All tests pass: npm run test"
+      ],
+      "passes": false
+    },
+    {
+      "id": "CAL-005",
+      "title": "Create useCalendarMonth hook",
+      "description": "Custom hook to fetch and manage calendar month data",
+      "acceptance_criteria": [
+        "File exists: src/hooks/useCalendarMonth.ts",
+        "Hook accepts year and month parameters",
+        "Returns loading, error, and data states",
+        "Fetches from /api/calendar/[year]/[month]",
+        "Re-fetches when year or month changes",
+        "Provides refetch function"
+      ],
+      "passes": false
+    },
+    {
+      "id": "CAL-006",
+      "title": "Create useCalendarDay hook",
+      "description": "Custom hook to fetch detailed data for a specific day",
+      "acceptance_criteria": [
+        "File exists: src/hooks/useCalendarDay.ts",
+        "Hook accepts date parameter (string or null)",
+        "Returns loading, error, and data states",
+        "Only fetches when date is provided",
+        "Fetches from /api/calendar/day/[date]"
+      ],
+      "passes": false
+    },
+    {
+      "id": "CAL-007",
+      "title": "Create CalendarGrid component",
+      "description": "Component that renders the monthly calendar grid structure",
+      "acceptance_criteria": [
+        "File exists: src/components/calendar/CalendarGrid.tsx",
+        "Renders 7-column grid for days of week",
+        "Renders correct number of week rows (4-6 depending on month)",
+        "Shows day headers (M, T, W, T, F, S, S) starting from Monday",
+        "Receives year and month as props",
+        "Calculates and displays correct days including overflow from adjacent months",
+        "Applies muted styling to days outside current month"
+      ],
+      "passes": false
+    },
+    {
+      "id": "CAL-008",
+      "title": "Create CalendarDayCell component",
+      "description": "Component for individual day cell with habit, weigh-in, and injection indicators",
+      "acceptance_criteria": [
+        "File exists: src/components/calendar/CalendarDayCell.tsx",
+        "Displays day number",
+        "Shows three habit dots (water, nutrition, exercise) when habit data exists",
+        "Habit dots use lime when complete, white/20 when incomplete",
+        "Shows Scale icon when weigh-in exists for that day",
+        "Shows Syringe icon when injection exists for that day",
+        "Highlights today with subtle lime ring",
+        "Accepts onClick handler prop",
+        "Has hover state (bg-white/5)",
+        "Is keyboard accessible (button element)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "CAL-009",
+      "title": "Create CalendarHeader component",
+      "description": "Component with month/year display and navigation controls",
+      "acceptance_criteria": [
+        "File exists: src/components/calendar/CalendarHeader.tsx",
+        "Displays current month and year (e.g., 'January 2026')",
+        "Has previous month button with ChevronLeft icon",
+        "Has next month button with ChevronRight icon",
+        "Has 'Today' button to return to current month",
+        "Calls onNavigate callback with new year/month",
+        "Disables next button when viewing current month",
+        "Follows DESIGN_SYSTEM.md button styling"
+      ],
+      "passes": false
+    },
+    {
+      "id": "CAL-010",
+      "title": "Create DayDetailDialog component",
+      "description": "Dialog component showing detailed data for a selected day",
+      "acceptance_criteria": [
+        "File exists: src/components/calendar/DayDetailDialog.tsx",
+        "Uses shadcn Dialog component",
+        "Shows full date in header (e.g., 'Thursday, January 23, 2026')",
+        "Shows relative context (Today, Yesterday, X days ago)",
+        "Displays habits section with check/x icons for each habit",
+        "Displays weigh-in section with weight and change from previous",
+        "Displays injection section with site name",
+        "Shows empty state when no data exists for past days",
+        "Shows appropriate message for future days",
+        "Loading state while fetching day data"
+      ],
+      "passes": false
+    },
+    {
+      "id": "CAL-011",
+      "title": "Create ProgressCalendar composite component",
+      "description": "Main component that combines header, grid, and day detail dialog",
+      "acceptance_criteria": [
+        "File exists: src/components/calendar/ProgressCalendar.tsx",
+        "Composes CalendarHeader, CalendarGrid, CalendarDayCell, DayDetailDialog",
+        "Manages current month/year state",
+        "Manages selected day state for dialog",
+        "Uses useCalendarMonth hook for data fetching",
+        "Passes appropriate data to CalendarDayCell components",
+        "Opens DayDetailDialog when day is clicked",
+        "Shows loading skeleton while fetching month data"
+      ],
+      "passes": false
+    },
+    {
+      "id": "CAL-012",
+      "title": "Create calendar page",
+      "description": "Create the /calendar page that displays the progress calendar",
+      "acceptance_criteria": [
+        "File exists: src/app/calendar/page.tsx",
+        "Uses standard authenticated page layout (Header, max-w-5xl, pt-16)",
+        "Page title: 'Progress Calendar'",
+        "Renders ProgressCalendar component",
+        "Follows DESIGN_SYSTEM.md page structure"
+      ],
+      "passes": false
+    },
+    {
+      "id": "CAL-013",
+      "title": "Add Calendar to header navigation",
+      "description": "Add link to calendar page in the main navigation",
+      "acceptance_criteria": [
+        "Calendar link added to desktop navigation in Header component",
+        "Calendar link added to mobile hamburger menu",
+        "Uses Calendar icon from lucide-react",
+        "Link text: 'Calendar'",
+        "Active state works correctly when on /calendar route"
+      ],
+      "passes": false
+    },
+    {
+      "id": "CAL-014",
+      "title": "Add E2E tests for progress calendar",
+      "description": "Create Playwright tests for calendar functionality",
+      "acceptance_criteria": [
+        "File exists: tests/e2e/calendar.spec.ts",
+        "Test: Calendar page loads and displays current month",
+        "Test: Navigate to previous month",
+        "Test: Cannot navigate past current month",
+        "Test: Today button returns to current month",
+        "Test: Click on day opens detail dialog",
+        "Test: Day detail shows habit data when exists",
+        "Test: Day detail shows weigh-in data when exists",
+        "Test: Day detail shows injection data when exists",
+        "All tests pass: npx playwright test tests/e2e/calendar.spec.ts"
+      ],
+      "passes": false
+    }
+  ]
+}

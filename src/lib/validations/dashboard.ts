@@ -14,6 +14,7 @@ export interface DashboardResponse {
     goalWeight: number | null
     weightUnit: string
     medication: string
+    injectionDay: number
     createdAt: string
   }
   weight: {
