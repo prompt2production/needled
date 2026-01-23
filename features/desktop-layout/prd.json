@@ -142,7 +142,7 @@
         "Step content has proper vertical centering",
         "Page renders well at 1280px viewport"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DESK-011",

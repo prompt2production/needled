@@ -165,7 +165,7 @@ export default function OnboardingPage() {
   // Loading state while checking localStorage
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
+      <main className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
         <div className="text-center space-y-4">
           <Loader2 className="h-10 w-10 text-lime animate-spin mx-auto" />
         </div>
@@ -176,8 +176,8 @@ export default function OnboardingPage() {
   // Success screen
   if (isComplete) {
     return (
-      <main className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
-        <div className="text-center space-y-6">
+      <main className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
+        <div className="text-center space-y-6 max-w-md">
           <div className="w-20 h-20 rounded-full bg-lime/10 flex items-center justify-center mx-auto">
             <Check className="h-10 w-10 text-lime" />
           </div>
@@ -197,7 +197,7 @@ export default function OnboardingPage() {
   // Loading screen during submission
   if (isSubmitting) {
     return (
-      <main className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
+      <main className="min-h-screen bg-background flex flex-col items-center justify-center px-6">
         <div className="text-center space-y-4">
           <Loader2 className="h-10 w-10 text-lime animate-spin mx-auto" />
           <p className="text-muted-foreground text-sm">Setting up your profile...</p>
@@ -208,7 +208,7 @@ export default function OnboardingPage() {
 
   return (
     <main className="min-h-screen bg-background flex flex-col">
-      <div className="px-4 pt-safe flex-1 flex flex-col">
+      <div className="px-6 flex-1 flex flex-col max-w-lg mx-auto w-full">
         {/* Header with back button and progress */}
         <header className="py-4 flex items-center justify-between">
           {currentStep > 1 ? (
@@ -245,7 +245,7 @@ export default function OnboardingPage() {
         </header>
 
         {/* Step content area */}
-        <div className="flex-1 flex flex-col justify-center pb-20">
+        <div className="flex-1 flex flex-col justify-center py-8">
           {currentStep === 1 && (
             <WelcomeStep onNext={handleNext} />
           )}

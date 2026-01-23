@@ -52,3 +52,9 @@ Completed: 2026-01-23T14:09:00Z
 Files changed: src/app/page.tsx
 Notes: Updated landing page for desktop. Hero section centered with max-w-4xl, feature cards in responsive md:grid-cols-3 grid that switch to centered column layout on desktop, CTA buttons constrained to max-w-sm. Removed pt-safe. Responsive typography (md:text-5xl for title).
 ---
+---
+Story: DESK-010 Update Onboarding page layout for desktop
+Completed: 2026-01-23T14:10:00Z
+Files changed: src/app/onboarding/page.tsx
+Notes: Updated onboarding for desktop. Content centered with max-w-lg mx-auto, removed pt-safe, updated padding to px-6. Progress dots and back button remain properly positioned. Step content vertically centered with flex justify-center. Changed bottom padding from pb-20 to py-8.
+---
