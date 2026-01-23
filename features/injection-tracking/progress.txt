@@ -76,3 +76,9 @@ Completed: 2026-01-23T14:59:00Z
 Files changed: src/components/injection/InjectionCard.tsx
 Notes: Upcoming state shows muted Syringe icon with countdown and injection day name.
 ---
+---
+Story: INJ-014 Integrate InjectionCard with API
+Completed: 2026-01-23T15:01:00Z
+Files changed: src/components/injection/InjectionCardConnected.tsx
+Notes: Created InjectionCardConnected that fetches status, handles loading/error states, and submits injections with success toast.
+---

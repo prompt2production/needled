@@ -205,7 +205,7 @@
         "On successful submission, card updates to show 'done' state",
         "Success toast shown: 'Injection logged' with site name"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "INJ-015",
