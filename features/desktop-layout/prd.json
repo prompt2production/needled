@@ -100,7 +100,7 @@
         "WeighInCard remains full width above the grid",
         "Page renders well at 1280px viewport"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DESK-008",

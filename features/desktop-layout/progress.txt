@@ -34,3 +34,9 @@ Completed: 2026-01-23T14:06:00Z
 Files changed: src/components/weigh-in/WeighInInput.tsx
 Notes: Replaced Drawer with Dialog for centered desktop experience. Preserved all form validation, loading states, and error handling. Added DialogDescription for accessibility. Dialog uses max-w-md and can be closed by X, clicking outside, or pressing Escape.
 ---
+---
+Story: DESK-007 Update Weigh-in page layout for desktop
+Completed: 2026-01-23T14:07:00Z
+Files changed: src/app/weigh-in/page.tsx
+Notes: Removed BottomNav, updated padding to px-6 py-6, removed pt-safe and pb-24, added max-w-5xl mx-auto container. WeighInCard stays full width, Progress and History cards now in lg:grid-cols-2 grid for side-by-side layout on desktop.
+---
