@@ -22,6 +22,8 @@ Based on the project brief, here are the recommended features in build order.
 
 - [ ] **notifications** — As this is a web app, users should opt to receive notifications via email (SendGrid)
 - [ ] **settings** — Edit profile, change injection day, adjust goals, export data
+- [ ] **login** — Ensure users revisiting can easily log back in
+- [ ] **user session** — Ensure users who have logged in and still have an active session and revisit home page are taken straight to dashboard
 
 ---
 

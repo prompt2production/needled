@@ -119,7 +119,7 @@
         "Has hover state (bg-white/5)",
         "Is keyboard accessible (button element)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "CAL-009",

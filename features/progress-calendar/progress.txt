@@ -40,3 +40,9 @@ Completed: 2026-01-23T21:12:00Z
 Files changed: src/components/calendar/CalendarGrid.tsx
 Notes: Renders 7-column grid with M-S headers. Uses date-fns to calculate days including overflow. Accepts renderDay prop for custom day rendering.
 ---
+---
+Story: CAL-008 Create CalendarDayCell component
+Completed: 2026-01-23T21:13:00Z
+Files changed: src/components/calendar/CalendarDayCell.tsx
+Notes: Button element with day number, 3 habit dots, Scale icon, Syringe icon. Lime ring on today, hover state, keyboard accessible.
+---
