@@ -22,3 +22,15 @@ Completed: 2026-01-23T15:50:00Z
 Files changed: src/app/api/habits/route.ts, tests/unit/api/habits.test.ts
 Notes: GET endpoint supports userId (required), optional startDate/endDate filters. Returns habits ordered by date descending. 7 tests pass.
 ---
+---
+Story: HAB-005 Create GET /api/habits/today endpoint
+Completed: 2026-01-23T15:52:00Z
+Files changed: src/app/api/habits/today/route.ts, tests/unit/api/habits-today.test.ts
+Notes: GET endpoint fetches or creates today's habit record. Uses unique constraint userId_date for lookup. Created combined with HAB-006 PATCH handler.
+---
+---
+Story: HAB-006 Create PATCH /api/habits/today endpoint
+Completed: 2026-01-23T15:52:00Z
+Files changed: src/app/api/habits/today/route.ts, tests/unit/api/habits-today.test.ts
+Notes: PATCH endpoint uses upsert to toggle individual habits. Validates input with Zod schema. Returns updated habit record. 12 total tests pass for both GET and PATCH.
+---

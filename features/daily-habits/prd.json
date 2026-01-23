@@ -71,7 +71,7 @@
         "Returns 400 if userId is missing",
         "npm run test passes for API route tests"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "HAB-006",
@@ -87,7 +87,7 @@
         "Returns 400 on validation errors",
         "npm run test passes for API route tests"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "HAB-007",
