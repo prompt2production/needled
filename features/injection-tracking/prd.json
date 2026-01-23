@@ -232,7 +232,7 @@
         "Empty state when no history: 'No injections logged yet'",
         "Styled per DESIGN_SYSTEM.md"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "INJ-017",

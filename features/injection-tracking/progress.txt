@@ -88,3 +88,9 @@ Completed: 2026-01-23T15:02:30Z
 Files changed: src/app/home/page.tsx
 Notes: Replaced "Coming soon" placeholder with InjectionCardConnected. Added DAY_NAMES and MEDICATION_NAMES constants for display.
 ---
+---
+Story: INJ-016 Create injection history list component
+Completed: 2026-01-23T15:04:00Z
+Files changed: src/components/injection/InjectionHistory.tsx
+Notes: Created history component with loading/error/empty states, date formatting (EEEE, MMM d), and site labels.
+---
