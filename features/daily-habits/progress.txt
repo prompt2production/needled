@@ -70,3 +70,9 @@ Completed: 2026-01-23T16:04:00Z
 Files changed: src/components/habits/HabitsWeekView.tsx
 Notes: Component showing three HabitWeekGrids for weekly overview. Fetches habits for current week (Monday-Sunday), supports toggle on today's habits. Loading state with skeleton grid.
 ---
+---
+Story: HAB-013 Create habits page
+Completed: 2026-01-23T16:06:00Z
+Files changed: src/app/habits/page.tsx
+Notes: Dedicated habits page with header 'Habits', HabitsCard for today's check-ins, and HabitsWeekView in a card showing 'This Week'. Redirects to landing if no userId in localStorage.
+---
