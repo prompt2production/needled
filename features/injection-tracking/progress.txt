@@ -82,3 +82,9 @@ Completed: 2026-01-23T15:01:00Z
 Files changed: src/components/injection/InjectionCardConnected.tsx
 Notes: Created InjectionCardConnected that fetches status, handles loading/error states, and submits injections with success toast.
 ---
+---
+Story: INJ-015 Add InjectionCard to home page
+Completed: 2026-01-23T15:02:30Z
+Files changed: src/app/home/page.tsx
+Notes: Replaced "Coming soon" placeholder with InjectionCardConnected. Added DAY_NAMES and MEDICATION_NAMES constants for display.
+---

@@ -217,7 +217,7 @@
         "Card fetches and displays current injection status",
         "Responsive layout works on desktop and mobile"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "INJ-016",

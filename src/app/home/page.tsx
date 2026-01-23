@@ -2,8 +2,19 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Scale, Syringe, Loader2 } from 'lucide-react'
+import { Scale, Loader2 } from 'lucide-react'
 import Link from 'next/link'
+import { InjectionCardConnected } from '@/components/injection/InjectionCardConnected'
+
+const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+const MEDICATION_NAMES: Record<string, string> = {
+  OZEMPIC: 'Ozempic',
+  WEGOVY: 'Wegovy',
+  MOUNJARO: 'Mounjaro',
+  ZEPBOUND: 'Zepbound',
+  OTHER: 'medication',
+}
 
 interface User {
   id: string
@@ -87,19 +98,11 @@ export default function HomePage() {
             </div>
           </Link>
 
-          <div className="bg-card rounded-xl border border-border p-4 opacity-50">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center">
-                <Syringe className="h-6 w-6 text-muted-foreground" />
-              </div>
-              <div className="flex-1">
-                <h3 className="font-medium text-white">Injection Tracking</h3>
-                <p className="text-sm text-muted-foreground">
-                  Coming soon
-                </p>
-              </div>
-            </div>
-          </div>
+          <InjectionCardConnected
+            userId={user.id}
+            medicationName={MEDICATION_NAMES[user.medication] || 'medication'}
+            injectionDayName={DAY_NAMES[user.injectionDay]}
+          />
         </div>
       </div>
     </main>
