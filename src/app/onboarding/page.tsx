@@ -5,17 +5,20 @@ import { ChevronLeft, Check, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { WelcomeStep } from '@/components/onboarding/WelcomeStep'
 import { NameStep } from '@/components/onboarding/NameStep'
+import { AccountStep } from '@/components/onboarding/AccountStep'
 import { StartWeightStep } from '@/components/onboarding/StartWeightStep'
 import { GoalWeightStep } from '@/components/onboarding/GoalWeightStep'
 import { MedicationStep } from '@/components/onboarding/MedicationStep'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 
-const TOTAL_STEPS = 5
+const TOTAL_STEPS = 6
 const STORAGE_KEY = 'needled_onboarding_progress'
 
 interface OnboardingData {
   name: string
+  email: string
+  password: string
   startWeight: number | null
   goalWeight: number | null
   weightUnit: 'kg' | 'lbs'
@@ -30,6 +33,8 @@ interface StoredProgress {
 
 const defaultFormData: OnboardingData = {
   name: '',
+  email: '',
+  password: '',
   startWeight: null,
   goalWeight: null,
   weightUnit: 'kg',
@@ -50,7 +55,7 @@ export default function OnboardingPage() {
     // Check if user already has a profile
     const userId = localStorage.getItem('userId')
     if (userId) {
-      router.replace('/home')
+      router.replace('/dashboard')
       return
     }
 
@@ -71,7 +76,7 @@ export default function OnboardingPage() {
   useEffect(() => {
     if (isComplete) {
       const timer = setTimeout(() => {
-        router.replace('/home')
+        router.replace('/dashboard')
       }, 2000)
       return () => clearTimeout(timer)
     }
@@ -128,6 +133,8 @@ export default function OnboardingPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: finalData.name,
+          email: finalData.email,
+          password: finalData.password,
           startWeight: finalData.startWeight,
           goalWeight: finalData.goalWeight,
           weightUnit: finalData.weightUnit,
@@ -137,7 +144,14 @@ export default function OnboardingPage() {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to create profile')
+        const errorData = await response.json()
+        if (response.status === 409) {
+          toast.error('Email already registered', {
+            description: 'Please use a different email or log in to your existing account.',
+          })
+          return
+        }
+        throw new Error(errorData.error || 'Failed to create profile')
       }
 
       const user = await response.json()
@@ -259,6 +273,16 @@ export default function OnboardingPage() {
             />
           )}
           {currentStep === 3 && (
+            <AccountStep
+              onNext={(data) => {
+                updateFormData(data)
+                handleNext()
+              }}
+              defaultEmail={formData.email}
+              defaultPassword={formData.password}
+            />
+          )}
+          {currentStep === 4 && (
             <StartWeightStep
               onNext={(data) => {
                 updateFormData(data)
@@ -268,7 +292,7 @@ export default function OnboardingPage() {
               defaultUnit={formData.weightUnit}
             />
           )}
-          {currentStep === 4 && formData.startWeight && (
+          {currentStep === 5 && formData.startWeight && (
             <GoalWeightStep
               onNext={(data) => {
                 updateFormData(data)
@@ -279,7 +303,7 @@ export default function OnboardingPage() {
               defaultValue={formData.goalWeight}
             />
           )}
-          {currentStep === 5 && (
+          {currentStep === 6 && (
             <MedicationStep
               onNext={handleSubmit}
               defaultMedication={formData.medication}

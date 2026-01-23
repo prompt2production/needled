@@ -64,3 +64,15 @@ Completed: 2026-01-23T22:03:00Z
 Files changed: src/app/login/page.tsx
 Notes: Form submits to /api/auth/login, shows loading spinner, displays toast on success, redirects to /dashboard. Button disabled during loading. Inline error message for invalid credentials.
 ---
+---
+Story: LOGIN-013 Update onboarding to collect email and password
+Completed: 2026-01-23T22:06:00Z
+Files changed: src/components/onboarding/AccountStep.tsx, src/app/onboarding/page.tsx
+Notes: Created AccountStep component with email, password, and password confirmation fields. Added as step 3 in onboarding flow (6 steps total). Client-side validation for email format, password length (8+ chars), and password match. Helper text shows password requirements.
+---
+---
+Story: LOGIN-014 Update onboarding form schema and submission
+Completed: 2026-01-23T22:06:00Z
+Files changed: src/app/onboarding/page.tsx
+Notes: Updated handleSubmit to include email and password in API call. Handles 409 conflict for duplicate emails. Redirects to /dashboard on success. User schema already included email/password from LOGIN-009.
+---

@@ -173,7 +173,7 @@
         "Email field has clear label and placeholder",
         "Password requirements shown as helper text"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "LOGIN-014",
@@ -186,7 +186,7 @@
         "User is automatically logged in after onboarding",
         "Redirects to /dashboard on success"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "LOGIN-015",
