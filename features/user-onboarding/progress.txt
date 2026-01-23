@@ -46,3 +46,9 @@ Completed: 2026-01-23T11:30:00Z
 Files changed: src/components/onboarding/StartWeightStep.tsx, src/app/onboarding/page.tsx
 Notes: StartWeightStep with unit toggle pills (kg/lbs). Validates range based on unit. Shows validation error when invalid.
 ---
+---
+Story: ONBOARD-009 Create Step 4: Goal weight input
+Completed: 2026-01-23T11:31:00Z
+Files changed: src/components/onboarding/GoalWeightStep.tsx, src/app/onboarding/page.tsx
+Notes: GoalWeightStep shows difference to lose. Validates goal < startWeight. Skip link for optional goal.
+---

@@ -125,7 +125,7 @@
         "Continue button disabled until valid or skip clicked",
         "onNext callback receives { goalWeight: number | null }"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ONBOARD-010",

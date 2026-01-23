@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { WelcomeStep } from '@/components/onboarding/WelcomeStep'
 import { NameStep } from '@/components/onboarding/NameStep'
 import { StartWeightStep } from '@/components/onboarding/StartWeightStep'
+import { GoalWeightStep } from '@/components/onboarding/GoalWeightStep'
 
 const TOTAL_STEPS = 5
 
@@ -107,11 +108,15 @@ export default function OnboardingPage() {
               defaultUnit={formData.weightUnit}
             />
           )}
-          {currentStep === 4 && (
-            <StepContent
-              title="Goal Weight"
-              description="This is Step 4"
-              onNext={handleNext}
+          {currentStep === 4 && formData.startWeight && (
+            <GoalWeightStep
+              onNext={(data) => {
+                updateFormData(data)
+                handleNext()
+              }}
+              startWeight={formData.startWeight}
+              weightUnit={formData.weightUnit}
+              defaultValue={formData.goalWeight}
             />
           )}
           {currentStep === 5 && (
