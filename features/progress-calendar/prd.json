@@ -73,7 +73,7 @@
         "Re-fetches when year or month changes",
         "Provides refetch function"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "CAL-006",

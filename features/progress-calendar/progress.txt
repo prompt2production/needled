@@ -22,3 +22,9 @@ Completed: 2026-01-23T21:09:00Z
 Files changed: tests/unit/calendar.test.ts
 Notes: Added 40 unit tests covering month params, day params, month response, and day response schemas. Tests valid and invalid inputs for all schemas.
 ---
+---
+Story: CAL-005 Create useCalendarMonth hook
+Completed: 2026-01-23T21:10:00Z
+Files changed: src/hooks/useCalendarMonth.ts
+Notes: Hook accepts year, month, and userId. Returns data, loading, error states and refetch function. Re-fetches on dependency change via useCallback.
+---
