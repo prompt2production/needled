@@ -10,3 +10,9 @@ Completed: 2026-01-23T12:48:00Z
 Files changed: src/lib/validations/weigh-in.ts, tests/unit/validations/weigh-in.test.ts
 Notes: Created Zod schema with userId and weight validation. Weight validated for positive number in 40-300 range.
 ---
+---
+Story: WEIGH-003 Create week calculation utilities
+Completed: 2026-01-23T12:50:00Z
+Files changed: src/lib/week.ts, tests/unit/lib/week.test.ts, package.json
+Notes: Installed date-fns. Created getWeekStart, getWeekEnd, and isCurrentWeek utilities. Week starts on Monday (weekStartsOn: 1).
+---

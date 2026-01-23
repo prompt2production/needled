@@ -37,7 +37,7 @@
         "isCurrentWeek(date: Date): boolean checks if date is in current week",
         "npm run test passes for week utility tests"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "WEIGH-004",
