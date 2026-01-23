@@ -46,3 +46,9 @@ Completed: 2026-01-23T15:56:00Z
 Files changed: src/components/habits/HabitRow.tsx
 Notes: Row component with icon, label, and toggleable circle indicator. Uses button element wrapping entire row for 56px min-height touch target. Shows Check icon when completed.
 ---
+---
+Story: HAB-009 Create HabitWeekGrid component
+Completed: 2026-01-23T15:58:00Z
+Files changed: src/components/habits/HabitWeekGrid.tsx
+Notes: Weekly grid showing 7 HabitIndicators with M-T-W-T-F-S-S labels. Uses habit-dates utilities to determine state. Only today's indicator is clickable.
+---

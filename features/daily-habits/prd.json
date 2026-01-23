@@ -135,7 +135,7 @@
         "Past days show completed or not completed state",
         "Styled per DESIGN_SYSTEM.md habit grid pattern"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "HAB-010",
