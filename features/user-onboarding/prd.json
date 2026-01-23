@@ -165,7 +165,7 @@
         "If progress exists, restore step and form data",
         "Clear localStorage after successful completion"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ONBOARD-013",

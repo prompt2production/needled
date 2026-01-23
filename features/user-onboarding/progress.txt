@@ -64,3 +64,9 @@ Completed: 2026-01-23T11:33:00Z
 Files changed: src/app/onboarding/page.tsx
 Notes: Added handleSubmit function for API call. Loading state with spinner. Success screen with check icon and personalized greeting. Error toast via Sonner. UserId stored in localStorage.
 ---
+---
+Story: ONBOARD-012 Add localStorage persistence for onboarding progress
+Completed: 2026-01-23T11:34:00Z
+Files changed: src/app/onboarding/page.tsx
+Notes: Progress saved to localStorage on every step/data change. Restored on page load via useEffect. Cleared after successful completion. Initial loading state while checking storage.
+---

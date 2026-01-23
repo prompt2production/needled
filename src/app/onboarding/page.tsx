@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ChevronLeft, Check, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { WelcomeStep } from '@/components/onboarding/WelcomeStep'
@@ -11,6 +11,7 @@ import { MedicationStep } from '@/components/onboarding/MedicationStep'
 import { toast } from 'sonner'
 
 const TOTAL_STEPS = 5
+const STORAGE_KEY = 'needled_onboarding_progress'
 
 interface OnboardingData {
   name: string
@@ -21,33 +22,80 @@ interface OnboardingData {
   injectionDay: number | null
 }
 
+interface StoredProgress {
+  step: number
+  data: OnboardingData
+}
+
+const defaultFormData: OnboardingData = {
+  name: '',
+  startWeight: null,
+  goalWeight: null,
+  weightUnit: 'kg',
+  medication: null,
+  injectionDay: null,
+}
+
 export default function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isComplete, setIsComplete] = useState(false)
-  const [formData, setFormData] = useState<OnboardingData>({
-    name: '',
-    startWeight: null,
-    goalWeight: null,
-    weightUnit: 'kg',
-    medication: null,
-    injectionDay: null,
-  })
+  const [isLoading, setIsLoading] = useState(true)
+  const [formData, setFormData] = useState<OnboardingData>(defaultFormData)
+
+  // Load saved progress on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY)
+      if (saved) {
+        const parsed: StoredProgress = JSON.parse(saved)
+        setCurrentStep(parsed.step)
+        setFormData(parsed.data)
+      }
+    } catch {
+      // Ignore parsing errors, start fresh
+    }
+    setIsLoading(false)
+  }, [])
+
+  // Save progress when step or data changes
+  const saveProgress = (step: number, data: OnboardingData) => {
+    try {
+      const progress: StoredProgress = { step, data }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(progress))
+    } catch {
+      // Ignore storage errors
+    }
+  }
 
   const handleNext = () => {
     if (currentStep < TOTAL_STEPS) {
-      setCurrentStep(currentStep + 1)
+      const nextStep = currentStep + 1
+      setCurrentStep(nextStep)
+      saveProgress(nextStep, formData)
     }
   }
 
   const handleBack = () => {
     if (currentStep > 1) {
-      setCurrentStep(currentStep - 1)
+      const prevStep = currentStep - 1
+      setCurrentStep(prevStep)
+      saveProgress(prevStep, formData)
     }
   }
 
   const updateFormData = (data: Partial<OnboardingData>) => {
-    setFormData((prev) => ({ ...prev, ...data }))
+    const newData = { ...formData, ...data }
+    setFormData(newData)
+    saveProgress(currentStep, newData)
+  }
+
+  const clearProgress = () => {
+    try {
+      localStorage.removeItem(STORAGE_KEY)
+    } catch {
+      // Ignore storage errors
+    }
   }
 
   const handleSubmit = async (medicationData: { medication: string; injectionDay: number }) => {
@@ -78,6 +126,12 @@ export default function OnboardingPage() {
       // Store user ID in localStorage
       localStorage.setItem('userId', user.id)
 
+      // Clear onboarding progress
+      clearProgress()
+
+      // Update local state with final data for success screen
+      setFormData(finalData)
+
       // Show success screen
       setIsComplete(true)
     } catch (error) {
@@ -87,6 +141,17 @@ export default function OnboardingPage() {
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  // Loading state while checking localStorage
+  if (isLoading) {
+    return (
+      <main className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
+        <div className="text-center space-y-4">
+          <Loader2 className="h-10 w-10 text-lime animate-spin mx-auto" />
+        </div>
+      </main>
+    )
   }
 
   // Success screen
