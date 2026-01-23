@@ -583,10 +583,10 @@ A feature is complete when:
 **Project:** Needled - Weight Loss Journey Companion
 **Design:** Complete
 **Features:** Planned (8 features across 4 phases)
-**Current Feature:** user-onboarding (14 stories)
+**Current Feature:** None
 
 ### Completed Features
-_(None yet)_
+- **user-onboarding** (14 stories) — User profile creation with name, weight, goal, medication, injection day
 
 ### Next Step
-Run Ralph to implement the feature.
+`Plan feature: weekly-weigh-in`

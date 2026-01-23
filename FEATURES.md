@@ -4,7 +4,7 @@ Based on the project brief, here are the recommended features in build order.
 
 ## Phase 1: Foundation
 
-- [ ] **user-onboarding** — Collect starting weight, goal weight, injection day preference, and create user profile
+- [x] **user-onboarding** — Collect starting weight, goal weight, injection day preference, and create user profile
 
 ## Phase 2: Core Tracking
 
