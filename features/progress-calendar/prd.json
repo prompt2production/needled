@@ -195,7 +195,7 @@
         "Link text: 'Calendar'",
         "Active state works correctly when on /calendar route"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "CAL-014",

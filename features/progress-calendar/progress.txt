@@ -70,3 +70,9 @@ Completed: 2026-01-23T21:18:00Z
 Files changed: src/app/calendar/page.tsx
 Notes: Created calendar page with standard layout (px-6 py-6 max-w-5xl mx-auto). Page title 'Progress Calendar' with subtitle. Auth check via localStorage userId with loading skeleton.
 ---
+---
+Story: CAL-013 Add Calendar to header navigation
+Completed: 2026-01-23T21:20:00Z
+Files changed: src/components/navigation/Header.tsx
+Notes: Added Calendar icon import from lucide-react. Added Calendar nav item with href '/calendar' to NAV_ITEMS array. Active state handled by existing pathname matching logic.
+---
