@@ -169,7 +169,7 @@
         "Opens DayDetailDialog when day is clicked",
         "Shows loading skeleton while fetching month data"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "CAL-012",

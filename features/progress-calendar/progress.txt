@@ -58,3 +58,9 @@ Completed: 2026-01-23T21:15:00Z
 Files changed: src/components/calendar/DayDetailDialog.tsx
 Notes: Uses shadcn Dialog, shows full date, relative context, habits with check/x icons, weigh-in with change, injection with site. Loading and empty states.
 ---
+---
+Story: CAL-011 Create ProgressCalendar composite component
+Completed: 2026-01-23T21:17:00Z
+Files changed: src/components/calendar/ProgressCalendar.tsx
+Notes: Composes Header, Grid, DayCell, Dialog. Manages month/year and selected day state. Uses useMemo for data lookup maps. Loading skeleton for grid.
+---
