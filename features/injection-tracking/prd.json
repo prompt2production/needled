@@ -148,7 +148,7 @@
         "Primary lime 'Log Injection' button opens InjectionDialog",
         "Card styled per DESIGN_SYSTEM.md accent card variant"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "INJ-011",
@@ -163,7 +163,7 @@
         "No Log Injection button visible",
         "'View History' link visible"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "INJ-012",
@@ -177,7 +177,7 @@
         "Primary 'Log Injection' button still available (can still log late)",
         "Styled to draw attention without being alarming"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "INJ-013",
@@ -191,7 +191,7 @@
         "Shows user's injection day name (e.g., 'Wednesday')",
         "No Log Injection button visible (or disabled/ghost variant)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "INJ-014",

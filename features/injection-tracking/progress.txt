@@ -52,3 +52,27 @@ Completed: 2026-01-23T14:57:30Z
 Files changed: src/components/injection/InjectionDialog.tsx
 Notes: Created Dialog component with InjectionSiteSelector, optional notes textarea, submit/cancel buttons, and loading state handling.
 ---
+---
+Story: INJ-010 Create InjectionCard - Due Today state
+Completed: 2026-01-23T14:59:00Z
+Files changed: src/components/injection/InjectionCard.tsx
+Notes: Created InjectionCard with all four states (due, done, overdue, upcoming) in a single component.
+---
+---
+Story: INJ-011 Create InjectionCard - Done state
+Completed: 2026-01-23T14:59:00Z
+Files changed: src/components/injection/InjectionCard.tsx
+Notes: Done state shows Check icon, logged day name, site used, and View History link.
+---
+---
+Story: INJ-012 Create InjectionCard - Overdue state
+Completed: 2026-01-23T14:59:00Z
+Files changed: src/components/injection/InjectionCard.tsx
+Notes: Overdue state shows AlertTriangle icon with amber warning styling and days overdue count.
+---
+---
+Story: INJ-013 Create InjectionCard - Upcoming state
+Completed: 2026-01-23T14:59:00Z
+Files changed: src/components/injection/InjectionCard.tsx
+Notes: Upcoming state shows muted Syringe icon with countdown and injection day name.
+---
