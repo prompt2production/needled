@@ -40,7 +40,7 @@
         "User is created in database via Prisma",
         "npm run test passes for API route tests"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ONBOARD-004",
