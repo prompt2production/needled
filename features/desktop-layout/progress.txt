@@ -16,3 +16,9 @@ Completed: 2026-01-23T14:03:00Z
 Files changed: src/components/navigation/Header.tsx, src/components/ui/sheet.tsx (installed)
 Notes: Added mobile hamburger menu using shadcn Sheet component. Menu icon visible only on screens < md, slides out from right side, contains same navigation links. Menu closes when clicking outside, clicking X, or clicking a nav link.
 ---
+---
+Story: DESK-004 Update root layout for desktop
+Completed: 2026-01-23T14:04:00Z
+Files changed: src/app/layout.tsx, src/components/navigation/AppShell.tsx (new)
+Notes: Created AppShell component that conditionally renders Header based on route. Public routes (/, /login, /onboarding) don't show header. Removed max-w-md constraint from layout, added pt-16 padding for header space. Individual pages will set their own max-width.
+---

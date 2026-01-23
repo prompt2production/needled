@@ -57,7 +57,7 @@
         "Top padding accounts for fixed header height (pt-16 or pt-20)",
         "Mobile safe area classes removed from layout"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DESK-005",
