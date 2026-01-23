@@ -223,7 +223,7 @@
         "Test verifies water habit shows as unchecked",
         "npx playwright test tests/e2e/habits.spec.ts passes"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "HAB-016",
@@ -238,7 +238,7 @@
         "Test verifies future dates are not clickable",
         "npx playwright test tests/e2e/habits.spec.ts passes"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }

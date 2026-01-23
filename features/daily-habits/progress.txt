@@ -82,3 +82,15 @@ Completed: 2026-01-23T16:08:00Z
 Files changed: src/components/navigation/Header.tsx
 Notes: Added 'Habits' link with Activity icon to NAV_ITEMS array. Appears in both desktop and mobile nav. Positioned between Injection and Profile links.
 ---
+---
+Story: HAB-015 E2E test for habit check-in happy path
+Completed: 2026-01-23T16:12:00Z
+Files changed: tests/e2e/habits.spec.ts
+Notes: Created E2E test file with 4 tests covering check/uncheck on home page, checking multiple habits, habits page weekly view, and header navigation. All tests pass.
+---
+---
+Story: HAB-016 E2E test for habits page weekly view
+Completed: 2026-01-23T16:12:00Z
+Files changed: tests/e2e/habits.spec.ts
+Notes: Included in HAB-015 test file. Test verifies 'Habits' heading, 'This Week' section, day labels in grid, and interactive today buttons. All 4 E2E tests pass.
+---
