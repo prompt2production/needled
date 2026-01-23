@@ -16,3 +16,9 @@ Completed: 2026-01-23T14:48:30Z
 Files changed: src/lib/injection-week.ts, tests/unit/lib/injection-week.test.ts
 Notes: Created utilities for calculating injection week boundaries based on user's injection day preference. 24 tests covering all functions.
 ---
+---
+Story: INJ-004 Create site rotation utility
+Completed: 2026-01-23T14:50:00Z
+Files changed: src/lib/injection-site.ts, tests/unit/lib/injection-site.test.ts
+Notes: Created site rotation utilities with SITE_ROTATION_ORDER constant, getNextSite, and getSiteLabel functions. 15 tests covering all functions.
+---

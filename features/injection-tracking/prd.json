@@ -54,7 +54,7 @@
         "getSiteLabel(site: InjectionSite): string returns human-readable label (e.g., 'Left Abdomen')",
         "npm run test passes for site rotation utility tests"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "INJ-005",
