@@ -52,3 +52,15 @@ Completed: 2026-01-23T22:10:00Z
 Files changed: src/app/api/users/route.ts, src/lib/validations/user.ts, tests/unit/api/users.test.ts, tests/unit/validations/user.test.ts
 Notes: Updated POST /api/users to require email and password. Password is hashed before storing. Session created automatically and cookie set. Returns 409 for duplicate emails. All 367 tests pass including new email/password validation tests.
 ---
+---
+Story: LOGIN-011 Create Login page UI
+Completed: 2026-01-23T22:03:00Z
+Files changed: src/app/login/page.tsx
+Notes: Rewrote login page with email/password form, Card wrapper, proper labels, error display. Follows DESIGN_SYSTEM.md public routes pattern (centered, max-w-md). Link to onboarding for new users.
+---
+---
+Story: LOGIN-012 Implement login form submission
+Completed: 2026-01-23T22:03:00Z
+Files changed: src/app/login/page.tsx
+Notes: Form submits to /api/auth/login, shows loading spinner, displays toast on success, redirects to /dashboard. Button disabled during loading. Inline error message for invalid credentials.
+---

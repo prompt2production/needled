@@ -1,94 +1,146 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { ChevronLeft, Loader2, AlertCircle } from 'lucide-react'
+import { Loader2, Syringe } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { toast } from 'sonner'
 
 export default function LoginPage() {
   const router = useRouter()
-  const [isLoading, setIsLoading] = useState(true)
-  const [hasAccount, setHasAccount] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
-    const userId = localStorage.getItem('userId')
-    if (userId) {
-      setHasAccount(true)
-      router.replace('/home')
-    } else {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+    setIsLoading(true)
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        if (response.status === 401) {
+          setError('Invalid email or password')
+        } else if (data.error) {
+          setError(typeof data.error === 'string' ? data.error : 'Invalid credentials')
+        } else {
+          setError('Something went wrong. Please try again.')
+        }
+        return
+      }
+
+      // Success - show toast and redirect to dashboard
+      toast.success('Welcome back!', {
+        description: 'You have been logged in successfully.',
+      })
+      router.push('/dashboard')
+    } catch {
+      setError('Something went wrong. Please try again.')
+    } finally {
       setIsLoading(false)
     }
-  }, [router])
-
-  if (isLoading && !hasAccount) {
-    return (
-      <main className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="h-8 w-8 text-lime animate-spin" />
-      </main>
-    )
   }
 
-  if (hasAccount) {
-    return (
-      <main className="min-h-screen bg-background flex items-center justify-center px-6">
-        <div className="text-center space-y-4">
-          <Loader2 className="h-8 w-8 text-lime animate-spin mx-auto" />
-          <p className="text-muted-foreground text-sm">Redirecting to your dashboard...</p>
-        </div>
-      </main>
-    )
-  }
+  const isFormValid = email.trim() !== '' && password.trim() !== ''
 
   return (
-    <main className="min-h-screen bg-background flex flex-col">
-      <div className="flex-1 flex flex-col px-6 max-w-md mx-auto w-full">
-        {/* Header */}
-        <header className="py-4">
-          <Button
-            asChild
-            variant="ghost"
-            size="icon"
-            className="text-muted-foreground hover:text-white hover:bg-white/5"
-          >
-            <Link href="/" aria-label="Go back">
-              <ChevronLeft className="h-5 w-5" />
-            </Link>
-          </Button>
-        </header>
-
-        {/* Content */}
-        <div className="flex-1 flex flex-col justify-center py-8">
-          <div className="text-center space-y-6">
-            <div className="w-16 h-16 rounded-full bg-card border border-border flex items-center justify-center mx-auto">
-              <AlertCircle className="h-8 w-8 text-muted-foreground" />
-            </div>
-
-            <div className="space-y-2">
-              <h1 className="text-2xl font-semibold text-white">
-                No account found
-              </h1>
-              <p className="text-muted-foreground text-sm max-w-xs mx-auto">
-                We couldn't find an existing account on this device. Create a new account to get started.
-              </p>
-            </div>
-
-            <div className="pt-4 space-y-3">
-              <Button
-                asChild
-                className="w-full h-12 bg-lime text-black hover:bg-lime-muted font-medium"
-              >
-                <Link href="/onboarding">
-                  Create Account
-                </Link>
-              </Button>
-
-              <p className="text-xs text-muted-foreground">
-                Previously onboarded on a different device?<br />
-                Cloud sync coming soon.
-              </p>
-            </div>
+    <main className="min-h-screen bg-background">
+      <div className="min-h-screen flex flex-col items-center justify-center px-6">
+        <div className="w-full max-w-md">
+          {/* Logo */}
+          <div className="flex items-center justify-center gap-2 mb-8">
+            <Syringe className="h-8 w-8 text-lime" />
+            <span className="text-2xl font-semibold text-white">Needled</span>
           </div>
+
+          <Card className="border-border">
+            <CardHeader className="text-center">
+              <CardTitle className="text-xl text-white">Welcome back</CardTitle>
+              <CardDescription>Sign in to continue your journey</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Error message */}
+                {error && (
+                  <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                    <p className="text-sm text-red-400">{error}</p>
+                  </div>
+                )}
+
+                {/* Email field */}
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-muted-foreground">
+                    Email
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="bg-input border-border text-white h-12"
+                    disabled={isLoading}
+                    autoComplete="email"
+                    required
+                  />
+                </div>
+
+                {/* Password field */}
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-muted-foreground">
+                    Password
+                  </Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="bg-input border-border text-white h-12"
+                    disabled={isLoading}
+                    autoComplete="current-password"
+                    required
+                  />
+                </div>
+
+                {/* Submit button */}
+                <Button
+                  type="submit"
+                  className="w-full bg-lime text-black hover:bg-lime-muted font-medium h-12"
+                  disabled={isLoading || !isFormValid}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      Signing in...
+                    </>
+                  ) : (
+                    'Log in'
+                  )}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Sign up link */}
+          <p className="text-center mt-6 text-sm text-muted-foreground">
+            New here?{' '}
+            <Link href="/onboarding" className="text-lime hover:text-lime-muted transition-colors">
+              Create an account
+            </Link>
+          </p>
         </div>
       </div>
     </main>

@@ -129,7 +129,7 @@
         "registerSchema validates { email: string (email format), password: string (min 8) }",
         "Schemas are exported and used in relevant API routes"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "LOGIN-011",
@@ -145,7 +145,7 @@
         "Follows DESIGN_SYSTEM.md patterns (Card wrapper, proper spacing)",
         "Page is responsive (centered card on desktop)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "LOGIN-012",
@@ -159,7 +159,7 @@
         "Displays inline error message on failure",
         "Disables submit button while loading"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "LOGIN-013",
