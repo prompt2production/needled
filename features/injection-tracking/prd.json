@@ -133,7 +133,7 @@
         "Submit button disabled until site is selected",
         "Styled per DESIGN_SYSTEM.md"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "INJ-010",

@@ -46,3 +46,9 @@ Completed: 2026-01-23T14:56:00Z
 Files changed: src/components/injection/InjectionSiteSelector.tsx
 Notes: Created grid-based site selector with 6 options, suggested site highlighting, last used indication, and proper touch targets (min-h-[56px]).
 ---
+---
+Story: INJ-009 Create InjectionDialog component
+Completed: 2026-01-23T14:57:30Z
+Files changed: src/components/injection/InjectionDialog.tsx
+Notes: Created Dialog component with InjectionSiteSelector, optional notes textarea, submit/cancel buttons, and loading state handling.
+---
