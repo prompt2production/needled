@@ -46,3 +46,9 @@ Completed: 2026-01-23T14:08:00Z
 Files changed: src/app/profile/page.tsx
 Notes: Removed BottomNav, updated padding to px-6 py-6, removed pt-safe and pb-24, added max-w-5xl mx-auto outer container and max-w-xl mx-auto inner container for profile content to maintain readability at wide viewports.
 ---
+---
+Story: DESK-009 Update Landing page layout for desktop
+Completed: 2026-01-23T14:09:00Z
+Files changed: src/app/page.tsx
+Notes: Updated landing page for desktop. Hero section centered with max-w-4xl, feature cards in responsive md:grid-cols-3 grid that switch to centered column layout on desktop, CTA buttons constrained to max-w-sm. Removed pt-safe. Responsive typography (md:text-5xl for title).
+---

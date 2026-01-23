@@ -128,7 +128,7 @@
         "Safe area padding classes removed",
         "Page renders well at 1280px viewport"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DESK-010",
