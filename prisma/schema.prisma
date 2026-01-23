@@ -34,17 +34,18 @@ enum Status {
 // ===========================================
 
 model User {
-  id           String      @id @default(cuid())
+  id           String       @id @default(cuid())
   name         String
   startWeight  Float
   goalWeight   Float?
   weightUnit   WeightUnit
   medication   Medication
-  injectionDay Int         // 0 = Monday, 6 = Sunday
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
+  injectionDay Int          // 0 = Monday, 6 = Sunday
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
   weighIns     WeighIn[]
   injections   Injection[]
+  dailyHabits  DailyHabit[]
 }
 
 model WeighIn {
@@ -89,5 +90,20 @@ model Injection {
   createdAt DateTime      @default(now())
   user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId, date])
+}
+
+model DailyHabit {
+  id        String   @id @default(cuid())
+  userId    String
+  date      DateTime @db.Date
+  water     Boolean  @default(false)
+  nutrition Boolean  @default(false)
+  exercise  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
   @@index([userId, date])
 }

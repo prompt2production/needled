@@ -587,7 +587,7 @@ A feature is complete when:
 **Project:** Needled - Weight Loss Journey Companion
 **Design:** Complete (desktop-first)
 **Features:** Planned (8 features across 4 phases)
-**Current Feature:** None
+**Current Feature:** daily-habits (16 stories)
 
 ### Completed Features
 - **user-onboarding** (14 stories) — User profile creation with name, weight, goal, medication, injection day
@@ -596,4 +596,4 @@ A feature is complete when:
 - **injection-tracking** (20 stories) — Weekly injection logging with site rotation, status tracking, and history
 
 ### Next Step
-Run `Plan feature: daily-habits` to plan the next feature
+Run Ralph to implement daily-habits feature

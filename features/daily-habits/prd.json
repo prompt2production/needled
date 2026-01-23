@@ -1,0 +1,244 @@
+{
+  "feature": "Daily Habits",
+  "stories": [
+    {
+      "id": "HAB-001",
+      "title": "Create DailyHabit database model",
+      "description": "Add the DailyHabit model to Prisma schema with relationship to User",
+      "acceptance_criteria": [
+        "prisma/schema.prisma contains DailyHabit model with fields: id, userId, date (DateTime @db.Date), water (Boolean default false), nutrition (Boolean default false), exercise (Boolean default false), createdAt, updatedAt",
+        "DailyHabit model has relation to User model (userId foreign key with onDelete: Cascade)",
+        "User model has dailyHabits relation (one-to-many)",
+        "@@unique([userId, date]) constraint ensures one record per user per day",
+        "@@index([userId, date]) for query performance",
+        "npx prisma migrate dev runs successfully",
+        "npx prisma generate completes without errors"
+      ],
+      "passes": true
+    },
+    {
+      "id": "HAB-002",
+      "title": "Create habit validation schemas",
+      "description": "Create Zod validation schemas for habit API operations",
+      "acceptance_criteria": [
+        "src/lib/validations/habit.ts exists",
+        "HabitType enum or union type: 'water' | 'nutrition' | 'exercise'",
+        "toggleHabitSchema validates: userId (required string), habit (required HabitType), value (required boolean)",
+        "getHabitsSchema validates: userId (required string), startDate (optional ISO date string), endDate (optional ISO date string)",
+        "npm run test passes for validation schema tests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "HAB-003",
+      "title": "Create habit date utilities",
+      "description": "Utility functions for habit date operations",
+      "acceptance_criteria": [
+        "src/lib/habit-dates.ts exists",
+        "getWeekDates(date: Date): Date[] returns array of 7 dates for the week containing given date (Monday to Sunday)",
+        "getDateString(date: Date): string returns ISO date string in YYYY-MM-DD format",
+        "isToday(date: Date): boolean checks if date is today",
+        "isFuture(date: Date): boolean checks if date is in the future",
+        "isPast(date: Date): boolean checks if date is before today",
+        "npm run test passes for date utility tests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "HAB-004",
+      "title": "Create GET /api/habits endpoint",
+      "description": "API endpoint to fetch habits for a date range",
+      "acceptance_criteria": [
+        "src/app/api/habits/route.ts exists with GET handler",
+        "Requires userId query parameter",
+        "Optional startDate and endDate query parameters filter by date range",
+        "Returns array of habit records ordered by date descending",
+        "Returns 400 if userId is missing",
+        "npm run test passes for API route tests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "HAB-005",
+      "title": "Create GET /api/habits/today endpoint",
+      "description": "API endpoint to fetch or create today's habit record",
+      "acceptance_criteria": [
+        "src/app/api/habits/today/route.ts exists with GET handler",
+        "Requires userId query parameter",
+        "If habit record exists for today, returns it",
+        "If no record exists, creates new record with all habits false and returns it",
+        "Returns habit record with id, date, water, nutrition, exercise fields",
+        "Returns 400 if userId is missing",
+        "npm run test passes for API route tests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "HAB-006",
+      "title": "Create PATCH /api/habits/today endpoint",
+      "description": "API endpoint to toggle a specific habit for today",
+      "acceptance_criteria": [
+        "PATCH handler added to src/app/api/habits/today/route.ts",
+        "Request body contains userId, habit (water/nutrition/exercise), and value (boolean)",
+        "Validates request body using Zod schema",
+        "Creates habit record if it doesn't exist for today",
+        "Updates the specified habit field to the given value",
+        "Returns updated habit record",
+        "Returns 400 on validation errors",
+        "npm run test passes for API route tests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "HAB-007",
+      "title": "Create HabitIndicator component",
+      "description": "Circular indicator component for habit state",
+      "acceptance_criteria": [
+        "src/components/habits/HabitIndicator.tsx exists",
+        "Props: state ('completed' | 'today' | 'past' | 'future'), label (string, e.g., 'M'), onClick (optional function)",
+        "Completed state: bg-lime text-black",
+        "Today state (not done): border border-white/20 text-white/60, cursor-pointer",
+        "Past state: border border-white/20 text-white/40",
+        "Future state: border border-white/10 text-white/20",
+        "Size: w-8 h-8 rounded-full with centered label",
+        "Styled per DESIGN_SYSTEM.md habit indicator patterns"
+      ],
+      "passes": false
+    },
+    {
+      "id": "HAB-008",
+      "title": "Create HabitRow component",
+      "description": "Single habit row with icon, label, and today's toggle",
+      "acceptance_criteria": [
+        "src/components/habits/HabitRow.tsx exists",
+        "Props: habit (HabitType), label (string), icon (LucideIcon), checked (boolean), onToggle (function), disabled (boolean optional)",
+        "Shows icon and label on the left",
+        "Shows toggleable circle indicator for today on the right",
+        "When clicked, calls onToggle with habit name and new value",
+        "Disabled state prevents interaction",
+        "Minimum 44x44px touch target per DESIGN_SYSTEM.md",
+        "Styled per DESIGN_SYSTEM.md"
+      ],
+      "passes": false
+    },
+    {
+      "id": "HAB-009",
+      "title": "Create HabitWeekGrid component",
+      "description": "Weekly grid showing 7-day habit completion",
+      "acceptance_criteria": [
+        "src/components/habits/HabitWeekGrid.tsx exists",
+        "Props: habit (HabitType), label (string), weekData (array of {date, completed}), today (string), onTodayToggle (function)",
+        "Shows M T W T F S S day labels",
+        "Shows HabitIndicator for each day with appropriate state",
+        "Today's indicator is clickable and calls onTodayToggle",
+        "Future days show dimmed/disabled state",
+        "Past days show completed or not completed state",
+        "Styled per DESIGN_SYSTEM.md habit grid pattern"
+      ],
+      "passes": false
+    },
+    {
+      "id": "HAB-010",
+      "title": "Create HabitsCard component",
+      "description": "Card displaying all three habits with today's check-in",
+      "acceptance_criteria": [
+        "src/components/habits/HabitsCard.tsx exists",
+        "Props: userId (string)",
+        "Shows card with title 'Daily Habits'",
+        "Contains HabitRow for water (Droplets icon), nutrition (Utensils icon), exercise (Dumbbell icon)",
+        "Fetches today's habits on mount via /api/habits/today",
+        "Loading state shows skeleton placeholders",
+        "Each habit row toggles via PATCH /api/habits/today",
+        "Toast shown on toggle: 'Water logged' / 'Water removed' etc.",
+        "Styled per DESIGN_SYSTEM.md card patterns"
+      ],
+      "passes": false
+    },
+    {
+      "id": "HAB-011",
+      "title": "Add HabitsCard to home page",
+      "description": "Display HabitsCard on the home page dashboard",
+      "acceptance_criteria": [
+        "src/app/home/page.tsx includes HabitsCard component",
+        "Card positioned appropriately in the dashboard grid layout",
+        "Card fetches and displays current day's habit status",
+        "Responsive layout works on desktop (side-by-side with other cards) and mobile (stacked)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "HAB-012",
+      "title": "Create HabitsWeekView component",
+      "description": "Component showing weekly grid for all three habits",
+      "acceptance_criteria": [
+        "src/components/habits/HabitsWeekView.tsx exists",
+        "Props: userId (string)",
+        "Shows HabitWeekGrid for each of the three habits",
+        "Fetches current week's habits via /api/habits with date range",
+        "Week runs Monday to Sunday",
+        "Loading state shows skeleton grid",
+        "Styled per DESIGN_SYSTEM.md"
+      ],
+      "passes": false
+    },
+    {
+      "id": "HAB-013",
+      "title": "Create habits page",
+      "description": "Dedicated page for habits tracking with weekly view",
+      "acceptance_criteria": [
+        "src/app/habits/page.tsx exists",
+        "Page title: 'Habits'",
+        "Shows HabitsCard at top for today's check-ins",
+        "Shows HabitsWeekView below with full week grid",
+        "Styled per DESIGN_SYSTEM.md page layout"
+      ],
+      "passes": false
+    },
+    {
+      "id": "HAB-014",
+      "title": "Add Habits to header navigation",
+      "description": "Add navigation link for habits page to header",
+      "acceptance_criteria": [
+        "Header component includes 'Habits' nav link",
+        "Link uses Activity or Dumbbell icon per DESIGN_SYSTEM.md",
+        "Link href is '/habits'",
+        "Active state shows when on /habits route",
+        "Link appears in both desktop nav and mobile hamburger menu"
+      ],
+      "passes": false
+    },
+    {
+      "id": "HAB-015",
+      "title": "E2E test for habit check-in happy path",
+      "description": "End-to-end test covering checking and unchecking habits",
+      "acceptance_criteria": [
+        "tests/e2e/habits.spec.ts exists",
+        "Test creates user and navigates to home page",
+        "Test verifies HabitsCard is visible with all habits unchecked",
+        "Test clicks water habit to check it",
+        "Test verifies success toast appears",
+        "Test verifies water habit shows as checked (lime fill)",
+        "Test clicks water habit again to uncheck",
+        "Test verifies removal toast appears",
+        "Test verifies water habit shows as unchecked",
+        "npx playwright test tests/e2e/habits.spec.ts passes"
+      ],
+      "passes": false
+    },
+    {
+      "id": "HAB-016",
+      "title": "E2E test for habits page weekly view",
+      "description": "End-to-end test verifying habits page displays correctly",
+      "acceptance_criteria": [
+        "Test added to tests/e2e/habits.spec.ts",
+        "Test navigates to /habits page",
+        "Test verifies page title 'Habits' is visible",
+        "Test verifies weekly grid shows M T W T F S S labels",
+        "Test verifies today's date is interactive",
+        "Test verifies future dates are not clickable",
+        "npx playwright test tests/e2e/habits.spec.ts passes"
+      ],
+      "passes": false
+    }
+  ]
+}
