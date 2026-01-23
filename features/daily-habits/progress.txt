@@ -16,3 +16,9 @@ Completed: 2026-01-23T15:48:00Z
 Files changed: src/lib/habit-dates.ts, tests/unit/lib/habit-dates.test.ts
 Notes: Created getWeekDates (Monday-Sunday), getDateString (YYYY-MM-DD format), isToday, isFuture, isPast utilities. Uses date-fns for date manipulation. 23 tests pass.
 ---
+---
+Story: HAB-004 Create GET /api/habits endpoint
+Completed: 2026-01-23T15:50:00Z
+Files changed: src/app/api/habits/route.ts, tests/unit/api/habits.test.ts
+Notes: GET endpoint supports userId (required), optional startDate/endDate filters. Returns habits ordered by date descending. 7 tests pass.
+---
