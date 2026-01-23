@@ -34,3 +34,9 @@ Completed: 2026-01-23T15:52:00Z
 Files changed: src/app/api/habits/today/route.ts, tests/unit/api/habits-today.test.ts
 Notes: PATCH endpoint uses upsert to toggle individual habits. Validates input with Zod schema. Returns updated habit record. 12 total tests pass for both GET and PATCH.
 ---
+---
+Story: HAB-007 Create HabitIndicator component
+Completed: 2026-01-23T15:54:00Z
+Files changed: src/components/habits/HabitIndicator.tsx
+Notes: Circular indicator component with 4 states (completed, today, past, future). Uses button element for accessibility with onClick handling. Styled per design system.
+---

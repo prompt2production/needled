@@ -103,7 +103,7 @@
         "Size: w-8 h-8 rounded-full with centered label",
         "Styled per DESIGN_SYSTEM.md habit indicator patterns"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "HAB-008",
