@@ -176,7 +176,7 @@
         "Tests journey stats card displays week number",
         "Tests responsive layout at desktop (1280px) and mobile (375px) viewports"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }

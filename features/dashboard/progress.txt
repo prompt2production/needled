@@ -64,3 +64,8 @@ Completed: 2026-01-23T14:45:00Z
 Files changed: tests/unit/api/dashboard.test.ts
 Notes: 19 tests covering progress percentage, week number, habit completion, weight data, and edge cases
 ---
+Story: DASH-014 Add E2E tests for dashboard page
+Completed: 2026-01-23T14:55:00Z
+Files changed: tests/e2e/dashboard.spec.ts
+Notes: 12 E2E tests covering page load, weight card, journey stats, responsive layout, and existing components
+---
