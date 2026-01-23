@@ -59,7 +59,7 @@
         "Tests day response schema",
         "All tests pass: npm run test"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "CAL-005",

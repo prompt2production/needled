@@ -16,3 +16,9 @@ Completed: 2026-01-23T21:08:00Z
 Files changed: src/app/api/calendar/day/[date]/route.ts
 Notes: API endpoint returns habit, weighIn (with change from previous), and injection data for a specific day. All fields nullable when data doesn't exist.
 ---
+---
+Story: CAL-004 Add unit tests for calendar API endpoints
+Completed: 2026-01-23T21:09:00Z
+Files changed: tests/unit/calendar.test.ts
+Notes: Added 40 unit tests covering month params, day params, month response, and day response schemas. Tests valid and invalid inputs for all schemas.
+---
