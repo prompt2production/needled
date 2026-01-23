@@ -43,6 +43,18 @@ model User {
   injectionDay Int        // 0 = Monday, 6 = Sunday
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
+  weighIns     WeighIn[]
+}
+
+model WeighIn {
+  id        String   @id @default(cuid())
+  userId    String
+  weight    Float
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
 }
 
 enum WeightUnit {

@@ -1,0 +1,212 @@
+{
+  "feature": "Weekly Weigh-In",
+  "stories": [
+    {
+      "id": "WEIGH-001",
+      "title": "Create WeighIn database model",
+      "description": "Add the WeighIn model to Prisma schema with relationship to User",
+      "acceptance_criteria": [
+        "prisma/schema.prisma contains WeighIn model with fields: id, userId, weight, date, createdAt",
+        "WeighIn model has relation to User model (userId foreign key)",
+        "User model has weighIns relation (one-to-many)",
+        "npx prisma migrate dev runs successfully",
+        "npx prisma generate completes without errors"
+      ],
+      "passes": true
+    },
+    {
+      "id": "WEIGH-002",
+      "title": "Create weigh-in validation schema",
+      "description": "Create Zod validation schema for weigh-in creation with business rules",
+      "acceptance_criteria": [
+        "src/lib/validations/weigh-in.ts exists",
+        "Schema validates weight: required, positive number, 40-300 range for kg",
+        "Schema validates userId: required, string",
+        "npm run test passes for validation schema tests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "WEIGH-003",
+      "title": "Create week calculation utilities",
+      "description": "Utility functions to determine current week boundaries and check if user can weigh in",
+      "acceptance_criteria": [
+        "src/lib/week.ts exists",
+        "getWeekStart(date: Date): Date returns Monday 00:00:00 of the given date's week",
+        "getWeekEnd(date: Date): Date returns Sunday 23:59:59 of the given date's week",
+        "isCurrentWeek(date: Date): boolean checks if date is in current week",
+        "npm run test passes for week utility tests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "WEIGH-004",
+      "title": "Create POST /api/weigh-ins endpoint",
+      "description": "API endpoint to create a new weigh-in with weekly constraint enforcement",
+      "acceptance_criteria": [
+        "src/app/api/weigh-ins/route.ts exists with POST handler",
+        "Endpoint requires userId in request body",
+        "Validates request body using Zod schema",
+        "Returns 409 Conflict if weigh-in already exists for current week",
+        "Returns 201 with created weigh-in on success",
+        "Returns 400 with validation errors on invalid input",
+        "WeighIn is created in database via Prisma",
+        "npm run test passes for API route tests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "WEIGH-005",
+      "title": "Create GET /api/weigh-ins endpoint",
+      "description": "API endpoint to fetch weigh-in history for a user",
+      "acceptance_criteria": [
+        "GET handler added to src/app/api/weigh-ins/route.ts",
+        "Requires userId query parameter",
+        "Returns array of weigh-ins ordered by date descending",
+        "Supports limit and offset query parameters for pagination",
+        "Returns 400 if userId is missing",
+        "npm run test passes for API route tests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "WEIGH-006",
+      "title": "Create GET /api/weigh-ins/latest endpoint",
+      "description": "API endpoint to fetch the latest weigh-in with trend data",
+      "acceptance_criteria": [
+        "src/app/api/weigh-ins/latest/route.ts exists with GET handler",
+        "Requires userId query parameter",
+        "Returns latest weigh-in with: weight, date, weekChange (vs previous), totalChange (vs start)",
+        "Returns canWeighIn boolean (false if weigh-in exists this week)",
+        "Returns null for weigh-in if no history exists (canWeighIn still true)",
+        "npm run test passes for API route tests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "WEIGH-007",
+      "title": "Create trend calculation utilities",
+      "description": "Utility functions to calculate weight trends and progress",
+      "acceptance_criteria": [
+        "src/lib/trends.ts exists",
+        "calculateWeekChange(current: number, previous: number | null): number | null returns difference",
+        "calculateTotalChange(current: number, startWeight: number): number returns difference from start",
+        "calculateProgress(current: number, start: number, goal: number | null): number | null returns percentage",
+        "npm run test passes for trend utility tests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "WEIGH-008",
+      "title": "Create WeighInInput component",
+      "description": "Bottom sheet component for entering a new weigh-in",
+      "acceptance_criteria": [
+        "src/components/weigh-in/WeighInInput.tsx exists",
+        "Uses shadcn Drawer component for bottom sheet pattern",
+        "Shows large numeric input with unit suffix (kg or lbs based on user preference)",
+        "Shows current date (read-only, formatted nicely)",
+        "Primary lime 'Log Weight' button triggers onSubmit callback",
+        "Cancel button closes the drawer",
+        "Input validates range and disables submit until valid",
+        "Styled per DESIGN_SYSTEM.md"
+      ],
+      "passes": false
+    },
+    {
+      "id": "WEIGH-009",
+      "title": "Create WeighInCard component - Can Weigh In state",
+      "description": "Card component showing prompt to log weight when user hasn't weighed in this week",
+      "acceptance_criteria": [
+        "src/components/weigh-in/WeighInCard.tsx exists",
+        "Displays 'Log your weight' heading when canWeighIn is true",
+        "Shows Scale icon per DESIGN_SYSTEM.md",
+        "Shows encouraging subtext",
+        "Primary lime 'Log Weight' button opens WeighInInput drawer",
+        "Card styled per DESIGN_SYSTEM.md (bg-card, rounded-xl, border-border)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "WEIGH-010",
+      "title": "Create WeighInCard component - Already Logged state",
+      "description": "Card component showing logged weight and trend when already weighed in this week",
+      "acceptance_criteria": [
+        "WeighInCard shows different UI when canWeighIn is false",
+        "Displays current weight in large text (text-4xl font-bold)",
+        "Shows unit suffix (kg or lbs)",
+        "Shows week-over-week change with trend icon (TrendingDown green for loss, TrendingUp red for gain)",
+        "Shows 'This week' or relative date ('Logged X days ago')",
+        "No Log Weight button visible in this state"
+      ],
+      "passes": false
+    },
+    {
+      "id": "WEIGH-011",
+      "title": "Create WeighInCard component - First Time state",
+      "description": "Card component showing first-time user experience",
+      "acceptance_criteria": [
+        "WeighInCard handles null weigh-in data (first time user)",
+        "Shows welcoming message like 'Track your first weigh-in'",
+        "Shows starting weight from user profile as reference",
+        "Primary lime 'Log Weight' button opens WeighInInput drawer",
+        "No trend data shown (nothing to compare to)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "WEIGH-012",
+      "title": "Integrate WeighInCard with API",
+      "description": "Connect WeighInCard to fetch data from API and submit weigh-ins",
+      "acceptance_criteria": [
+        "WeighInCard fetches latest weigh-in data on mount via /api/weigh-ins/latest",
+        "Loading skeleton shown while fetching",
+        "Error state handled with retry option",
+        "On successful weigh-in submission, card updates to show logged state",
+        "Success toast shown after logging: 'Weight logged' with trend if available"
+      ],
+      "passes": false
+    },
+    {
+      "id": "WEIGH-013",
+      "title": "Create weigh-in page",
+      "description": "Dedicated page for weigh-in history and trends",
+      "acceptance_criteria": [
+        "src/app/weigh-in/page.tsx exists",
+        "Page header shows 'Weight' title",
+        "Shows WeighInCard at top",
+        "Shows progress summary: total lost, progress to goal percentage",
+        "Lists recent weigh-ins with date, weight, and change from previous",
+        "Styled per DESIGN_SYSTEM.md mobile layout"
+      ],
+      "passes": false
+    },
+    {
+      "id": "WEIGH-014",
+      "title": "E2E test for weigh-in happy path",
+      "description": "End-to-end test covering logging a weigh-in and seeing results",
+      "acceptance_criteria": [
+        "tests/e2e/weigh-in.spec.ts exists",
+        "Test sets up a user via API or uses existing test user",
+        "Test navigates to weigh-in page",
+        "Test taps Log Weight button, enters weight, submits",
+        "Test verifies success toast appears",
+        "Test verifies card updates to show logged weight",
+        "npx playwright test tests/e2e/weigh-in.spec.ts passes"
+      ],
+      "passes": false
+    },
+    {
+      "id": "WEIGH-015",
+      "title": "E2E test for weekly constraint",
+      "description": "End-to-end test verifying user cannot weigh in twice in same week",
+      "acceptance_criteria": [
+        "Test added to tests/e2e/weigh-in.spec.ts",
+        "Test logs a weigh-in for current week",
+        "Test verifies Log Weight button is not visible after logging",
+        "Test verifies card shows logged weight instead of input prompt",
+        "npx playwright test tests/e2e/weigh-in.spec.ts passes"
+      ],
+      "passes": false
+    }
+  ]
+}
