@@ -4,6 +4,8 @@ import { createUserSchema } from '@/lib/validations/user'
 describe('createUserSchema', () => {
   const validData = {
     name: 'John',
+    email: 'john@example.com',
+    password: 'password123',
     startWeight: 85,
     goalWeight: 75,
     weightUnit: 'kg' as const,
@@ -40,6 +42,50 @@ describe('createUserSchema', () => {
 
     it('should reject empty name after trimming', () => {
       const result = createUserSchema.safeParse({ ...validData, name: '   ' })
+      expect(result.success).toBe(false)
+    })
+  })
+
+  describe('email validation', () => {
+    it('should accept valid email', () => {
+      const result = createUserSchema.safeParse(validData)
+      expect(result.success).toBe(true)
+    })
+
+    it('should reject invalid email format', () => {
+      const result = createUserSchema.safeParse({ ...validData, email: 'not-an-email' })
+      expect(result.success).toBe(false)
+    })
+
+    it('should reject empty email', () => {
+      const result = createUserSchema.safeParse({ ...validData, email: '' })
+      expect(result.success).toBe(false)
+    })
+
+    it('should reject email without domain', () => {
+      const result = createUserSchema.safeParse({ ...validData, email: 'test@' })
+      expect(result.success).toBe(false)
+    })
+  })
+
+  describe('password validation', () => {
+    it('should accept password with 8 or more characters', () => {
+      const result = createUserSchema.safeParse(validData)
+      expect(result.success).toBe(true)
+    })
+
+    it('should accept password with exactly 8 characters', () => {
+      const result = createUserSchema.safeParse({ ...validData, password: '12345678' })
+      expect(result.success).toBe(true)
+    })
+
+    it('should reject password with less than 8 characters', () => {
+      const result = createUserSchema.safeParse({ ...validData, password: '1234567' })
+      expect(result.success).toBe(false)
+    })
+
+    it('should reject empty password', () => {
+      const result = createUserSchema.safeParse({ ...validData, password: '' })
       expect(result.success).toBe(false)
     })
   })

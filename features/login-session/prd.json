@@ -117,7 +117,7 @@
         "Returns user data without passwordHash",
         "Returns 409 if email already exists"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "LOGIN-010",

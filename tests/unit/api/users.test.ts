@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { POST } from '@/app/api/users/route'
 import { NextRequest } from 'next/server'
+import { Prisma } from '@prisma/client'
 
 vi.mock('@/lib/prisma', () => ({
   prisma: {
@@ -10,9 +11,23 @@ vi.mock('@/lib/prisma', () => ({
   },
 }))
 
+vi.mock('@/lib/auth', () => ({
+  hashPassword: vi.fn(),
+  createSession: vi.fn(),
+}))
+
+vi.mock('@/lib/cookies', () => ({
+  setSessionCookie: vi.fn(),
+}))
+
 import { prisma } from '@/lib/prisma'
+import { hashPassword, createSession } from '@/lib/auth'
+import { setSessionCookie } from '@/lib/cookies'
 
 const mockCreate = vi.mocked(prisma.user.create)
+const mockHashPassword = vi.mocked(hashPassword)
+const mockCreateSession = vi.mocked(createSession)
+const mockSetSessionCookie = vi.mocked(setSessionCookie)
 
 function createRequest(body: unknown): NextRequest {
   return new NextRequest('http://localhost:3000/api/users', {
@@ -25,6 +40,8 @@ function createRequest(body: unknown): NextRequest {
 describe('POST /api/users', () => {
   const validData = {
     name: 'John',
+    email: 'john@example.com',
+    password: 'password123',
     startWeight: 85,
     goalWeight: 75,
     weightUnit: 'kg',
@@ -35,6 +52,8 @@ describe('POST /api/users', () => {
   const mockUser = {
     id: 'cuid123',
     name: 'John',
+    email: 'john@example.com',
+    passwordHash: 'hashed-password',
     startWeight: 85,
     goalWeight: 75,
     weightUnit: 'kg',
@@ -46,6 +65,9 @@ describe('POST /api/users', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    mockHashPassword.mockResolvedValue('hashed-password')
+    mockCreateSession.mockResolvedValue('session-token')
+    mockSetSessionCookie.mockResolvedValue(undefined)
   })
 
   it('should return 201 with created user on success', async () => {
@@ -58,9 +80,16 @@ describe('POST /api/users', () => {
     expect(response.status).toBe(201)
     expect(data.id).toBe('cuid123')
     expect(data.name).toBe('John')
+    expect(data.email).toBe('john@example.com')
+    expect(data.passwordHash).toBeUndefined()
+    expect(mockHashPassword).toHaveBeenCalledWith('password123')
+    expect(mockCreateSession).toHaveBeenCalledWith('cuid123')
+    expect(mockSetSessionCookie).toHaveBeenCalledWith('session-token')
     expect(mockCreate).toHaveBeenCalledWith({
       data: {
         name: 'John',
+        email: 'john@example.com',
+        passwordHash: 'hashed-password',
         startWeight: 85,
         goalWeight: 75,
         weightUnit: 'kg',
@@ -93,6 +122,24 @@ describe('POST /api/users', () => {
     expect(Array.isArray(data.error)).toBe(true)
   })
 
+  it('should return 400 with validation errors for invalid email', async () => {
+    const request = createRequest({ ...validData, email: 'not-an-email' })
+    const response = await POST(request)
+    const data = await response.json()
+
+    expect(response.status).toBe(400)
+    expect(data.error).toBeDefined()
+  })
+
+  it('should return 400 with validation errors for short password', async () => {
+    const request = createRequest({ ...validData, password: 'short' })
+    const response = await POST(request)
+    const data = await response.json()
+
+    expect(response.status).toBe(400)
+    expect(data.error).toBeDefined()
+  })
+
   it('should return 400 with validation errors for invalid weight', async () => {
     const request = createRequest({ ...validData, startWeight: 10 })
     const response = await POST(request)
@@ -121,6 +168,21 @@ describe('POST /api/users', () => {
     const response = await POST(request)
 
     expect(response.status).toBe(400)
+  })
+
+  it('should return 409 when email already exists', async () => {
+    const uniqueConstraintError = new Prisma.PrismaClientKnownRequestError(
+      'Unique constraint failed',
+      { code: 'P2002', clientVersion: '5.0.0' }
+    )
+    mockCreate.mockRejectedValue(uniqueConstraintError)
+
+    const request = createRequest(validData)
+    const response = await POST(request)
+    const data = await response.json()
+
+    expect(response.status).toBe(409)
+    expect(data.error).toBe('Email already exists')
   })
 
   it('should return 500 on database error', async () => {

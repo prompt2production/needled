@@ -46,3 +46,9 @@ Completed: 2026-01-23T22:07:00Z
 Files changed: src/app/api/auth/session/route.ts
 Notes: GET /api/auth/session validates session from cookie, returns user data without passwordHash if valid. Returns 401 with 'Not authenticated' if no session or expired session.
 ---
+---
+Story: LOGIN-009 Update user creation API to require email and password
+Completed: 2026-01-23T22:10:00Z
+Files changed: src/app/api/users/route.ts, src/lib/validations/user.ts, tests/unit/api/users.test.ts, tests/unit/validations/user.test.ts
+Notes: Updated POST /api/users to require email and password. Password is hashed before storing. Session created automatically and cookie set. Returns 409 for duplicate emails. All 367 tests pass including new email/password validation tests.
+---

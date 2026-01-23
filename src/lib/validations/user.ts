@@ -10,6 +10,8 @@ export const createUserSchema = z.object({
     .pipe(
       z.string().min(2, 'Name must be at least 2 characters').max(30, 'Name must be at most 30 characters')
     ),
+  email: z.string().email('Invalid email format'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
   startWeight: z
     .number()
     .min(40, 'Weight must be at least 40')
