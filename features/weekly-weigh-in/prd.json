@@ -110,7 +110,7 @@
         "Input validates range and disables submit until valid",
         "Styled per DESIGN_SYSTEM.md"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "WEIGH-009",
