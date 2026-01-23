@@ -29,7 +29,7 @@
         "Returns injections array with date and site",
         "Returns 200 with correct response schema"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "CAL-003",

@@ -4,3 +4,9 @@ Completed: 2026-01-23T21:06:00Z
 Files changed: src/lib/validations/calendar.ts
 Notes: Created Zod schemas for calendar month params, day params, month response, and day response. All schemas exported with TypeScript types.
 ---
+---
+Story: CAL-002 Create GET /api/calendar/[year]/[month] endpoint
+Completed: 2026-01-23T21:07:00Z
+Files changed: src/app/api/calendar/[year]/[month]/route.ts
+Notes: API endpoint queries DailyHabit, WeighIn, and Injection for the month date range. Returns formatted date strings (YYYY-MM-DD) for each entry.
+---
