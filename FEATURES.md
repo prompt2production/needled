@@ -5,7 +5,7 @@ Based on the project brief, here are the recommended features in build order.
 ## Phase 1: Foundation
 
 - [x] **user-onboarding** — Collect starting weight, goal weight, injection day preference, and create user profile
-- [ ] **desktop-layout** — Convert from mobile-first to desktop-first layout with top header navigation
+- [x] **desktop-layout** — Convert from mobile-first to desktop-first layout with top header navigation
 
 ## Phase 2: Core Tracking
 
