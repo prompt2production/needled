@@ -213,7 +213,7 @@
         "Test: Day detail shows injection data when exists",
         "All tests pass: npx playwright test tests/e2e/calendar.spec.ts"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }

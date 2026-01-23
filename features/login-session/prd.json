@@ -1,0 +1,258 @@
+{
+  "feature": "Login & Session Management",
+  "stories": [
+    {
+      "id": "LOGIN-001",
+      "title": "Add email field to User model",
+      "description": "Add email field to the Prisma User model as a unique, required string field",
+      "acceptance_criteria": [
+        "prisma/schema.prisma has email field on User model with @unique constraint",
+        "Migration created and applied successfully",
+        "npx prisma generate completes without errors"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-002",
+      "title": "Create Session model in Prisma",
+      "description": "Add Session model to store user sessions with token, expiry, and user relation",
+      "acceptance_criteria": [
+        "prisma/schema.prisma has Session model with id, userId, token (@unique), expiresAt, createdAt fields",
+        "Session has relation to User with onDelete: Cascade",
+        "Session has indexes on token and userId",
+        "User model has sessions relation",
+        "Migration created and applied successfully"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-003",
+      "title": "Create session utility functions",
+      "description": "Create utility functions for generating session tokens and managing cookies",
+      "acceptance_criteria": [
+        "src/lib/session.ts exists",
+        "generateSessionToken() returns a cryptographically random base64 string",
+        "SESSION_COOKIE_NAME constant is 'needled_session'",
+        "SESSION_MAX_AGE constant is 30 days in seconds (2592000)",
+        "createSessionCookie(token) returns cookie options object with HttpOnly, Secure (in prod), SameSite: Lax, Path: /, MaxAge",
+        "Unit tests in tests/unit/lib/session.test.ts pass"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-004",
+      "title": "Create login validation schema",
+      "description": "Create Zod validation schema for login requests",
+      "acceptance_criteria": [
+        "src/lib/validations/auth.ts exists",
+        "loginSchema validates email as required string with .email() validation",
+        "Export LoginInput type inferred from schema",
+        "Unit tests in tests/unit/validations/auth.test.ts validate email formats"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-005",
+      "title": "Create POST /api/auth/login endpoint",
+      "description": "API endpoint to authenticate users by email and create a session",
+      "acceptance_criteria": [
+        "src/app/api/auth/login/route.ts exists",
+        "POST validates email using loginSchema",
+        "Returns 400 with validation errors for invalid email format",
+        "Returns 404 with error message if no user found with email",
+        "On success: creates Session in database with 30-day expiry",
+        "On success: sets needled_session cookie with session token",
+        "On success: returns 200 with user data (id, name, email)",
+        "Unit tests in tests/unit/api/auth-login.test.ts pass"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-006",
+      "title": "Create POST /api/auth/logout endpoint",
+      "description": "API endpoint to log out user by clearing session",
+      "acceptance_criteria": [
+        "src/app/api/auth/logout/route.ts exists",
+        "POST reads session token from cookie",
+        "Deletes session from database if exists",
+        "Clears needled_session cookie (sets MaxAge to 0)",
+        "Returns 200 OK regardless of whether session existed",
+        "Unit tests in tests/unit/api/auth-logout.test.ts pass"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-007",
+      "title": "Create GET /api/auth/session endpoint",
+      "description": "API endpoint to validate current session and return user data",
+      "acceptance_criteria": [
+        "src/app/api/auth/session/route.ts exists",
+        "GET reads session token from needled_session cookie",
+        "Returns 401 if no cookie present",
+        "Returns 401 if session not found in database",
+        "Returns 401 if session is expired",
+        "Deletes expired sessions when encountered",
+        "On valid session: returns 200 with user data (id, name, email, plus other profile fields)",
+        "Unit tests in tests/unit/api/auth-session.test.ts pass"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-008",
+      "title": "Update user creation to require email and create session",
+      "description": "Modify POST /api/users to require email field and automatically create session on signup",
+      "acceptance_criteria": [
+        "src/lib/validations/user.ts createUserSchema includes email field with .email() validation",
+        "POST /api/users validates email uniqueness and returns 409 if email already exists",
+        "On successful user creation, creates Session in database",
+        "Sets needled_session cookie in response",
+        "Returns user data including email",
+        "Unit tests updated in tests/unit/api/users.test.ts"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-009",
+      "title": "Create useAuth hook",
+      "description": "Create React hook to manage authentication state client-side",
+      "acceptance_criteria": [
+        "src/hooks/useAuth.ts exists",
+        "Hook fetches /api/auth/session on mount",
+        "Returns { user, isLoading, isAuthenticated, logout }",
+        "user is null when not authenticated",
+        "isLoading is true during initial fetch",
+        "isAuthenticated derived from user !== null",
+        "logout() calls /api/auth/logout and clears state",
+        "Hook handles fetch errors gracefully"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-010",
+      "title": "Update onboarding form to collect email",
+      "description": "Add email input field to onboarding flow",
+      "acceptance_criteria": [
+        "Onboarding page has email input field after name field",
+        "Label is 'Email'",
+        "Placeholder is 'you@example.com'",
+        "Field is required with email validation",
+        "Error message displays 'Please enter a valid email address' for invalid input",
+        "Email is sent to POST /api/users on form submission",
+        "Remove localStorage.setItem('userId') call - session cookie handles auth now"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-011",
+      "title": "Rebuild login page with email form",
+      "description": "Replace static 'no account found' page with functional login form",
+      "acceptance_criteria": [
+        "src/app/login/page.tsx has email input form",
+        "Form has 'Log in' primary button (lime)",
+        "Shows loading spinner while submitting",
+        "On success: redirects to /home",
+        "On 404: shows 'No account found with this email' error",
+        "Has link to /onboarding for new users",
+        "Back button returns to landing page",
+        "Follows DESIGN_SYSTEM.md form patterns"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-012",
+      "title": "Update landing page to check session",
+      "description": "Replace localStorage check with session API call",
+      "acceptance_criteria": [
+        "src/app/page.tsx uses useAuth hook or fetches /api/auth/session",
+        "Remove localStorage.getItem('userId') check",
+        "If valid session, redirect to /home",
+        "If no session, show landing page with Get Started and Login buttons",
+        "Loading state shown while checking session"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-013",
+      "title": "Add logout button to profile page",
+      "description": "Add ability to log out from profile page",
+      "acceptance_criteria": [
+        "Profile page (/profile) has 'Log out' button at bottom",
+        "Button styled as ghost/destructive variant",
+        "Clicking shows confirmation dialog: 'Are you sure you want to log out?'",
+        "Confirming calls logout and redirects to landing page",
+        "Cancelling closes dialog"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-014",
+      "title": "Create AuthGuard component for protected routes",
+      "description": "Create wrapper component that redirects unauthenticated users",
+      "acceptance_criteria": [
+        "src/components/auth/AuthGuard.tsx exists",
+        "Component uses useAuth hook",
+        "Shows loading spinner while checking auth",
+        "Redirects to /login if not authenticated",
+        "Renders children if authenticated",
+        "Can be used to wrap page content"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-015",
+      "title": "Protect authenticated routes",
+      "description": "Add auth protection to dashboard and feature pages",
+      "acceptance_criteria": [
+        "src/app/home/page.tsx uses AuthGuard or equivalent protection",
+        "src/app/weigh-in/page.tsx uses AuthGuard",
+        "src/app/injection/page.tsx uses AuthGuard",
+        "src/app/habits/page.tsx uses AuthGuard",
+        "src/app/profile/page.tsx uses AuthGuard",
+        "src/app/calendar/page.tsx uses AuthGuard",
+        "Unauthenticated users are redirected to /login"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-016",
+      "title": "Handle localStorage migration",
+      "description": "Migrate existing users from localStorage to session-based auth",
+      "acceptance_criteria": [
+        "Create src/app/migrate/page.tsx for migration flow",
+        "If user has localStorage userId but no session cookie, show migration prompt",
+        "Prompt collects email address",
+        "On submit: updates user with email, creates session, clears localStorage",
+        "Landing page detects localStorage userId and redirects to /migrate",
+        "After migration, user is logged in and redirected to /home"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-017",
+      "title": "E2E test: onboarding and login flow",
+      "description": "End-to-end tests for user registration and login",
+      "acceptance_criteria": [
+        "tests/e2e/auth.spec.ts exists",
+        "Test: new user completes onboarding with email, lands on dashboard",
+        "Test: user logs out, then logs back in with same email",
+        "Test: login with non-existent email shows error message",
+        "Test: invalid email format shows validation error",
+        "All tests pass with npx playwright test tests/e2e/auth.spec.ts"
+      ],
+      "passes": false
+    },
+    {
+      "id": "LOGIN-018",
+      "title": "E2E test: protected routes and session persistence",
+      "description": "End-to-end tests for route protection and session handling",
+      "acceptance_criteria": [
+        "Test: unauthenticated user visiting /home is redirected to /login",
+        "Test: unauthenticated user visiting /profile is redirected to /login",
+        "Test: session persists after page reload (user stays logged in)",
+        "Test: logout clears session (user cannot access protected routes)",
+        "All tests added to tests/e2e/auth.spec.ts and pass"
+      ],
+      "passes": false
+    }
+  ]
+}
