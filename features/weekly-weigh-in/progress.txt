@@ -16,3 +16,9 @@ Completed: 2026-01-23T12:50:00Z
 Files changed: src/lib/week.ts, tests/unit/lib/week.test.ts, package.json
 Notes: Installed date-fns. Created getWeekStart, getWeekEnd, and isCurrentWeek utilities. Week starts on Monday (weekStartsOn: 1).
 ---
+---
+Story: WEIGH-004 Create POST /api/weigh-ins endpoint
+Completed: 2026-01-23T12:52:00Z
+Files changed: src/app/api/weigh-ins/route.ts, tests/unit/api/weigh-ins.test.ts
+Notes: Enforces weekly constraint by checking for existing weigh-in in current week before creating. Returns 409 if already logged this week.
+---
