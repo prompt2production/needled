@@ -51,13 +51,13 @@ test.describe('Weekly Weigh-In', () => {
     // Click Log Weight button
     await page.getByRole('button', { name: 'Log Weight' }).click()
 
-    // The drawer should open
+    // The dialog should open
     await expect(page.getByText('Log your weight')).toBeVisible()
 
     // Enter weight
     await page.getByPlaceholder('0.0').fill('88.5')
 
-    // Click the submit button in the drawer
+    // Click the submit button in the dialog
     await page.getByRole('dialog').getByRole('button', { name: 'Log Weight' }).click()
 
     // Wait for toast to appear
@@ -86,7 +86,7 @@ test.describe('Weekly Weigh-In', () => {
     // Set up localStorage and navigate
     await setupLocalStorage(page, testUserId)
 
-    // Open the drawer
+    // Open the dialog
     await expect(
       page.getByRole('button', { name: 'Log Weight' })
     ).toBeVisible({ timeout: 10000 })

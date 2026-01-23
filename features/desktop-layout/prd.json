@@ -178,7 +178,7 @@
         "Viewport size appropriate for desktop testing",
         "npx playwright test passes"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DESK-014",

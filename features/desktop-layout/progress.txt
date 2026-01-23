@@ -70,3 +70,9 @@ Completed: 2026-01-23T14:14:00Z
 Files changed: src/components/navigation/BottomNav.tsx (deleted), src/app/design/page.tsx, src/components/weigh-in/WeighInCard.tsx
 Notes: Deleted BottomNav component file. Updated design page to mark BottomNavigation section as deprecated with visual indicator and explanatory note. Fixed TypeScript error in WeighInCard (weekChange undefined check). Build passes.
 ---
+---
+Story: DESK-013 Update E2E tests for desktop layout
+Completed: 2026-01-23T14:16:00Z
+Files changed: tests/e2e/weigh-in.spec.ts
+Notes: E2E tests already configured for desktop viewport (Desktop Chrome, 1280x720). Tests don't reference BottomNav and work with Header navigation. Updated comments in weigh-in.spec.ts to say "dialog" instead of "drawer". All 13 E2E tests pass.
+---
