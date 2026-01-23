@@ -76,3 +76,21 @@ Completed: 2026-01-23T22:06:00Z
 Files changed: src/app/onboarding/page.tsx
 Notes: Updated handleSubmit to include email and password in API call. Handles 409 conflict for duplicate emails. Redirects to /dashboard on success. User schema already included email/password from LOGIN-009.
 ---
+---
+Story: LOGIN-015 Create authentication middleware
+Completed: 2026-01-23T22:08:00Z
+Files changed: src/middleware.ts
+Notes: Created middleware that validates sessions via database lookup. Protected routes redirect to /login if no valid session. Public API routes (/api/auth/*) bypass middleware. Validates session expiry.
+---
+---
+Story: LOGIN-016 Add home page redirect for authenticated users
+Completed: 2026-01-23T22:08:00Z
+Files changed: src/middleware.ts
+Notes: Middleware redirects authenticated users from / to /dashboard. Server-side redirect prevents flash of home page.
+---
+---
+Story: LOGIN-020 Add login page redirect for authenticated users
+Completed: 2026-01-23T22:08:00Z
+Files changed: src/middleware.ts
+Notes: Middleware redirects authenticated users from /login and /onboarding to /dashboard. Server-side redirect prevents flash of auth pages.
+---

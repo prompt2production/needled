@@ -199,7 +199,7 @@
         "Public routes (/, /login, /onboarding) work without session",
         "/api/auth/* routes are not protected by middleware"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "LOGIN-016",
@@ -211,7 +211,7 @@
         "Redirect happens server-side (no flash of home page)",
         "Middleware handles this redirect"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "LOGIN-017",
@@ -259,7 +259,7 @@
         "Middleware handles this redirect",
         "No flash of login page for authenticated users"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "LOGIN-021",
