@@ -43,7 +43,7 @@
         "Logo remains visible on mobile",
         "Install shadcn sheet component if needed: npx shadcn@latest add sheet"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DESK-004",
