@@ -10,3 +10,9 @@ Completed: 2026-01-23T21:52:00Z
 Files changed: prisma/schema.prisma
 Notes: Added optional passwordHash field (String?) to User model to allow migration of existing users without passwords.
 ---
+---
+Story: LOGIN-003 Create auth utility functions
+Completed: 2026-01-23T21:55:00Z
+Files changed: src/lib/auth.ts, tests/unit/auth.test.ts, package.json
+Notes: Created hashPassword, verifyPassword, and generateSessionToken functions. Installed bcrypt with cost factor 12. All 8 unit tests pass.
+---

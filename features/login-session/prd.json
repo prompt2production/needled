@@ -36,7 +36,7 @@
         "bcrypt package is installed (npm install bcrypt @types/bcrypt)",
         "Unit tests pass in tests/unit/auth.test.ts"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "LOGIN-004",
