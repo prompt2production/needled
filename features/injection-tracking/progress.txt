@@ -106,3 +106,15 @@ Completed: 2026-01-23T15:07:30Z
 Files changed: src/components/navigation/Header.tsx
 Notes: Added Injection nav item with Syringe icon to NAV_ITEMS array. Appears in both desktop and mobile navigation.
 ---
+---
+Story: INJ-019 E2E test for injection logging happy path
+Completed: 2026-01-23T15:12:00Z
+Files changed: tests/e2e/injection.spec.ts
+Notes: Created E2E tests for injection tracking. Tests cover due state, logging injection, dialog interaction, history page, navigation.
+---
+---
+Story: INJ-020 E2E test for weekly constraint
+Completed: 2026-01-23T15:12:00Z
+Files changed: tests/e2e/injection.spec.ts
+Notes: Test verifies Log Injection button is not visible after logging and card shows done state with site.
+---

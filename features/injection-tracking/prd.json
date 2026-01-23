@@ -277,7 +277,7 @@
         "Test verifies card updates to show 'done' state",
         "npx playwright test tests/e2e/injection.spec.ts passes"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "INJ-020",
@@ -290,7 +290,7 @@
         "Test verifies card shows 'done' state with logged date and site",
         "npx playwright test tests/e2e/injection.spec.ts passes"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }
