@@ -116,7 +116,7 @@
         "Minimum 44x44px touch targets per DESIGN_SYSTEM.md",
         "Styled per DESIGN_SYSTEM.md"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "INJ-009",
