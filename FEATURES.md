@@ -1,0 +1,51 @@
+# Feature Roadmap
+
+Based on the project brief, here are the recommended features in build order.
+
+## Phase 1: Foundation
+
+- [ ] **user-onboarding** — Collect starting weight, goal weight, injection day preference, and create user profile
+
+## Phase 2: Core Tracking
+
+- [ ] **weekly-weigh-in** — Log weight once per week with enforced timing, view weight trend over time
+- [ ] **injection-tracking** — Mark weekly injection as done, track schedule, send due reminders
+- [ ] **daily-habits** — Daily yes/no check-in for water, nutrition, and exercise habits
+
+## Phase 3: Visualization
+
+- [ ] **dashboard** — Home screen showing weight progress, habit streaks, injection status at a glance
+- [ ] **progress-calendar** — Calendar view showing habit completion patterns and weigh-in history
+
+## Phase 4: Polish
+
+- [ ] **notifications** — Push notifications for injection reminders and daily habit prompts
+- [ ] **settings** — Edit profile, change injection day, adjust goals, export data
+
+---
+
+## Feature Dependencies
+
+```
+user-onboarding
+    └── weekly-weigh-in
+    └── injection-tracking
+    └── daily-habits
+            └── dashboard
+            └── progress-calendar
+                    └── notifications
+                    └── settings
+```
+
+## Notes
+
+- **user-onboarding** must come first as all other features depend on having a user profile
+- **Core tracking** features (weigh-in, injection, habits) can be built in any order after onboarding
+- **dashboard** and **progress-calendar** need tracking data to display, so they come after core tracking
+- **notifications** and **settings** are polish features that enhance but aren't critical for MVP
+
+---
+
+## Next Step
+
+Start building with: `Plan feature: user-onboarding`

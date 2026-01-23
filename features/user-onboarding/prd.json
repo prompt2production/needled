@@ -1,0 +1,196 @@
+{
+  "feature": "User Onboarding",
+  "stories": [
+    {
+      "id": "ONBOARD-001",
+      "title": "Create User database model",
+      "description": "Add the User model to Prisma schema with all required fields for onboarding",
+      "acceptance_criteria": [
+        "prisma/schema.prisma contains User model with fields: id, name, startWeight, goalWeight, weightUnit, medication, injectionDay, createdAt, updatedAt",
+        "npx prisma migrate dev runs successfully",
+        "npx prisma generate completes without errors"
+      ],
+      "passes": true
+    },
+    {
+      "id": "ONBOARD-002",
+      "title": "Create user validation schema",
+      "description": "Create Zod validation schema for user creation with all business rules",
+      "acceptance_criteria": [
+        "src/lib/validations/user.ts exists",
+        "Schema validates name: required, 2-30 chars, trimmed",
+        "Schema validates startWeight: required, 40-300 range",
+        "Schema validates goalWeight: optional, must be less than startWeight when provided",
+        "Schema validates weightUnit: required, enum 'kg' or 'lbs'",
+        "Schema validates medication: required, enum of allowed values",
+        "Schema validates injectionDay: required, 0-6 range",
+        "npm run test passes for validation schema tests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ONBOARD-003",
+      "title": "Create POST /api/users endpoint",
+      "description": "API endpoint to create a new user profile with validation",
+      "acceptance_criteria": [
+        "src/app/api/users/route.ts exists with POST handler",
+        "Endpoint validates request body using Zod schema",
+        "Returns 201 with created user on success",
+        "Returns 400 with validation errors on invalid input",
+        "User is created in database via Prisma",
+        "npm run test passes for API route tests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ONBOARD-004",
+      "title": "Create weight conversion utilities",
+      "description": "Utility functions to convert between kg and lbs for display",
+      "acceptance_criteria": [
+        "src/lib/weight.ts exists",
+        "kgToLbs(kg: number): number function converts kg to lbs",
+        "lbsToKg(lbs: number): number function converts lbs to kg",
+        "formatWeight(weight: number, unit: 'kg' | 'lbs'): string formats with 1 decimal place",
+        "npm run test passes for weight utility tests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ONBOARD-005",
+      "title": "Create onboarding page layout and step navigation",
+      "description": "Create the onboarding page with step navigation and progress indicator",
+      "acceptance_criteria": [
+        "src/app/onboarding/page.tsx exists",
+        "Page renders full-screen dark background per DESIGN_SYSTEM.md",
+        "Progress indicator shows current step (e.g., dots or 'Step X of 5')",
+        "useState manages current step (1-5)",
+        "Back button navigates to previous step (hidden on step 1)",
+        "Step content area renders based on current step"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ONBOARD-006",
+      "title": "Create Step 1: Welcome screen",
+      "description": "Welcome step with app introduction and Get Started button",
+      "acceptance_criteria": [
+        "src/components/onboarding/WelcomeStep.tsx exists",
+        "Displays 'Needled' heading with tagline",
+        "Shows welcoming subtext",
+        "Primary lime 'Get Started' button triggers onNext callback",
+        "Styled per DESIGN_SYSTEM.md (dark bg, lime accent, centered content)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ONBOARD-007",
+      "title": "Create Step 2: Name input",
+      "description": "Name collection step with validation",
+      "acceptance_criteria": [
+        "src/components/onboarding/NameStep.tsx exists",
+        "Displays 'What should we call you?' heading",
+        "Text input for name with placeholder",
+        "Continue button disabled until name is 2+ characters",
+        "Input styled per DESIGN_SYSTEM.md (bg-input, border-border, h-12)",
+        "onNext callback receives { name: string }"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ONBOARD-008",
+      "title": "Create Step 3: Starting weight input",
+      "description": "Starting weight collection with unit toggle",
+      "acceptance_criteria": [
+        "src/components/onboarding/StartWeightStep.tsx exists",
+        "Displays 'What's your current weight?' heading",
+        "Numeric input for weight",
+        "Unit toggle pills (kg | lbs) - lime bg when selected",
+        "Validates range: 40-300 kg or 90-660 lbs",
+        "Continue button disabled until valid",
+        "onNext callback receives { startWeight: number, weightUnit: 'kg' | 'lbs' }"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ONBOARD-009",
+      "title": "Create Step 4: Goal weight input",
+      "description": "Goal weight collection with skip option",
+      "acceptance_criteria": [
+        "src/components/onboarding/GoalWeightStep.tsx exists",
+        "Displays 'What's your goal weight?' heading",
+        "Numeric input for weight (uses same unit as step 3)",
+        "Shows calculated difference: 'That's X kg to lose'",
+        "Validates goal < startWeight",
+        "Skip link allows proceeding without goal",
+        "Continue button disabled until valid or skip clicked",
+        "onNext callback receives { goalWeight: number | null }"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ONBOARD-010",
+      "title": "Create Step 5: Medication and injection day selection",
+      "description": "Medication type and injection day selection",
+      "acceptance_criteria": [
+        "src/components/onboarding/MedicationStep.tsx exists",
+        "Displays medication selection (Ozempic, Wegovy, Mounjaro, Zepbound, Other)",
+        "Select or button group for medication choice",
+        "Day picker row: M T W T F S S as circular buttons (like habit indicators)",
+        "Selected day shows lime bg per DESIGN_SYSTEM.md",
+        "Complete Setup button disabled until both selected",
+        "onNext callback receives { medication: string, injectionDay: number }"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ONBOARD-011",
+      "title": "Create success screen and API submission",
+      "description": "Submit onboarding data to API and show success screen",
+      "acceptance_criteria": [
+        "After step 5 completes, data is POSTed to /api/users",
+        "Loading state shown during submission",
+        "Success screen displays 'You're all set, {name}!'",
+        "Error toast shown if API call fails",
+        "User ID stored in localStorage after success"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ONBOARD-012",
+      "title": "Add localStorage persistence for onboarding progress",
+      "description": "Persist onboarding progress so users can resume if they close the app",
+      "acceptance_criteria": [
+        "Onboarding data saved to localStorage on each step completion",
+        "On page load, check localStorage for existing progress",
+        "If progress exists, restore step and form data",
+        "Clear localStorage after successful completion"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ONBOARD-013",
+      "title": "Add redirect to home after onboarding",
+      "description": "Redirect user to home page after successful onboarding",
+      "acceptance_criteria": [
+        "Success screen auto-redirects after 2 seconds",
+        "Redirect goes to '/' (home page)",
+        "If user already has profile (userId in localStorage), redirect from /onboarding to /"
+      ],
+      "passes": false
+    },
+    {
+      "id": "ONBOARD-014",
+      "title": "E2E test for complete onboarding flow",
+      "description": "End-to-end test covering the happy path of user onboarding",
+      "acceptance_criteria": [
+        "tests/e2e/onboarding.spec.ts exists",
+        "Test navigates through all 5 steps",
+        "Test enters valid data: name, start weight, goal weight, medication, day",
+        "Test verifies success screen appears with user's name",
+        "Test verifies redirect to home page",
+        "npx playwright test tests/e2e/onboarding.spec.ts passes"
+      ],
+      "passes": false
+    }
+  ]
+}

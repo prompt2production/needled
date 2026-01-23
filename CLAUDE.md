@@ -1,6 +1,14 @@
-# Project Name
+# Needled
 
-A brief description of your project.
+A mobile-first weight loss journey companion app for people using GLP-1 medications (Ozempic, Wegovy, Mounjaro). The app combines injection tracking, weekly weigh-ins, and daily habit check-ins into a single, focused experience.
+
+**Target Audience:** People on weight loss injection journeys who want structure without complexity—those who find comprehensive health apps overwhelming but need more than a simple weight tracker.
+
+**Key Goals:**
+- Enforce healthy behaviours by design (weekly-only weigh-ins prevent obsessive tracking)
+- Maintain injection schedule consistency with reminders
+- Build daily mindfulness around three foundational habits: hydration, nutrition, movement
+- Provide visual progress feedback that motivates rather than overwhelms
 
 ## Prompt2Production Workflow
 
@@ -330,7 +338,7 @@ WHEN ALL STORIES COMPLETE:
 
 If stuck after 3 attempts, document blockers and move to next story." --max-iterations 50 --completion-promise "COMPLETE"
 
-Monitor progress at: http://localhost:3000/dev/progress
+Monitor progress at: http://localhost:2810/dev/progress
 ```
 
 **Critical requirements:**
@@ -572,13 +580,13 @@ A feature is complete when:
 
 ## Current Status
 
-**Project:** Not defined
-**Design:** Not started
-**Features:** Not planned
-**Current Feature:** None
+**Project:** Needled - Weight Loss Journey Companion
+**Design:** Complete
+**Features:** Planned (8 features across 4 phases)
+**Current Feature:** user-onboarding (14 stories)
 
 ### Completed Features
 _(None yet)_
 
 ### Next Step
-To begin, tell Claude: "Project: [brief description of what you're building and who it's for]"
+Run Ralph to implement the feature.

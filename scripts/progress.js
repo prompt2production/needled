@@ -220,7 +220,7 @@ function printProgress() {
 
   console.log(`${colors.dim}${'━'.repeat(50)}${colors.reset}`)
   console.log(`${colors.dim}Last updated: ${new Date().toLocaleTimeString()}${colors.reset}`)
-  console.log(`${colors.dim}Web dashboard: http://localhost:3000/dev/progress${colors.reset}`)
+  console.log(`${colors.dim}Web dashboard: http://localhost:2810/dev/progress${colors.reset}`)
   console.log()
 }
 

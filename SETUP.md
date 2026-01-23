@@ -59,7 +59,7 @@ npm run test
 npm run dev
 ```
 
-Open http://localhost:3000 — you should see the Prompt2Production starter page.
+Open http://localhost:2810 — you should see the Prompt2Production starter page.
 
 ---
 

@@ -32,3 +32,28 @@ enum Status {
 // ===========================================
 // Add your models below
 // ===========================================
+
+model User {
+  id           String     @id @default(cuid())
+  name         String
+  startWeight  Float
+  goalWeight   Float?
+  weightUnit   WeightUnit
+  medication   Medication
+  injectionDay Int        // 0 = Monday, 6 = Sunday
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+enum WeightUnit {
+  kg
+  lbs
+}
+
+enum Medication {
+  OZEMPIC
+  WEGOVY
+  MOUNJARO
+  ZEPBOUND
+  OTHER
+}

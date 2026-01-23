@@ -1,5 +1,6 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
+import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
 const geistSans = Geist({
@@ -13,8 +14,16 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Prompt2Production Starter',
-  description: 'A production-ready Next.js boilerplate for AI-driven development',
+  title: 'Needled',
+  description: 'Your weight loss journey companion for GLP-1 medications',
+}
+
+export const viewport: Viewport = {
+  themeColor: '#050505',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({
@@ -26,7 +35,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
-        {/* Add <Toaster /> here after installing: npx shadcn@latest add sonner */}
+        <Toaster position="top-center" richColors />
       </body>
     </html>
   )

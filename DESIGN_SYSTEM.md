@@ -1,44 +1,58 @@
-# Taskflow Design System
+# Needled Design System
 
-This document defines the visual and interaction patterns for Taskflow. All UI development must adhere to these standards to ensure consistency.
+This document defines the visual and interaction patterns for Needled. All UI development must adhere to these standards to ensure a consistent, premium dark-mode experience.
 
 ---
 
-## Brand & Colour Palette
+## Brand Identity
 
-### Primary Colours
-- **Primary:** Indigo (`indigo-600` base, `indigo-700` hover, `indigo-500` light)
-- **Primary Foreground:** White
+**Name:** Needled
+**Personality:** Modern, premium, slightly cheeky. An insider nod to the injection community—not a sterile medical app.
+**Visual Direction:** Fintech-inspired dark mode with bold electric lime accents.
 
-### Neutral Colours
-- **Background:** `slate-50` (light mode)
-- **Card Background:** `white`
-- **Border:** `slate-200`
-- **Text Primary:** `slate-900`
-- **Text Secondary:** `slate-600`
-- **Text Muted:** `slate-400`
+---
+
+## Colour Palette
+
+### Core Colours
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--lime` | `#BFFF00` | Primary accent, CTAs, positive indicators |
+| `--lime-muted` | `#9FD600` | Hover states, secondary lime elements |
+| `--lime-dim` | `rgba(191, 255, 0, 0.15)` | Lime backgrounds, glows |
+
+### Dark Mode (Default)
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--background` | `#050505` | Page background |
+| `--card` | `#0F0F0F` | Card backgrounds |
+| `--card-elevated` | `#1A1A1A` | Elevated cards, modals |
+| `--foreground` | `#FFFFFF` | Primary text |
+| `--muted-foreground` | `#737373` | Secondary text, labels |
+| `--border` | `rgba(255, 255, 255, 0.08)` | Card borders, dividers |
+| `--input` | `rgba(255, 255, 255, 0.06)` | Input backgrounds |
 
 ### Semantic Colours
-| Purpose | Background | Text | Border |
-|---------|------------|------|--------|
-| Success | `emerald-50` | `emerald-700` | `emerald-200` |
-| Warning | `amber-50` | `amber-700` | `amber-200` |
-| Danger | `rose-50` | `rose-700` | `rose-200` |
-| Info | `sky-50` | `sky-700` | `sky-200` |
 
-### Status Badge Colours
-| Status | Variant |
-|--------|---------|
-| TODO | `secondary` (slate) |
-| IN_PROGRESS | `default` (indigo) |
-| DONE | `outline` with emerald text |
+| Purpose | Colour | Usage |
+|---------|--------|-------|
+| Success | `#22C55E` (green-500) | Completed habits, positive trends |
+| Warning | `#F59E0B` (amber-500) | Reminders, caution states |
+| Danger | `#EF4444` (red-500) | Missed habits, destructive actions |
+| Info | `#3B82F6` (blue-500) | Informational elements |
 
-### Priority Badge Colours
-| Priority | Colour |
-|----------|--------|
-| LOW | `slate-500` text, `slate-100` bg |
-| MEDIUM | `amber-600` text, `amber-100` bg |
-| HIGH | `rose-600` text, `rose-100` bg |
+### Habit Indicator States
+
+Used for the daily habit circles (Water, Nutrition, Exercise):
+
+| State | Fill | Border |
+|-------|------|--------|
+| Completed | `--lime` solid | None |
+| Partial/Muted | `--lime-dim` | `--lime` at 30% |
+| Not done | Transparent | `rgba(255, 255, 255, 0.2)` |
+| Future | Transparent | `rgba(255, 255, 255, 0.1)` |
 
 ---
 
@@ -46,418 +60,402 @@ This document defines the visual and interaction patterns for Taskflow. All UI d
 
 ### Font Stack
 ```css
-font-family: var(--font-geist-sans), system-ui, sans-serif;
+font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
 ```
 
-### Scale
-| Element | Class | Size |
-|---------|-------|------|
-| Page Title | `text-2xl font-bold` | 24px |
-| Section Header | `text-lg font-semibold` | 18px |
-| Card Title | `text-base font-medium` | 16px |
-| Body | `text-sm` | 14px |
-| Caption/Helper | `text-xs` | 12px |
+### Type Scale
 
-### Colours
-- Headings: `text-slate-900`
-- Body: `text-slate-700`
-- Secondary: `text-slate-500`
-- Disabled: `text-slate-400`
+| Element | Class | Size | Weight |
+|---------|-------|------|--------|
+| Hero Number | `text-5xl` | 48px | Bold (700) |
+| Large Metric | `text-4xl` | 36px | Bold (700) |
+| Page Title | `text-2xl` | 24px | Semibold (600) |
+| Section Header | `text-lg` | 18px | Semibold (600) |
+| Card Title | `text-base` | 16px | Medium (500) |
+| Body | `text-sm` | 14px | Regular (400) |
+| Caption | `text-xs` | 12px | Regular (400) |
+| Micro | `text-[10px]` | 10px | Medium (500) |
+
+### Text Colours
+- **Primary:** `text-white` — Headings, important metrics
+- **Secondary:** `text-muted-foreground` — Labels, descriptions
+- **Accent:** `text-lime` — Highlights, positive values
+- **Muted:** `text-white/50` — Tertiary info, placeholders
 
 ---
 
 ## Spacing
 
 Use Tailwind's spacing scale consistently:
-- **xs:** `space-1` (4px) — icon padding
-- **sm:** `space-2` (8px) — between related items
-- **md:** `space-4` (16px) — between sections
-- **lg:** `space-6` (24px) — between major blocks
-- **xl:** `space-8` (32px) — page margins
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `space-1` | 4px | Icon padding, tight gaps |
+| `space-2` | 8px | Between related items |
+| `space-3` | 12px | Component internal padding |
+| `space-4` | 16px | Card padding, section gaps |
+| `space-5` | 20px | Between cards |
+| `space-6` | 24px | Section spacing |
+| `space-8` | 32px | Major section breaks |
 
 ### Component Spacing
-- Card padding: `p-6`
+- Card padding: `p-4` (mobile) / `p-5` (desktop)
 - Form field gap: `space-y-4`
-- Button gap in groups: `gap-2`
-- Table cell padding: `px-4 py-3`
+- Habit grid gap: `gap-2`
+- Safe area padding (mobile): `px-4 pb-safe`
+
+---
+
+## Border Radius
+
+Generously rounded for a friendly, modern feel:
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--radius-sm` | 8px | Buttons, badges, small elements |
+| `--radius` | 12px | Inputs, small cards |
+| `--radius-lg` | 16px | Cards, dialogs |
+| `--radius-xl` | 20px | Large cards, bottom sheets |
+| `--radius-full` | 9999px | Pills, circular indicators |
+
+---
+
+## Shadows & Depth
+
+Subtle depth using borders and opacity rather than heavy shadows:
+
+```css
+/* Card shadow - subtle glow */
+shadow-card: 0 0 0 1px rgba(255, 255, 255, 0.05),
+             0 2px 8px rgba(0, 0, 0, 0.4);
+
+/* Elevated elements */
+shadow-elevated: 0 0 0 1px rgba(255, 255, 255, 0.08),
+                 0 8px 24px rgba(0, 0, 0, 0.6);
+
+/* Lime glow for active/focus states */
+shadow-lime: 0 0 20px rgba(191, 255, 0, 0.3);
+```
 
 ---
 
 ## Layout
 
+### Mobile-First Approach
+Needled is designed for mobile use. The primary viewport is 375px (iPhone SE) to 428px (iPhone 14 Pro Max).
+
 ### Page Structure
 ```tsx
-<main className="min-h-screen bg-slate-50">
-  <div className="container mx-auto px-4 py-8 max-w-5xl">
-    {/* Page header */}
-    <div className="mb-8">
-      <h1 className="text-2xl font-bold text-slate-900">Page Title</h1>
-      <p className="text-slate-600 mt-1">Page description</p>
+<main className="min-h-screen bg-background">
+  {/* Safe area for notch/home indicator */}
+  <div className="px-4 pt-safe pb-20">
+    {/* Greeting */}
+    <header className="py-6">
+      <h1 className="text-2xl font-semibold text-white">Hey, Chris</h1>
+      <p className="text-muted-foreground text-sm">Let's check in</p>
+    </header>
+
+    {/* Main content - card stack */}
+    <div className="space-y-4">
+      <Card>...</Card>
+      <Card>...</Card>
     </div>
-    
-    {/* Page content */}
-    <Card>
-      {/* ... */}
-    </Card>
   </div>
+
+  {/* Bottom navigation - fixed */}
+  <nav className="fixed bottom-0 inset-x-0 bg-card border-t border-border pb-safe">
+    ...
+  </nav>
 </main>
 ```
 
 ### Responsive Breakpoints
-- Mobile first approach
-- `sm:` 640px — small tablets
-- `md:` 768px — tablets
-- `lg:` 1024px — desktops
-- `max-w-5xl` for main content container
+- `default` — Mobile (375px+)
+- `sm:` — Large phones (640px+)
+- `md:` — Tablets (768px+) - unlikely use case
+- `max-w-md` — Content max-width on larger screens
 
 ---
 
 ## Components
 
+### Cards
+
+The primary container for all content. Dark with subtle border.
+
+```tsx
+<div className="bg-card rounded-xl border border-border p-4">
+  <div className="flex items-center justify-between mb-3">
+    <h3 className="text-base font-medium text-white">Card Title</h3>
+    <Button variant="ghost" size="icon" className="text-muted-foreground">
+      <ChevronRight className="h-5 w-5" />
+    </Button>
+  </div>
+  {/* Card content */}
+</div>
+```
+
+**Card variants:**
+- **Default:** `bg-card` — Standard content cards
+- **Elevated:** `bg-card-elevated` — Modals, overlays
+- **Accent:** `bg-lime/10 border-lime/20` — Highlighted cards (injection due, etc.)
+
+---
+
 ### Buttons
 
-**Variants:**
-- `default` — Primary actions (indigo)
-- `secondary` — Secondary actions (slate)
-- `outline` — Tertiary actions
-- `ghost` — Subtle actions
-- `destructive` — Dangerous actions (rose)
+**Primary (Lime):**
+```tsx
+<Button className="bg-lime text-black hover:bg-lime-muted font-medium">
+  Log Weight
+</Button>
+```
+
+**Secondary:**
+```tsx
+<Button variant="secondary" className="bg-white/10 text-white hover:bg-white/15">
+  Skip
+</Button>
+```
+
+**Ghost:**
+```tsx
+<Button variant="ghost" className="text-muted-foreground hover:text-white hover:bg-white/5">
+  Cancel
+</Button>
+```
+
+**Destructive:**
+```tsx
+<Button variant="destructive" className="bg-red-500/20 text-red-400 hover:bg-red-500/30">
+  Delete
+</Button>
+```
+
+**Icon Button:**
+```tsx
+<Button variant="ghost" size="icon" className="h-10 w-10 rounded-full">
+  <Settings className="h-5 w-5" />
+</Button>
+```
 
 **Sizes:**
-- `sm` — Compact UI, table actions
-- `default` — Standard forms
-- `lg` — Hero CTAs
+- `sm` — 32px height, compact
+- `default` — 40px height, standard
+- `lg` — 48px height, prominent CTAs
 
-**Rules:**
-- Primary action on the right in button groups
-- Cancel/secondary on the left
-- Always include loading state for async actions
-- Icon-only buttons must have `aria-label`
+---
 
-**Pattern:**
+### Habit Indicators
+
+The weekly M-T-W-T-F-S-S grid with circular indicators:
+
 ```tsx
-// Button group in dialogs/forms
-<div className="flex justify-end gap-2">
-  <Button variant="outline" onClick={onCancel}>
-    Cancel
-  </Button>
-  <Button onClick={onSubmit} disabled={isLoading}>
-    {isLoading ? (
-      <>
-        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-        Saving...
-      </>
-    ) : (
-      'Save'
-    )}
-  </Button>
-</div>
-```
-
-### Forms
-
-**Rules:**
-- Use `react-hook-form` with `zod` validation
-- Validation errors appear below inputs in `text-sm text-rose-600`
-- Required fields marked with red asterisk
-- Submit buttons disable during submission with loading spinner
-- Labels above inputs, not floating
-
-**Pattern:**
-```tsx
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-
-const schema = z.object({
-  title: z.string().min(1, 'Title is required').max(100, 'Title too long'),
-})
-
-type FormData = z.infer<typeof schema>
-
-function TaskForm({ onSubmit }: { onSubmit: (data: FormData) => void }) {
-  const form = useForm<FormData>({
-    resolver: zodResolver(schema),
-    defaultValues: { title: '' },
-  })
-
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                Title <span className="text-rose-500">*</span>
-              </FormLabel>
-              <FormControl>
-                <Input placeholder="Enter task title" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div className="flex justify-end gap-2">
-          <Button type="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? 'Saving...' : 'Save'}
-          </Button>
-        </div>
-      </form>
-    </Form>
-  )
-}
-```
-
-### Dialogs (Modals)
-
-**Rules:**
-- Use `Dialog` from shadcn/ui
-- Destructive actions require `AlertDialog` with explicit confirmation
-- Cancel on left, primary action on right
-- Close on overlay click for non-destructive modals
-- Max width: `sm:max-w-md` for forms, `sm:max-w-lg` for complex content
-
-**Pattern — Standard Dialog:**
-```tsx
-<Dialog open={open} onOpenChange={setOpen}>
-  <DialogContent className="sm:max-w-md">
-    <DialogHeader>
-      <DialogTitle>Create Task</DialogTitle>
-      <DialogDescription>
-        Add a new task to your list.
-      </DialogDescription>
-    </DialogHeader>
-    {/* Form content */}
-    <DialogFooter>
-      <Button variant="outline" onClick={() => setOpen(false)}>
-        Cancel
-      </Button>
-      <Button onClick={handleSubmit}>Create</Button>
-    </DialogFooter>
-  </DialogContent>
-</Dialog>
-```
-
-**Pattern — Destructive Confirmation:**
-```tsx
-<AlertDialog open={open} onOpenChange={setOpen}>
-  <AlertDialogContent>
-    <AlertDialogHeader>
-      <AlertDialogTitle>Delete Task</AlertDialogTitle>
-      <AlertDialogDescription>
-        This action cannot be undone. This will permanently delete the task.
-      </AlertDialogDescription>
-    </AlertDialogHeader>
-    <AlertDialogFooter>
-      <AlertDialogCancel>Cancel</AlertDialogCancel>
-      <AlertDialogAction
-        onClick={handleDelete}
-        className="bg-rose-600 hover:bg-rose-700"
+// Single habit row
+<div className="flex items-center gap-3">
+  <span className="text-sm text-muted-foreground w-16">Water</span>
+  <div className="flex gap-2">
+    {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, i) => (
+      <div
+        key={day + i}
+        className={cn(
+          "w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium",
+          isCompleted && "bg-lime text-black",
+          isPartial && "bg-lime/15 text-lime border border-lime/30",
+          !isCompleted && !isPartial && "border border-white/20 text-white/40"
+        )}
       >
-        Delete
-      </AlertDialogAction>
-    </AlertDialogFooter>
-  </AlertDialogContent>
-</AlertDialog>
-```
-
-### Tables
-
-**Rules:**
-- Use `Table` components from shadcn/ui
-- Sortable columns have hover state and cursor pointer
-- Actions column aligned right
-- Empty state centered with helpful message
-- Row hover: `hover:bg-slate-50`
-
-**Pattern:**
-```tsx
-<div className="rounded-md border">
-  <Table>
-    <TableHeader>
-      <TableRow>
-        <TableHead>Title</TableHead>
-        <TableHead>Status</TableHead>
-        <TableHead>Priority</TableHead>
-        <TableHead className="text-right">Actions</TableHead>
-      </TableRow>
-    </TableHeader>
-    <TableBody>
-      {tasks.length === 0 ? (
-        <TableRow>
-          <TableCell colSpan={4} className="h-24 text-center text-slate-500">
-            No tasks yet. Create your first task to get started.
-          </TableCell>
-        </TableRow>
-      ) : (
-        tasks.map((task) => (
-          <TableRow key={task.id} className="hover:bg-slate-50">
-            <TableCell className="font-medium">{task.title}</TableCell>
-            <TableCell><StatusBadge status={task.status} /></TableCell>
-            <TableCell><PriorityBadge priority={task.priority} /></TableCell>
-            <TableCell className="text-right">
-              <TaskActions task={task} />
-            </TableCell>
-          </TableRow>
-        ))
-      )}
-    </TableBody>
-  </Table>
+        {day}
+      </div>
+    ))}
+  </div>
 </div>
 ```
 
-### Toasts (Sonner)
+---
 
-**Rules:**
-- Position: top-right
-- Auto-dismiss: 4 seconds for success, persist for errors
-- Use appropriate variant for message type
+### Progress Ring
 
-**Pattern:**
+For weight loss percentage, injection countdown, etc:
+
 ```tsx
-import { toast } from 'sonner'
-
-// Success
-toast.success('Task created successfully')
-
-// Error
-toast.error('Failed to create task', {
-  description: 'Please try again later.',
-})
-
-// With action
-toast('Task updated', {
-  action: {
-    label: 'Undo',
-    onClick: () => handleUndo(),
-  },
-})
+<div className="relative w-24 h-24">
+  {/* Background ring */}
+  <svg className="w-full h-full -rotate-90">
+    <circle
+      cx="48" cy="48" r="40"
+      className="fill-none stroke-white/10"
+      strokeWidth="8"
+    />
+    <circle
+      cx="48" cy="48" r="40"
+      className="fill-none stroke-lime"
+      strokeWidth="8"
+      strokeLinecap="round"
+      strokeDasharray={circumference}
+      strokeDashoffset={offset}
+    />
+  </svg>
+  {/* Center content */}
+  <div className="absolute inset-0 flex flex-col items-center justify-center">
+    <span className="text-2xl font-bold text-white">-8.5</span>
+    <span className="text-xs text-muted-foreground">kg lost</span>
+  </div>
+</div>
 ```
 
-**Setup in layout:**
-```tsx
-import { Toaster } from '@/components/ui/sonner'
+---
 
-export default function RootLayout({ children }) {
-  return (
-    <html>
-      <body>
-        {children}
-        <Toaster position="top-right" richColors />
-      </body>
-    </html>
-  )
-}
+### Metric Display
+
+Big glanceable numbers:
+
+```tsx
+<div className="text-center">
+  <p className="text-4xl font-bold text-white">87.2<span className="text-lg ml-1">kg</span></p>
+  <p className="text-sm text-lime flex items-center justify-center gap-1">
+    <TrendingDown className="h-4 w-4" />
+    -0.8 this week
+  </p>
+</div>
 ```
 
-### Select Dropdowns
+---
 
-**Rules:**
-- Use `Select` from shadcn/ui for form fields
-- Use `DropdownMenu` for action menus
-- Always include placeholder text
-- Group related options if more than 7 items
+### Forms & Inputs
 
-**Pattern:**
+Dark inputs with subtle borders:
+
 ```tsx
-<Select value={status} onValueChange={setStatus}>
-  <SelectTrigger className="w-[180px]">
-    <SelectValue placeholder="Select status" />
-  </SelectTrigger>
-  <SelectContent>
-    <SelectItem value="TODO">To Do</SelectItem>
-    <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-    <SelectItem value="DONE">Done</SelectItem>
-  </SelectContent>
-</Select>
-```
-
-### Badges
-
-**Pattern:**
-```tsx
-// Status badge component
-function StatusBadge({ status }: { status: Status }) {
-  const variants: Record<Status, { variant: BadgeVariant; label: string }> = {
-    TODO: { variant: 'secondary', label: 'To Do' },
-    IN_PROGRESS: { variant: 'default', label: 'In Progress' },
-    DONE: { variant: 'outline', label: 'Done' },
-  }
-  
-  const { variant, label } = variants[status]
-  
-  return (
-    <Badge variant={variant} className={status === 'DONE' ? 'text-emerald-600' : ''}>
-      {label}
-    </Badge>
-  )
-}
-
-// Priority badge component
-function PriorityBadge({ priority }: { priority: Priority }) {
-  const styles: Record<Priority, string> = {
-    LOW: 'bg-slate-100 text-slate-600',
-    MEDIUM: 'bg-amber-100 text-amber-700',
-    HIGH: 'bg-rose-100 text-rose-700',
-  }
-  
-  return (
-    <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${styles[priority]}`}>
-      {priority.charAt(0) + priority.slice(1).toLowerCase()}
+<div className="space-y-2">
+  <Label className="text-sm text-muted-foreground">Weight</Label>
+  <div className="relative">
+    <Input
+      type="number"
+      placeholder="0.0"
+      className="bg-input border-border text-white text-lg h-12 pr-12"
+    />
+    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground">
+      kg
     </span>
+  </div>
+</div>
+```
+
+---
+
+### Bottom Navigation
+
+Fixed bottom nav with pill-shaped active indicator:
+
+```tsx
+<nav className="fixed bottom-0 inset-x-0 bg-card/80 backdrop-blur-lg border-t border-border">
+  <div className="flex items-center justify-around py-2 pb-safe">
+    <NavItem icon={Home} label="Home" active />
+    <NavItem icon={Calendar} label="Calendar" />
+    <NavItem icon={User} label="Profile" />
+  </div>
+</nav>
+
+function NavItem({ icon: Icon, label, active }) {
+  return (
+    <button className={cn(
+      "flex flex-col items-center gap-1 px-4 py-2 rounded-xl",
+      active && "bg-lime text-black",
+      !active && "text-muted-foreground"
+    )}>
+      <Icon className="h-5 w-5" />
+      <span className="text-xs font-medium">{label}</span>
+    </button>
   )
 }
+```
+
+---
+
+### Dialogs & Bottom Sheets
+
+Use bottom sheets on mobile for a native feel:
+
+```tsx
+<Drawer>
+  <DrawerContent className="bg-card-elevated border-t border-border">
+    <DrawerHeader>
+      <DrawerTitle className="text-white">Log Today's Weight</DrawerTitle>
+    </DrawerHeader>
+    <div className="p-4">
+      {/* Content */}
+    </div>
+    <DrawerFooter>
+      <Button className="bg-lime text-black w-full">Save</Button>
+      <DrawerClose asChild>
+        <Button variant="ghost" className="w-full">Cancel</Button>
+      </DrawerClose>
+    </DrawerFooter>
+  </DrawerContent>
+</Drawer>
+```
+
+---
+
+### Toasts
+
+Position at top for mobile, use Sonner:
+
+```tsx
+toast.success('Weight logged', {
+  description: 'Down 0.8kg from last week!',
+})
+
+toast.error('Could not save', {
+  description: 'Please try again.',
+})
 ```
 
 ---
 
 ## Loading States
 
-### Button Loading
-```tsx
-<Button disabled={isLoading}>
-  {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-  {isLoading ? 'Loading...' : 'Submit'}
-</Button>
-```
-
-### Page/Section Loading
-```tsx
-<div className="flex items-center justify-center h-32">
-  <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
-</div>
-```
-
-### Skeleton Loading
-Use for content that takes time to load:
+### Skeleton
 ```tsx
 <div className="space-y-3">
-  <div className="h-4 bg-slate-200 rounded animate-pulse w-3/4" />
-  <div className="h-4 bg-slate-200 rounded animate-pulse w-1/2" />
+  <div className="h-8 bg-white/5 rounded-lg animate-pulse w-24" />
+  <div className="h-4 bg-white/5 rounded animate-pulse w-32" />
 </div>
+```
+
+### Spinner
+```tsx
+<Loader2 className="h-6 w-6 animate-spin text-lime" />
 ```
 
 ---
 
 ## Icons
 
-Use `lucide-react` exclusively. Common icons:
-- Add: `Plus`
-- Edit: `Pencil`
-- Delete: `Trash2`
-- Close: `X`
-- Loading: `Loader2`
-- Menu: `MoreHorizontal` or `MoreVertical`
-- Check: `Check`
-- Warning: `AlertTriangle`
-- Info: `Info`
+Use `lucide-react` exclusively. Key icons for Needled:
 
-**Size convention:**
+| Purpose | Icon |
+|---------|------|
+| Home | `Home` |
+| Calendar | `Calendar` |
+| Profile | `User` |
+| Settings | `Settings` |
+| Weight | `Scale` |
+| Injection | `Syringe` |
+| Water | `Droplets` |
+| Food | `Utensils` |
+| Exercise | `Dumbbell` or `Activity` |
+| Trend up | `TrendingUp` |
+| Trend down | `TrendingDown` |
+| Check | `Check` |
+| Close | `X` |
+| Add | `Plus` |
+| Chevron | `ChevronRight` |
+
+**Sizes:**
+- Navigation: `h-5 w-5`
 - In buttons: `h-4 w-4`
-- Standalone: `h-5 w-5`
 - Large/hero: `h-6 w-6`
 
 ---
@@ -465,52 +463,39 @@ Use `lucide-react` exclusively. Common icons:
 ## Accessibility
 
 ### Requirements
+- Minimum touch target: 44x44px
+- Colour contrast: WCAG AA (lime on dark passes)
 - All interactive elements keyboard accessible
-- Focus visible states (handled by shadcn defaults)
-- ARIA labels on icon-only buttons
-- Form fields linked to labels
-- Colour contrast meets WCAG AA
+- Screen reader labels on icon-only buttons
+- Haptic feedback on key actions (native)
 
 ### Pattern
 ```tsx
 // Icon button with aria-label
-<Button variant="ghost" size="sm" aria-label="Delete task">
-  <Trash2 className="h-4 w-4" />
+<Button variant="ghost" size="icon" aria-label="Open settings">
+  <Settings className="h-5 w-5" />
 </Button>
-
-// Visually hidden text
-<span className="sr-only">Loading</span>
 ```
 
 ---
 
-## File Structure
+## Animation
 
-```
-src/
-├── app/
-│   ├── layout.tsx          # Root layout with Toaster
-│   ├── page.tsx            # Home page
-│   └── api/
-│       └── tasks/
-│           └── route.ts    # API routes
-├── components/
-│   ├── ui/                 # shadcn components (don't modify)
-│   ├── tasks/              # Feature components
-│   │   ├── task-table.tsx
-│   │   ├── task-form.tsx
-│   │   ├── task-dialog.tsx
-│   │   ├── status-badge.tsx
-│   │   └── priority-badge.tsx
-│   └── shared/             # Shared components
-│       └── page-header.tsx
-├── lib/
-│   ├── prisma.ts           # Prisma client
-│   ├── utils.ts            # shadcn utils
-│   └── validations/
-│       └── task.ts         # Zod schemas
-└── types/
-    └── index.ts            # TypeScript types
+Subtle, purposeful animations:
+
+```css
+/* Micro-interactions */
+transition-colors: 150ms ease
+transition-transform: 200ms ease-out
+
+/* Progress ring fill */
+transition: stroke-dashoffset 600ms ease-out
+
+/* Card appearance */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 ```
 
 ---
@@ -518,17 +503,44 @@ src/
 ## Do's and Don'ts
 
 ### Do
-- ✅ Use shadcn/ui components as the foundation
-- ✅ Follow the spacing scale consistently
-- ✅ Include loading and error states
-- ✅ Write accessible markup
-- ✅ Use semantic colour tokens
-- ✅ Test on mobile viewport
+- Use the lime accent sparingly for maximum impact
+- Keep cards minimal—one clear purpose per card
+- Make numbers large and glanceable
+- Use haptic feedback for completions
+- Design for one-handed use
+- Test on actual devices in dark environments
 
 ### Don't
-- ❌ Create custom components when shadcn has one
-- ❌ Use arbitrary Tailwind values (e.g., `p-[13px]`)
-- ❌ Mix different icon libraries
-- ❌ Forget empty states
-- ❌ Use colour alone to convey meaning
-- ❌ Modify files in `components/ui/` directly
+- Overuse lime (it should highlight, not overwhelm)
+- Create dense, clinical-looking interfaces
+- Use light backgrounds anywhere
+- Add unnecessary decorative elements
+- Make users scroll to complete daily actions
+- Forget empty states
+
+---
+
+## Quick Reference: Tailwind Classes
+
+```tsx
+// Backgrounds
+bg-background    // #050505 - page
+bg-card          // #0F0F0F - cards
+bg-card-elevated // #1A1A1A - modals
+bg-lime          // #BFFF00 - accent
+bg-lime/10       // lime with 10% opacity
+
+// Text
+text-white           // primary text
+text-muted-foreground // #737373 - secondary
+text-lime            // accent text
+
+// Borders
+border-border        // rgba(255,255,255,0.08)
+border-lime/30       // lime border
+
+// Radius
+rounded-lg           // 16px - cards
+rounded-xl           // 20px - large cards
+rounded-full         // pills, circles
+```

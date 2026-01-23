@@ -1,1 +1,225 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  /* Border radius scale */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 1.75rem;
+  --radius-4xl: 2rem;
+  --radius: 0.75rem;
+
+  /* Semantic colour mappings */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-card-elevated: var(--card-elevated);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Needled brand colours */
+  --color-lime: #BFFF00;
+  --color-lime-muted: #9FD600;
+  --color-lime-dim: rgba(191, 255, 0, 0.15);
+
+  /* Chart colours */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Sidebar colours (if needed) */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/*
+ * Needled is dark-mode first.
+ * The :root defines dark mode as default.
+ * Light mode is available via .light class but not primary.
+ */
+:root {
+  /* Core dark palette */
+  --background: #050505;
+  --foreground: #FFFFFF;
+  --card: #0F0F0F;
+  --card-foreground: #FFFFFF;
+  --card-elevated: #1A1A1A;
+  --popover: #1A1A1A;
+  --popover-foreground: #FFFFFF;
+
+  /* Primary = Lime accent */
+  --primary: #BFFF00;
+  --primary-foreground: #000000;
+
+  /* Secondary = Subtle white */
+  --secondary: rgba(255, 255, 255, 0.1);
+  --secondary-foreground: #FFFFFF;
+
+  /* Muted elements */
+  --muted: rgba(255, 255, 255, 0.05);
+  --muted-foreground: #737373;
+
+  /* Accent = Lime (same as primary) */
+  --accent: #BFFF00;
+  --accent-foreground: #000000;
+
+  /* Destructive = Red */
+  --destructive: #EF4444;
+
+  /* Borders and inputs */
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.06);
+  --ring: #BFFF00;
+
+  /* Chart colours - lime-based palette */
+  --chart-1: #BFFF00;
+  --chart-2: #9FD600;
+  --chart-3: #7FB300;
+  --chart-4: #5F9000;
+  --chart-5: #3F6D00;
+
+  /* Sidebar (matches card) */
+  --sidebar: #0F0F0F;
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #BFFF00;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: rgba(255, 255, 255, 0.05);
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-ring: #BFFF00;
+}
+
+/* Light mode override (rarely used, but available) */
+.light {
+  --background: #FFFFFF;
+  --foreground: #0F0F0F;
+  --card: #F5F5F5;
+  --card-foreground: #0F0F0F;
+  --card-elevated: #FFFFFF;
+  --popover: #FFFFFF;
+  --popover-foreground: #0F0F0F;
+  --primary: #7FB300;
+  --primary-foreground: #FFFFFF;
+  --secondary: rgba(0, 0, 0, 0.05);
+  --secondary-foreground: #0F0F0F;
+  --muted: rgba(0, 0, 0, 0.03);
+  --muted-foreground: #737373;
+  --accent: #7FB300;
+  --accent-foreground: #FFFFFF;
+  --destructive: #DC2626;
+  --border: rgba(0, 0, 0, 0.1);
+  --input: rgba(0, 0, 0, 0.05);
+  --ring: #7FB300;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+
+  /* Ensure dark background on html for safe areas */
+  html {
+    background-color: #050505;
+  }
+}
+
+@layer utilities {
+  /* Lime accent utilities */
+  .text-lime {
+    color: #BFFF00;
+  }
+
+  .bg-lime {
+    background-color: #BFFF00;
+  }
+
+  .bg-lime-muted {
+    background-color: #9FD600;
+  }
+
+  .bg-lime-dim {
+    background-color: rgba(191, 255, 0, 0.15);
+  }
+
+  .border-lime {
+    border-color: #BFFF00;
+  }
+
+  .ring-lime {
+    --tw-ring-color: #BFFF00;
+  }
+
+  /* Card elevated background */
+  .bg-card-elevated {
+    background-color: #1A1A1A;
+  }
+
+  /* Shadow utilities */
+  .shadow-card {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.05),
+      0 2px 8px rgba(0, 0, 0, 0.4);
+  }
+
+  .shadow-elevated {
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.08),
+      0 8px 24px rgba(0, 0, 0, 0.6);
+  }
+
+  .shadow-lime {
+    box-shadow: 0 0 20px rgba(191, 255, 0, 0.3);
+  }
+
+  /* Safe area padding for mobile */
+  .pt-safe {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .pl-safe {
+    padding-left: env(safe-area-inset-left);
+  }
+
+  .pr-safe {
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Stroke utilities for SVG */
+  .stroke-lime {
+    stroke: #BFFF00;
+  }
+}
