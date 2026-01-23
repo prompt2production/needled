@@ -1,0 +1,182 @@
+{
+  "feature": "Dashboard",
+  "stories": [
+    {
+      "id": "DASH-001",
+      "title": "Create dashboard API endpoint",
+      "description": "Create GET /api/dashboard endpoint that aggregates user, weight, habit, and journey data into a single response",
+      "acceptance_criteria": [
+        "File exists at src/app/api/dashboard/route.ts",
+        "GET handler accepts userId query parameter",
+        "Returns 400 if userId is missing",
+        "Returns 404 if user not found",
+        "Returns aggregated DashboardResponse with user, weight, habits, and journey data"
+      ],
+      "passes": true
+    },
+    {
+      "id": "DASH-002",
+      "title": "Create dashboard Zod validation schema",
+      "description": "Create Zod schema for validating dashboard API query params and response type",
+      "acceptance_criteria": [
+        "File exists at src/lib/validations/dashboard.ts",
+        "Exports dashboardQuerySchema for query param validation",
+        "Exports DashboardResponse TypeScript type",
+        "Schema validates userId as required string"
+      ],
+      "passes": true
+    },
+    {
+      "id": "DASH-003",
+      "title": "Calculate weight progress percentage",
+      "description": "Add logic to dashboard API to calculate percentage progress toward goal weight",
+      "acceptance_criteria": [
+        "API returns progressPercent as number 0-100 when user has goal weight and at least one weigh-in",
+        "progressPercent is null when user has no goal weight",
+        "progressPercent is 0 when user has no weigh-ins",
+        "progressPercent caps at 100 when goal is exceeded",
+        "Formula: ((startWeight - currentWeight) / (startWeight - goalWeight)) * 100"
+      ],
+      "passes": true
+    },
+    {
+      "id": "DASH-004",
+      "title": "Calculate journey week number",
+      "description": "Add logic to dashboard API to calculate which week of the journey the user is on",
+      "acceptance_criteria": [
+        "API returns journey.weekNumber as positive integer",
+        "Week 1 is the week the user created their account",
+        "Week number increments each Monday",
+        "API returns journey.startDate as ISO string"
+      ],
+      "passes": true
+    },
+    {
+      "id": "DASH-005",
+      "title": "Calculate weekly habit completion percentage",
+      "description": "Add logic to dashboard API to calculate habit completion rate for current week",
+      "acceptance_criteria": [
+        "API returns habits.weeklyCompletionPercent as number 0-100",
+        "Calculates total habits completed / total possible habits (days * 3)",
+        "Only counts days up to and including today (not future days)",
+        "Returns 0 when no habits logged this week"
+      ],
+      "passes": true
+    },
+    {
+      "id": "DASH-006",
+      "title": "Create ProgressRing component",
+      "description": "Create reusable SVG progress ring component for displaying percentage progress",
+      "acceptance_criteria": [
+        "File exists at src/components/dashboard/ProgressRing.tsx",
+        "Accepts value (0-100), size, and children props",
+        "Renders SVG circle with stroke-dasharray animation",
+        "Uses lime color for progress, white/10 for background track",
+        "Children render centered inside the ring"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DASH-007",
+      "title": "Create WeightProgressCard component",
+      "description": "Create card component displaying weight progress with ring, current weight, and week change",
+      "acceptance_criteria": [
+        "File exists at src/components/dashboard/WeightProgressCard.tsx",
+        "Displays ProgressRing with total weight lost in center",
+        "Shows current weight prominently below ring",
+        "Shows week change with trend icon (TrendingDown green, TrendingUp red)",
+        "Shows 'Log This Week's Weight' button when canWeighIn is true",
+        "Button links to /weigh-in page"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DASH-008",
+      "title": "Create WeightProgressCard loading state",
+      "description": "Add loading skeleton to WeightProgressCard for when data is being fetched",
+      "acceptance_criteria": [
+        "WeightProgressCard accepts isLoading prop",
+        "When isLoading is true, displays skeleton with animate-pulse",
+        "Skeleton includes circular placeholder for ring, text placeholders for weight"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DASH-009",
+      "title": "Create WeightProgressCard empty state",
+      "description": "Add empty state to WeightProgressCard when user has no weigh-ins yet",
+      "acceptance_criteria": [
+        "When current weight is null, displays starting weight with label",
+        "Progress ring shows 0% progress",
+        "Shows encouraging message to log first weigh-in",
+        "CTA button still links to /weigh-in"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DASH-010",
+      "title": "Create JourneyStatsCard component",
+      "description": "Create card component displaying journey statistics",
+      "acceptance_criteria": [
+        "File exists at src/components/dashboard/JourneyStatsCard.tsx",
+        "Displays 'Week X of your journey' with week number",
+        "Displays habit completion percentage for current week",
+        "Displays total weigh-ins logged count",
+        "Uses muted styling per DESIGN_SYSTEM.md"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DASH-011",
+      "title": "Integrate dashboard components into home page",
+      "description": "Update /home page to use new dashboard components with dashboard API",
+      "acceptance_criteria": [
+        "src/app/home/page.tsx fetches data from /api/dashboard endpoint",
+        "Renders WeightProgressCard with weight data",
+        "Renders JourneyStatsCard with journey and habit stats",
+        "Keeps existing InjectionCardConnected and HabitsCard components",
+        "Desktop layout: 2-column grid per DESIGN_SYSTEM.md",
+        "Mobile layout: Single column stack"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DASH-012",
+      "title": "Add dashboard page loading state",
+      "description": "Add loading state to dashboard page while API data is being fetched",
+      "acceptance_criteria": [
+        "Page shows loading skeleton while fetching dashboard data",
+        "WeightProgressCard shows loading state",
+        "JourneyStatsCard shows loading skeleton",
+        "Loading state uses animate-pulse per DESIGN_SYSTEM.md"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DASH-013",
+      "title": "Add unit tests for dashboard API",
+      "description": "Create Vitest unit tests for dashboard API logic",
+      "acceptance_criteria": [
+        "Test file exists at tests/unit/dashboard.test.ts",
+        "Tests progress percentage calculation with various scenarios",
+        "Tests week number calculation",
+        "Tests habit completion percentage calculation",
+        "Tests edge cases: no goal weight, no weigh-ins, future dates"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DASH-014",
+      "title": "Add E2E tests for dashboard page",
+      "description": "Create Playwright E2E tests for dashboard functionality",
+      "acceptance_criteria": [
+        "Test file exists at tests/e2e/dashboard.spec.ts",
+        "Tests dashboard page loads with all cards visible",
+        "Tests weight progress card displays correct data",
+        "Tests journey stats card displays week number",
+        "Tests responsive layout at desktop (1280px) and mobile (375px) viewports"
+      ],
+      "passes": false
+    }
+  ]
+}

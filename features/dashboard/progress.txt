@@ -1,0 +1,26 @@
+---
+Story: DASH-001 Create dashboard API endpoint
+Completed: 2026-01-23T14:30:00Z
+Files changed: src/app/api/dashboard/route.ts
+Notes: Created GET /api/dashboard endpoint that aggregates user, weight, habit, and journey data
+---
+Story: DASH-002 Create dashboard Zod validation schema
+Completed: 2026-01-23T14:30:00Z
+Files changed: src/lib/validations/dashboard.ts
+Notes: Created dashboardQuerySchema and DashboardResponse type
+---
+Story: DASH-003 Calculate weight progress percentage
+Completed: 2026-01-23T14:30:00Z
+Files changed: src/app/api/dashboard/route.ts
+Notes: Progress percentage calculation included in dashboard API - handles null goal, no weigh-ins, and capped at 100%
+---
+Story: DASH-004 Calculate journey week number
+Completed: 2026-01-23T14:30:00Z
+Files changed: src/app/api/dashboard/route.ts
+Notes: Week number calculation using date-fns differenceInWeeks from user creation date
+---
+Story: DASH-005 Calculate weekly habit completion percentage
+Completed: 2026-01-23T14:30:00Z
+Files changed: src/app/api/dashboard/route.ts
+Notes: Habit completion calculates only days up to and including today
+---
