@@ -22,7 +22,7 @@
         "Migration runs successfully with: npx prisma migrate dev --name add-user-password",
         "Prisma client is regenerated"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "LOGIN-003",

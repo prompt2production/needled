@@ -4,3 +4,9 @@ Completed: 2026-01-23T21:50:00Z
 Files changed: prisma/schema.prisma
 Notes: Added Session model with id, token (unique), userId, expiresAt, createdAt fields. Relation to User model established. Used db push due to migration drift, then regenerated Prisma client.
 ---
+---
+Story: LOGIN-002 Add passwordHash field to User model
+Completed: 2026-01-23T21:52:00Z
+Files changed: prisma/schema.prisma
+Notes: Added optional passwordHash field (String?) to User model to allow migration of existing users without passwords.
+---
