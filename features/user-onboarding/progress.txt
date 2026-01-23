@@ -16,3 +16,9 @@ Completed: 2026-01-23T11:25:00Z
 Files changed: src/app/api/users/route.ts, tests/unit/api/users.test.ts
 Notes: API endpoint validates using Zod schema and creates user via Prisma. 8 tests covering success, validation errors, and database errors.
 ---
+---
+Story: ONBOARD-004 Create weight conversion utilities
+Completed: 2026-01-23T11:26:00Z
+Files changed: src/lib/weight.ts, tests/unit/lib/weight.test.ts
+Notes: kgToLbs, lbsToKg, and formatWeight functions. 14 tests covering conversions and formatting.
+---

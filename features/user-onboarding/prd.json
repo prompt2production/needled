@@ -53,7 +53,7 @@
         "formatWeight(weight: number, unit: 'kg' | 'lbs'): string formats with 1 decimal place",
         "npm run test passes for weight utility tests"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "ONBOARD-005",
