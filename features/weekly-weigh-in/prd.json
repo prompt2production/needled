@@ -193,7 +193,7 @@
         "Test verifies card updates to show logged weight",
         "npx playwright test tests/e2e/weigh-in.spec.ts passes"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "WEIGH-015",
@@ -206,7 +206,7 @@
         "Test verifies card shows logged weight instead of input prompt",
         "npx playwright test tests/e2e/weigh-in.spec.ts passes"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }

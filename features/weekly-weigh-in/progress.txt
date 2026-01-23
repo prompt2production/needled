@@ -76,3 +76,15 @@ Completed: 2026-01-23T13:08:00Z
 Files changed: src/app/weigh-in/page.tsx, src/app/api/users/[id]/route.ts
 Notes: Full-page layout with header, WeighInCard, progress summary (total change, % to goal), and history list. Also added GET /api/users/[id] endpoint.
 ---
+---
+Story: WEIGH-014 E2E test for weigh-in happy path
+Completed: 2026-01-23T13:10:00Z
+Files changed: tests/e2e/weigh-in.spec.ts, src/app/weigh-in/page.tsx
+Notes: Created E2E tests covering logging weigh-in, first-time state, validation, and progress display. Fixed null check bug in page.tsx. Used addInitScript approach for localStorage setup. Tests use dialog selector for drawer buttons.
+---
+---
+Story: WEIGH-015 E2E test for weekly constraint
+Completed: 2026-01-23T13:12:00Z
+Files changed: tests/e2e/weigh-in.spec.ts
+Notes: Added test verifying user cannot weigh in twice in same week. Test logs weigh-in, verifies Log Weight button disappears, and shows "This week" indicator.
+---

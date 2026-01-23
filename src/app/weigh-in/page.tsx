@@ -120,7 +120,7 @@ export default function WeighInPage() {
           />
 
           {/* Progress Summary */}
-          {latestData?.totalChange !== null && (
+          {latestData && latestData.totalChange !== null && (
             <div className="bg-card rounded-xl border border-border p-4">
               <h3 className="text-sm text-muted-foreground mb-3">Progress</h3>
               <div className="grid grid-cols-2 gap-4">
