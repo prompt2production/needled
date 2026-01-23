@@ -28,3 +28,9 @@ Completed: 2026-01-23T12:54:00Z
 Files changed: src/app/api/weigh-ins/route.ts, tests/unit/api/weigh-ins.test.ts
 Notes: Added GET handler with pagination (limit/offset). Default limit 10, max 100. Returns weigh-ins ordered by date descending.
 ---
+---
+Story: WEIGH-006 Create GET /api/weigh-ins/latest endpoint
+Completed: 2026-01-23T12:55:00Z
+Files changed: src/app/api/weigh-ins/latest/route.ts, tests/unit/api/weigh-ins-latest.test.ts
+Notes: Returns latest weigh-in with weekChange and totalChange. Includes canWeighIn flag based on weekly constraint.
+---

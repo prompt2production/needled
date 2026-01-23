@@ -81,7 +81,7 @@
         "Returns null for weigh-in if no history exists (canWeighIn still true)",
         "npm run test passes for API route tests"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "WEIGH-007",
