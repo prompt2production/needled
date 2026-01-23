@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Scale, User, Syringe, Menu, Activity, Calendar } from 'lucide-react'
+import { Home, Scale, User, Syringe, Menu, Activity, Calendar, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,6 +13,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { useState } from 'react'
+import { useAuth } from '@/hooks/useAuth'
 
 const NAV_ITEMS = [
   { href: '/home', icon: Home, label: 'Home' },
@@ -26,6 +27,7 @@ const NAV_ITEMS = [
 export function Header() {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { logout } = useAuth()
 
   return (
     <header className="fixed top-0 inset-x-0 h-16 bg-card border-b border-border z-50">
@@ -56,6 +58,13 @@ export function Header() {
               </Link>
             )
           })}
+          <button
+            onClick={logout}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors text-muted-foreground hover:text-white hover:bg-white/5"
+          >
+            <LogOut className="h-4 w-4" />
+            Logout
+          </button>
         </nav>
 
         {/* Mobile hamburger menu - visible on mobile only */}
@@ -100,6 +109,16 @@ export function Header() {
                   </Link>
                 )
               })}
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false)
+                  logout()
+                }}
+                className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-muted-foreground hover:text-white hover:bg-white/5"
+              >
+                <LogOut className="h-5 w-5" />
+                Logout
+              </button>
             </nav>
           </SheetContent>
         </Sheet>

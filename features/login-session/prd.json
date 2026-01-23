@@ -224,7 +224,7 @@
         "Redirects to home page (/) after logout",
         "Button is styled consistently with header design"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "LOGIN-018",
@@ -237,7 +237,7 @@
         "logout() function calls API and redirects",
         "Used in header component for logout functionality"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "LOGIN-019",
@@ -248,7 +248,7 @@
         "Error message suggests re-registering if account has no password",
         "No server errors when checking users without passwords"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "LOGIN-020",

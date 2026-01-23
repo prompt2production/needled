@@ -94,3 +94,21 @@ Completed: 2026-01-23T22:08:00Z
 Files changed: src/middleware.ts
 Notes: Middleware redirects authenticated users from /login and /onboarding to /dashboard. Server-side redirect prevents flash of auth pages.
 ---
+---
+Story: LOGIN-017 Add logout button to header navigation
+Completed: 2026-01-23T22:10:00Z
+Files changed: src/components/navigation/Header.tsx
+Notes: Added logout button to both desktop nav and mobile sheet menu. Uses useAuth hook for logout functionality. Styled consistently with other nav items.
+---
+---
+Story: LOGIN-018 Create useAuth hook for client-side auth state
+Completed: 2026-01-23T22:10:00Z
+Files changed: src/hooks/useAuth.ts
+Notes: Created hook returning { user, isLoading, isAuthenticated, logout }. Fetches session from /api/auth/session. Logout function calls API, clears localStorage, shows toast, redirects to /.
+---
+---
+Story: LOGIN-019 Handle existing users without passwords
+Completed: 2026-01-23T22:10:00Z
+Files changed: src/app/api/auth/login/route.ts, tests/unit/api/auth-login.test.ts
+Notes: Updated error message for users without passwordHash to suggest creating a new account. Returns 401 gracefully with helpful message. Updated test to verify new error message.
+---

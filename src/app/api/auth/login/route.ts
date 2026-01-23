@@ -3,11 +3,7 @@ import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
 import { verifyPassword, createSession } from '@/lib/auth'
 import { setSessionCookie } from '@/lib/cookies'
-
-const loginSchema = z.object({
-  email: z.string().email('Invalid email format'),
-  password: z.string().min(1, 'Password is required'),
-})
+import { loginSchema } from '@/lib/validations/auth'
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,10 +22,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if user has a password set
+    // Check if user has a password set (legacy users may not have one)
     if (!user.passwordHash) {
       return NextResponse.json(
-        { error: 'Invalid credentials' },
+        { error: 'This account was created before passwords were required. Please create a new account with an email and password.' },
         { status: 401 }
       )
     }

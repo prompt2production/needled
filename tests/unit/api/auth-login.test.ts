@@ -98,7 +98,7 @@ describe('POST /api/auth/login', () => {
     expect(data.error).toBe('Invalid credentials')
   })
 
-  it('should return 401 for user without passwordHash', async () => {
+  it('should return 401 for user without passwordHash with helpful message', async () => {
     const userWithoutPassword = { ...mockUser, passwordHash: null }
     mockFindUnique.mockResolvedValue(userWithoutPassword)
 
@@ -106,7 +106,7 @@ describe('POST /api/auth/login', () => {
     const data = await response.json()
 
     expect(response.status).toBe(401)
-    expect(data.error).toBe('Invalid credentials')
+    expect(data.error).toContain('Please create a new account')
   })
 
   it('should return 400 for invalid email format', async () => {
