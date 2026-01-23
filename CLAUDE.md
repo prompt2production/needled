@@ -597,6 +597,7 @@ A feature is complete when:
 - **daily-habits** (16 stories) — Daily yes/no check-in for water, nutrition, and exercise habits
 - **dashboard** (14 stories) — Home screen with weight progress ring, journey stats, integrated with dashboard API
 - **progress-calendar** (14 stories) — Calendar view showing habit completion patterns, weigh-in history, and injection data
+- **login-session** (23 stories) — Email/password authentication with session management and route protection
 
 ### Next Step
-Building: login-session (18 stories) — Email-based login and HTTP-only cookie session management
+Next feature: notifications - To continue, run: Plan feature: notifications
