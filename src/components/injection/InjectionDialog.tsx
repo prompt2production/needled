@@ -1,6 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { format, subDays, startOfDay } from 'date-fns'
+import { CalendarIcon } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -11,17 +13,26 @@ import {
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
+import { Calendar } from '@/components/ui/calendar'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import { cn } from '@/lib/utils'
 import { InjectionSiteSelector } from './InjectionSiteSelector'
 import type { InjectionSite } from '@/lib/validations/injection'
 
 interface InjectionDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onSubmit: (data: { site: InjectionSite; notes?: string }) => Promise<void>
+  onSubmit: (data: { site: InjectionSite; notes?: string; date: string }) => Promise<void>
   suggestedSite?: InjectionSite | null
   lastUsedSite?: InjectionSite | null
   isSubmitting?: boolean
 }
+
+const MAX_DAYS_IN_PAST = 90
 
 export function InjectionDialog({
   open,
@@ -33,13 +44,34 @@ export function InjectionDialog({
 }: InjectionDialogProps) {
   const [site, setSite] = useState<InjectionSite | null>(null)
   const [notes, setNotes] = useState('')
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date())
+
+  // Reset form when dialog opens
+  useEffect(() => {
+    if (open) {
+      setSite(null)
+      setNotes('')
+      setSelectedDate(new Date())
+    }
+  }, [open])
+
+  const today = startOfDay(new Date())
+  const minDate = subDays(today, MAX_DAYS_IN_PAST)
+
+  // Disable dates that are in the future or more than 90 days in the past
+  const isDateDisabled = (date: Date) => {
+    const d = startOfDay(date)
+    return d > today || d < minDate
+  }
 
   const handleSubmit = async () => {
     if (!site) return
-    await onSubmit({ site, notes: notes.trim() || undefined })
+    const dateString = format(selectedDate, 'yyyy-MM-dd')
+    await onSubmit({ site, notes: notes.trim() || undefined, date: dateString })
     // Reset state after successful submission
     setSite(null)
     setNotes('')
+    setSelectedDate(new Date())
   }
 
   const handleOpenChange = (newOpen: boolean) => {
@@ -47,6 +79,7 @@ export function InjectionDialog({
       // Reset state when closing
       setSite(null)
       setNotes('')
+      setSelectedDate(new Date())
     }
     onOpenChange(newOpen)
   }
@@ -62,6 +95,36 @@ export function InjectionDialog({
         </DialogHeader>
 
         <div className="py-4 space-y-6">
+          {/* Date picker */}
+          <div className="space-y-2">
+            <Label className="text-sm text-muted-foreground">Date</Label>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    'w-full justify-start text-left font-normal h-12',
+                    'bg-input border-border text-white hover:bg-white/5 hover:text-white',
+                    !selectedDate && 'text-muted-foreground'
+                  )}
+                  disabled={isSubmitting}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4 text-muted-foreground" />
+                  {selectedDate ? format(selectedDate, 'EEEE, d MMMM yyyy') : 'Select date'}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 bg-card-elevated border-border" align="start">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(date) => date && setSelectedDate(date)}
+                  disabled={isDateDisabled}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
+          </div>
+
           {/* Site selection */}
           <div className="space-y-3">
             <Label className="text-sm text-muted-foreground">

@@ -76,3 +76,9 @@ Completed: 2026-01-24T06:55:00Z
 Files changed: src/app/api/injections/[id]/route.ts, tests/unit/api/injections-id.test.ts
 Notes: Added DELETE handler to injection [id] route. Returns 400 if userId not provided, 404 if not found or wrong user, 204 on successful deletion.
 ---
+---
+Story: FLEX-014 Add date picker to injection dialog
+Completed: 2026-01-24T07:00:00Z
+Files changed: src/components/injection/InjectionDialog.tsx, src/components/injection/InjectionCard.tsx, src/components/injection/InjectionCardConnected.tsx
+Notes: Added date picker to InjectionDialog above site selection. Uses Calendar and Popover components. Defaults to today, disables future dates and dates older than 90 days. Date is included in form submission.
+---

@@ -48,7 +48,7 @@ export function InjectionCardConnected({
     fetchStatus()
   }, [fetchStatus])
 
-  const handleSubmit = async (submitData: { site: InjectionSite; notes?: string }) => {
+  const handleSubmit = async (submitData: { site: InjectionSite; notes?: string; date: string }) => {
     setIsSubmitting(true)
 
     try {

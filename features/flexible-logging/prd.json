@@ -192,7 +192,7 @@
         "Dates older than 90 days are disabled",
         "Selected date is included in form submission"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FLEX-015",

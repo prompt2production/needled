@@ -25,7 +25,7 @@ interface InjectionCardProps {
   suggestedSite: InjectionSite
   medicationName: string
   injectionDayName: string
-  onSubmit: (data: { site: InjectionSite; notes?: string }) => Promise<void>
+  onSubmit: (data: { site: InjectionSite; notes?: string; date: string }) => Promise<void>
   isSubmitting?: boolean
 }
 
@@ -42,7 +42,7 @@ export function InjectionCard({
 }: InjectionCardProps) {
   const [dialogOpen, setDialogOpen] = useState(false)
 
-  const handleSubmit = async (data: { site: InjectionSite; notes?: string }) => {
+  const handleSubmit = async (data: { site: InjectionSite; notes?: string; date: string }) => {
     await onSubmit(data)
     setDialogOpen(false)
   }
