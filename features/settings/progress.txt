@@ -1,0 +1,6 @@
+---
+Story: SETTINGS-001 Create settings validation schemas
+Completed: 2026-01-24T00:50:00Z
+Files changed: src/lib/validations/settings.ts, tests/unit/settings-validations.test.ts
+Notes: Created 4 validation schemas (profileUpdateSchema, emailUpdateSchema, passwordUpdateSchema, accountDeleteSchema) with 43 unit tests all passing.
+---

@@ -13,7 +13,7 @@
         "Export all schemas and inferred types",
         "Unit tests pass for all schemas in tests/unit/settings-validations.test.ts"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SETTINGS-002",
