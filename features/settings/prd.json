@@ -71,7 +71,7 @@
         "Returns success response (no sensitive data)",
         "Unit test verifies password change flow"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SETTINGS-006",

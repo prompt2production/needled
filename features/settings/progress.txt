@@ -22,3 +22,9 @@ Completed: 2026-01-24T00:54:00Z
 Files changed: src/app/api/settings/email/route.ts, tests/unit/api/settings-email.test.ts
 Notes: Created authenticated endpoint to update email with uniqueness check. Returns 409 if email in use. 9 unit tests.
 ---
+---
+Story: SETTINGS-005 Create PUT /api/settings/password endpoint
+Completed: 2026-01-24T00:55:00Z
+Files changed: src/app/api/settings/password/route.ts, tests/unit/api/settings-password.test.ts
+Notes: Created authenticated endpoint to change password. Verifies current password, hashes new password. 10 unit tests.
+---
