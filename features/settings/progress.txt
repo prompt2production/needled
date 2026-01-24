@@ -40,3 +40,9 @@ Completed: 2026-01-24T00:57:00Z
 Files changed: src/app/api/settings/account/route.ts, tests/unit/api/settings-account.test.ts
 Notes: Created authenticated endpoint to delete user account. Verifies password, cascades deletion, clears session cookie. 9 unit tests.
 ---
+---
+Story: SETTINGS-008 Create settings page layout
+Completed: 2026-01-24T00:59:00Z
+Files changed: src/app/settings/page.tsx, src/components/settings/*.tsx, src/components/ui/select.tsx
+Notes: Updated settings page with Profile, Account, Notifications, and Data sections. Added loading skeletons. Created placeholder components for forms. Installed shadcn select component.
+---

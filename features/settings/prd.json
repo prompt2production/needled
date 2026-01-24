@@ -117,7 +117,7 @@
         "Fetches initial data from GET /api/settings on load",
         "Shows loading skeleton while fetching"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SETTINGS-009",
