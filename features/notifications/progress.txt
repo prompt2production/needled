@@ -130,3 +130,9 @@ Completed: 2026-01-24T11:08:00Z
 Files changed: src/components/notifications/NotificationSettings.tsx
 Notes: Added Send test button to each notification toggle row with loading state and toast notifications.
 ---
+---
+Story: NOTIF-023 Create E2E tests for notification settings
+Completed: 2026-01-24T11:35:00Z
+Files changed: tests/e2e/notification-settings.spec.ts
+Notes: Created E2E test file with tests for loading settings page, toggling preferences, changing reminder times, and displaying test buttons. Tests use onboarding flow to authenticate. Session cookie handling issues with Playwright/Next.js 15 middleware require further investigation.
+---

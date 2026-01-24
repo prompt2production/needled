@@ -303,7 +303,7 @@
         "Tests email required notice shows when no email",
         "All tests pass with npx playwright test"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }
