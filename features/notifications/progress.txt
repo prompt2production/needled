@@ -16,3 +16,9 @@ Completed: 2026-01-24T10:22:00Z
 Files changed: src/app/api/notifications/preferences/route.ts
 Notes: Uses getSessionToken and validateSession pattern from auth routes. Creates default preferences if none exist.
 ---
+---
+Story: NOTIF-004 Create PUT /api/notifications/preferences endpoint
+Completed: 2026-01-24T10:25:00Z
+Files changed: src/app/api/notifications/preferences/route.ts
+Notes: Added PUT handler with Zod validation. Uses prisma upsert for create-or-update behavior.
+---

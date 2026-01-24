@@ -50,7 +50,7 @@
         "Successfully updates and returns preferences",
         "Creates preferences if none exist (upsert behavior)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NOTIF-005",

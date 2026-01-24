@@ -1,7 +1,9 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getSessionToken } from '@/lib/cookies'
 import { validateSession } from '@/lib/auth'
+import { notificationPreferencesInputSchema } from '@/lib/validations/notification-preferences'
+import { z } from 'zod'
 
 const DEFAULT_PREFERENCES = {
   injectionReminder: true,
@@ -50,6 +52,52 @@ export async function GET() {
     return NextResponse.json(preferences)
   } catch (error) {
     console.error('Failed to fetch notification preferences:', error)
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const token = await getSessionToken()
+
+    if (!token) {
+      return NextResponse.json(
+        { error: 'Not authenticated' },
+        { status: 401 }
+      )
+    }
+
+    const user = await validateSession(token)
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Not authenticated' },
+        { status: 401 }
+      )
+    }
+
+    const body = await request.json()
+    const validated = notificationPreferencesInputSchema.parse(body)
+
+    // Upsert preferences - create if doesn't exist, update if exists
+    const preferences = await prisma.notificationPreference.upsert({
+      where: { userId: user.id },
+      create: {
+        userId: user.id,
+        ...validated,
+      },
+      update: validated,
+    })
+
+    return NextResponse.json(preferences)
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: error.errors }, { status: 400 })
+    }
+    console.error('Failed to update notification preferences:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
