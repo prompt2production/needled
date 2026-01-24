@@ -86,7 +86,7 @@
         "Excludes sensitive data (passwordHash, session tokens)",
         "Unit test verifies export data structure"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SETTINGS-007",

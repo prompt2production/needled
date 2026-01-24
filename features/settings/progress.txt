@@ -28,3 +28,9 @@ Completed: 2026-01-24T00:55:00Z
 Files changed: src/app/api/settings/password/route.ts, tests/unit/api/settings-password.test.ts
 Notes: Created authenticated endpoint to change password. Verifies current password, hashes new password. 10 unit tests.
 ---
+---
+Story: SETTINGS-006 Create GET /api/settings/export endpoint
+Completed: 2026-01-24T00:56:00Z
+Files changed: src/app/api/settings/export/route.ts, tests/unit/api/settings-export.test.ts
+Notes: Created authenticated endpoint to export all user data. Includes Content-Disposition header for download, excludes sensitive data. 13 unit tests.
+---
