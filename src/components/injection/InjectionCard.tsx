@@ -54,33 +54,52 @@ export function InjectionCard({
     const siteLabel = getSiteLabel(lastInjection.site as InjectionSite)
 
     return (
-      <div className="bg-card rounded-xl border border-border p-4">
-        <div className="flex items-start gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-lime/10">
-            <Check className="h-6 w-6 text-lime" />
+      <>
+        <div className="bg-card rounded-xl border border-border p-4">
+          <div className="flex items-start gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-lime/10">
+              <Check className="h-6 w-6 text-lime" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-base font-medium text-white">Injection Done</h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                Logged {dayName}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {siteLabel}
+              </p>
+            </div>
           </div>
-          <div className="flex-1">
-            <h3 className="text-base font-medium text-white">Injection Done</h3>
-            <p className="text-sm text-muted-foreground mt-1">
-              Logged {dayName}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              {siteLabel}
-            </p>
+
+          <div className="mt-4 flex gap-2 justify-end">
+            <Button
+              variant="outline"
+              onClick={() => setDialogOpen(true)}
+              className="border-border text-muted-foreground hover:text-white hover:bg-white/5 text-sm"
+              disabled={isSubmitting}
+            >
+              Log Another
+            </Button>
+            <Link href="/injection">
+              <Button
+                variant="ghost"
+                className="text-muted-foreground hover:text-white hover:bg-white/5 text-sm"
+              >
+                View History
+              </Button>
+            </Link>
           </div>
         </div>
 
-        <div className="mt-4 flex justify-end">
-          <Link href="/injection">
-            <Button
-              variant="ghost"
-              className="text-muted-foreground hover:text-white hover:bg-white/5 text-sm"
-            >
-              View History
-            </Button>
-          </Link>
-        </div>
-      </div>
+        <InjectionDialog
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          onSubmit={handleSubmit}
+          suggestedSite={suggestedSite}
+          lastUsedSite={lastInjection?.site as InjectionSite | undefined}
+          isSubmitting={isSubmitting}
+        />
+      </>
     )
   }
 
@@ -127,22 +146,42 @@ export function InjectionCard({
     const daysText = daysUntil === 1 ? 'Tomorrow' : `In ${daysUntil} days`
 
     return (
-      <div className="bg-card rounded-xl border border-border p-4">
-        <div className="flex items-start gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/5">
-            <Syringe className="h-6 w-6 text-muted-foreground" />
+      <>
+        <div className="bg-card rounded-xl border border-border p-4">
+          <div className="flex items-start gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/5">
+              <Syringe className="h-6 w-6 text-muted-foreground" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-base font-medium text-white">Next Injection</h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                {daysText}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {injectionDayName}
+              </p>
+            </div>
           </div>
-          <div className="flex-1">
-            <h3 className="text-base font-medium text-white">Next Injection</h3>
-            <p className="text-sm text-muted-foreground mt-1">
-              {daysText}
-            </p>
-            <p className="text-sm text-muted-foreground">
-              {injectionDayName}
-            </p>
-          </div>
+
+          <Button
+            variant="outline"
+            onClick={() => setDialogOpen(true)}
+            className="border-border text-muted-foreground hover:text-white hover:bg-white/5 w-full mt-4"
+            disabled={isSubmitting}
+          >
+            Log Injection
+          </Button>
         </div>
-      </div>
+
+        <InjectionDialog
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          onSubmit={handleSubmit}
+          suggestedSite={suggestedSite}
+          lastUsedSite={lastInjection?.site as InjectionSite | undefined}
+          isSubmitting={isSubmitting}
+        />
+      </>
     )
   }
 
