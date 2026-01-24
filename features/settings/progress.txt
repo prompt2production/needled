@@ -82,3 +82,9 @@ Completed: 2026-01-24T01:06:00Z
 Files changed: (none - already implemented in previous notifications feature)
 Notes: Settings link already exists in Header.tsx NAV_ITEMS with Settings icon from lucide-react. Included in both desktop nav and mobile hamburger menu with active state.
 ---
+---
+Story: SETTINGS-015 E2E test: Update profile settings
+Completed: 2026-01-24T01:25:00Z
+Files changed: tests/e2e/settings-profile.spec.ts, src/middleware.ts, src/app/dashboard/page.tsx
+Notes: Created E2E tests for profile settings. Fixed middleware to use Node.js runtime (runtime = 'nodejs') for Prisma compatibility. Created /dashboard page as alias to /home. 6 tests passing covering navigation, profile updates, and form state.
+---

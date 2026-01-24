@@ -222,7 +222,7 @@
         "Test updates goal weight and medication",
         "Test verifies changes persist after page reload"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SETTINGS-016",

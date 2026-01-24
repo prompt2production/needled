@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
+// Force Node.js runtime for Prisma compatibility
+export const runtime = 'nodejs'
+
 const COOKIE_NAME = 'needled_session'
 
 // Routes that require authentication
