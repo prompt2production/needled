@@ -40,3 +40,9 @@ Completed: 2026-01-24T11:02:00Z
 Files changed: tests/unit/api/injections.test.ts
 Notes: Prisma already returns doseNumber field with default of 1. Added 2 tests to verify doseNumber is included in GET response.
 ---
+---
+Story: DOSE-008 Create DoseSelector component
+Completed: 2026-01-24T11:03:00Z
+Files changed: src/components/injection/DoseSelector.tsx
+Notes: Created DoseSelector with 4 horizontal buttons. Follows InjectionSiteSelector pattern for consistent styling. Uses lime styling for suggested/selected states.
+---

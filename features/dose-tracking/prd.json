@@ -94,7 +94,7 @@
         "Selected dose has distinct selected styling",
         "Follows DESIGN_SYSTEM.md patterns"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DOSE-009",
