@@ -64,3 +64,9 @@ Completed: 2026-01-24T01:03:00Z
 Files changed: src/components/settings/PasswordChangeForm.tsx, src/components/ui/collapsible.tsx
 Notes: Implemented collapsible password change form. Uses react-hook-form with passwordUpdateSchema. Clears form and closes collapsible on success. Installed shadcn collapsible component.
 ---
+---
+Story: SETTINGS-012 Create ExportDataButton component
+Completed: 2026-01-24T01:04:00Z
+Files changed: src/components/settings/ExportDataButton.tsx
+Notes: Implemented export button with Download icon. Fetches export API, creates blob, and triggers browser download. Shows loading state and success/error toasts.
+---
