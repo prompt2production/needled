@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getInjectionWeekStart, getInjectionWeekEnd, isInjectionDay, getDaysUntilInjection, getDaysOverdue } from '@/lib/injection-week'
 import { getNextSite } from '@/lib/injection-site'
+import { getNextDoseNumber } from '@/lib/dose-tracking'
 import type { InjectionSite } from '@/lib/validations/injection'
 
 export type InjectionStatus = 'due' | 'done' | 'overdue' | 'upcoming'
@@ -13,10 +14,14 @@ export interface InjectionStatusResponse {
   lastInjection: {
     id: string
     site: string
+    doseNumber: number
     date: string
     notes: string | null
   } | null
   suggestedSite: InjectionSite
+  currentDose: number | null
+  nextDose: number
+  dosesRemaining: number
 }
 
 export async function GET(request: NextRequest) {
@@ -95,6 +100,13 @@ export async function GET(request: NextRequest) {
       status = 'overdue'
     }
 
+    // Calculate dose tracking fields
+    const currentDose = lastInjection?.doseNumber ?? null
+    const nextDose = getNextDoseNumber(currentDose)
+    // Doses remaining: if on dose 4, still show 4 remaining (new pen) since dose 4 was used
+    // Otherwise show 4 - currentDose
+    const dosesRemaining = currentDose === null ? 4 : (currentDose === 4 ? 4 : 4 - currentDose)
+
     const response: InjectionStatusResponse = {
       status,
       daysUntil: status === 'done' || status === 'due' || status === 'overdue' ? 0 : daysUntil,
@@ -102,10 +114,14 @@ export async function GET(request: NextRequest) {
       lastInjection: lastInjection ? {
         id: lastInjection.id,
         site: lastInjection.site,
+        doseNumber: lastInjection.doseNumber,
         date: lastInjection.date.toISOString(),
         notes: lastInjection.notes,
       } : null,
       suggestedSite,
+      currentDose,
+      nextDose,
+      dosesRemaining,
     }
 
     return NextResponse.json(response)

@@ -46,6 +46,7 @@ describe('GET /api/injections/status', () => {
     id: 'injection123',
     userId: 'user123',
     site: 'ABDOMEN_LEFT',
+    doseNumber: 1,
     notes: null,
     date: new Date(),
     createdAt: new Date(),
@@ -240,5 +241,105 @@ describe('GET /api/injections/status', () => {
 
     expect(response.status).toBe(500)
     expect(data.error).toBe('Internal server error')
+  })
+
+  describe('dose tracking fields', () => {
+    it('should return currentDose as null when no previous injection', async () => {
+      mockInjectionFindFirst.mockResolvedValue(null)
+
+      const request = createGetRequest({ userId: 'user123' })
+      const response = await GET(request)
+      const data = await response.json()
+
+      expect(response.status).toBe(200)
+      expect(data.currentDose).toBeNull()
+    })
+
+    it('should return currentDose from most recent injection', async () => {
+      const injectionWithDose3 = { ...mockInjection, doseNumber: 3 }
+      mockInjectionFindFirst.mockResolvedValue(injectionWithDose3 as any)
+
+      const request = createGetRequest({ userId: 'user123' })
+      const response = await GET(request)
+      const data = await response.json()
+
+      expect(response.status).toBe(200)
+      expect(data.currentDose).toBe(3)
+    })
+
+    it('should return nextDose as 1 when no previous injection', async () => {
+      mockInjectionFindFirst.mockResolvedValue(null)
+
+      const request = createGetRequest({ userId: 'user123' })
+      const response = await GET(request)
+      const data = await response.json()
+
+      expect(data.nextDose).toBe(1)
+    })
+
+    it('should return nextDose calculated from currentDose', async () => {
+      const injectionWithDose2 = { ...mockInjection, doseNumber: 2 }
+      mockInjectionFindFirst.mockResolvedValue(injectionWithDose2 as any)
+
+      const request = createGetRequest({ userId: 'user123' })
+      const response = await GET(request)
+      const data = await response.json()
+
+      expect(data.nextDose).toBe(3)
+    })
+
+    it('should return nextDose as 1 when currentDose is 4 (new pen)', async () => {
+      const injectionWithDose4 = { ...mockInjection, doseNumber: 4 }
+      mockInjectionFindFirst.mockResolvedValue(injectionWithDose4 as any)
+
+      const request = createGetRequest({ userId: 'user123' })
+      const response = await GET(request)
+      const data = await response.json()
+
+      expect(data.nextDose).toBe(1)
+    })
+
+    it('should return dosesRemaining as 4 when no previous injection', async () => {
+      mockInjectionFindFirst.mockResolvedValue(null)
+
+      const request = createGetRequest({ userId: 'user123' })
+      const response = await GET(request)
+      const data = await response.json()
+
+      expect(data.dosesRemaining).toBe(4)
+    })
+
+    it('should return dosesRemaining as 3 when currentDose is 1', async () => {
+      mockInjectionFindFirst.mockResolvedValue(mockInjection as any) // doseNumber: 1
+
+      const request = createGetRequest({ userId: 'user123' })
+      const response = await GET(request)
+      const data = await response.json()
+
+      expect(data.dosesRemaining).toBe(3)
+    })
+
+    it('should return dosesRemaining as 4 when currentDose is 4 (new pen)', async () => {
+      const injectionWithDose4 = { ...mockInjection, doseNumber: 4 }
+      mockInjectionFindFirst.mockResolvedValue(injectionWithDose4 as any)
+
+      const request = createGetRequest({ userId: 'user123' })
+      const response = await GET(request)
+      const data = await response.json()
+
+      // After using dose 4, user starts a new pen with 4 doses remaining
+      expect(data.dosesRemaining).toBe(4)
+    })
+
+    it('should include doseNumber in lastInjection', async () => {
+      const injectionWithDose2 = { ...mockInjection, doseNumber: 2, notes: 'Test notes' }
+      mockInjectionFindFirst.mockResolvedValue(injectionWithDose2 as any)
+
+      const request = createGetRequest({ userId: 'user123' })
+      const response = await GET(request)
+      const data = await response.json()
+
+      expect(data.lastInjection.doseNumber).toBe(2)
+    })
   })
 })

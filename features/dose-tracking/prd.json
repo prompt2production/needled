@@ -70,7 +70,7 @@
         "Response includes dosesRemaining (number of doses left: 4 - currentDose, or 4 if currentDose is 4)",
         "Fields populated from most recent injection's doseNumber"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DOSE-007",

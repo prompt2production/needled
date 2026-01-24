@@ -28,3 +28,9 @@ Completed: 2026-01-24T10:58:00Z
 Files changed: src/app/api/injections/[id]/route.ts, tests/unit/api/injections-id.test.ts
 Notes: Added doseNumber to updateData in PATCH handler. Added 5 new tests for doseNumber update handling.
 ---
+---
+Story: DOSE-006 Update GET /api/injections/status to include dose information
+Completed: 2026-01-24T11:00:00Z
+Files changed: src/app/api/injections/status/route.ts, tests/unit/api/injections-status.test.ts
+Notes: Added currentDose, nextDose, dosesRemaining to status response. Updated InjectionStatusResponse interface and added doseNumber to lastInjection. Added 9 new tests for dose tracking fields.
+---
