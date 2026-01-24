@@ -165,7 +165,7 @@
         "Returns updated entry on success",
         "Unit test verifies update and ownership validation"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FLEX-013",

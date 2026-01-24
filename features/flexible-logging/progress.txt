@@ -64,3 +64,9 @@ Completed: 2026-01-24T06:45:00Z
 Files changed: src/lib/validations/injection.ts, src/app/api/injections/route.ts, tests/unit/validations/injection.test.ts, tests/unit/api/injections.test.ts
 Notes: Added optional date field to injection schema using logDateSchema. Removed same-week restriction (409 conflict). Multiple injections per week now allowed. Tests updated to verify date acceptance and removal of week restriction.
 ---
+---
+Story: FLEX-012 Create PATCH endpoint for injections
+Completed: 2026-01-24T06:50:00Z
+Files changed: src/app/api/injections/[id]/route.ts, tests/unit/api/injections-id.test.ts
+Notes: Created PATCH endpoint for injections with ownership validation. Accepts date, site, and notes. Returns 404 for not found or wrong user, 400 for invalid data, 200 with updated entry on success.
+---
