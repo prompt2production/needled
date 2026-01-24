@@ -7,6 +7,7 @@ vi.mock('@/lib/prisma', () => ({
     injection: {
       create: vi.fn(),
       findMany: vi.fn(),
+      findFirst: vi.fn(),
     },
     user: {
       findUnique: vi.fn(),
@@ -18,6 +19,7 @@ import { prisma } from '@/lib/prisma'
 
 const mockCreate = vi.mocked(prisma.injection.create)
 const mockFindMany = vi.mocked(prisma.injection.findMany)
+const mockFindFirst = vi.mocked(prisma.injection.findFirst)
 const mockUserFindUnique = vi.mocked(prisma.user.findUnique)
 
 function createRequest(body: unknown): NextRequest {
@@ -50,6 +52,7 @@ describe('POST /api/injections', () => {
     id: 'injection123',
     userId: 'user123',
     site: 'ABDOMEN_LEFT',
+    doseNumber: 1,
     notes: null,
     date: new Date(),
     createdAt: new Date(),
@@ -62,6 +65,8 @@ describe('POST /api/injections', () => {
     vi.setSystemTime(new Date('2026-01-24T12:00:00Z'))
     // Default: user exists
     mockUserFindUnique.mockResolvedValue(mockUser as any)
+    // Default: no previous injection
+    mockFindFirst.mockResolvedValue(null)
   })
 
   afterEach(() => {
@@ -221,6 +226,98 @@ describe('POST /api/injections', () => {
 
     expect(response.status).toBe(500)
     expect(data.error).toBe('Internal server error')
+  })
+
+  describe('doseNumber handling', () => {
+    it('should accept provided doseNumber in request body', async () => {
+      const injectionWithDose = { ...mockInjection, doseNumber: 3 }
+      mockCreate.mockResolvedValue(injectionWithDose as any)
+
+      const request = createRequest({ ...validData, doseNumber: 3 })
+      const response = await POST(request)
+      const data = await response.json()
+
+      expect(response.status).toBe(201)
+      expect(data.doseNumber).toBe(3)
+      expect(mockCreate).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          doseNumber: 3,
+        }),
+      })
+    })
+
+    it('should auto-calculate doseNumber as 1 when no previous injection', async () => {
+      mockFindFirst.mockResolvedValue(null)
+      mockCreate.mockResolvedValue(mockInjection as any)
+
+      const request = createRequest(validData)
+      const response = await POST(request)
+
+      expect(response.status).toBe(201)
+      expect(mockCreate).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          doseNumber: 1,
+        }),
+      })
+    })
+
+    it('should auto-calculate doseNumber as 2 when last injection was dose 1', async () => {
+      mockFindFirst.mockResolvedValue({ doseNumber: 1 } as any)
+      const injectionWithDose2 = { ...mockInjection, doseNumber: 2 }
+      mockCreate.mockResolvedValue(injectionWithDose2 as any)
+
+      const request = createRequest(validData)
+      const response = await POST(request)
+      const data = await response.json()
+
+      expect(response.status).toBe(201)
+      expect(data.doseNumber).toBe(2)
+      expect(mockCreate).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          doseNumber: 2,
+        }),
+      })
+    })
+
+    it('should auto-calculate doseNumber as 1 when last injection was dose 4 (new pen)', async () => {
+      mockFindFirst.mockResolvedValue({ doseNumber: 4 } as any)
+      mockCreate.mockResolvedValue(mockInjection as any)
+
+      const request = createRequest(validData)
+      await POST(request)
+
+      expect(mockCreate).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          doseNumber: 1,
+        }),
+      })
+    })
+
+    it('should return 400 for invalid doseNumber (0)', async () => {
+      const request = createRequest({ ...validData, doseNumber: 0 })
+      const response = await POST(request)
+
+      expect(response.status).toBe(400)
+    })
+
+    it('should return 400 for invalid doseNumber (5)', async () => {
+      const request = createRequest({ ...validData, doseNumber: 5 })
+      const response = await POST(request)
+
+      expect(response.status).toBe(400)
+    })
+
+    it('should include doseNumber in response', async () => {
+      const injectionWithDose = { ...mockInjection, doseNumber: 2 }
+      mockCreate.mockResolvedValue(injectionWithDose as any)
+
+      const request = createRequest({ ...validData, doseNumber: 2 })
+      const response = await POST(request)
+      const data = await response.json()
+
+      expect(response.status).toBe(201)
+      expect(data.doseNumber).toBe(2)
+    })
   })
 })
 

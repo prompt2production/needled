@@ -16,3 +16,9 @@ Completed: 2026-01-24T10:54:00Z
 Files changed: src/lib/dose-tracking.ts, tests/unit/dose-tracking.test.ts
 Notes: Created getNextDoseNumber function that cycles 1→2→3→4→1 (new pen). Handles null for first injection.
 ---
+---
+Story: DOSE-004 Update POST /api/injections to handle doseNumber
+Completed: 2026-01-24T10:57:00Z
+Files changed: src/app/api/injections/route.ts, tests/unit/api/injections.test.ts
+Notes: Added doseNumber handling to POST. Auto-calculates from last injection if not provided. Added 7 new tests for doseNumber handling.
+---

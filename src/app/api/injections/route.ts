@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { createInjectionSchema } from '@/lib/validations/injection'
+import { getNextDoseNumber } from '@/lib/dose-tracking'
 import { z } from 'zod'
 
 const DEFAULT_LIMIT = 10
@@ -59,10 +60,22 @@ export async function POST(request: NextRequest) {
       ? new Date(validated.date + 'T12:00:00Z') // Noon UTC to avoid timezone issues
       : new Date()
 
+    // Calculate dose number if not provided
+    let doseNumber = validated.doseNumber
+    if (doseNumber == null) {
+      const lastInjection = await prisma.injection.findFirst({
+        where: { userId: validated.userId },
+        orderBy: { date: 'desc' },
+        select: { doseNumber: true },
+      })
+      doseNumber = getNextDoseNumber(lastInjection?.doseNumber ?? null)
+    }
+
     const injection = await prisma.injection.create({
       data: {
         userId: validated.userId,
         site: validated.site,
+        doseNumber,
         notes: validated.notes,
         date: injectionDate,
       },
