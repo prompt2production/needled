@@ -25,6 +25,8 @@ interface InjectionCardProps {
   lastInjection: InjectionData | null
   suggestedSite: InjectionSite
   suggestedDose: number
+  currentDose: number | null
+  dosesRemaining: number
   medicationName: string
   injectionDayName: string
   onSubmit: (data: { site: InjectionSite; doseNumber: number; notes?: string; date: string }) => Promise<void>
@@ -38,11 +40,14 @@ export function InjectionCard({
   lastInjection,
   suggestedSite,
   suggestedDose,
+  currentDose: _currentDose,
+  dosesRemaining: _dosesRemaining,
   medicationName,
   injectionDayName,
   onSubmit,
   isSubmitting = false,
 }: InjectionCardProps) {
+  // currentDose and dosesRemaining are passed for future use (DOSE-015)
   const [dialogOpen, setDialogOpen] = useState(false)
 
   const handleSubmit = async (data: { site: InjectionSite; doseNumber: number; notes?: string; date: string }) => {

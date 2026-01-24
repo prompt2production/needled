@@ -116,7 +116,7 @@
         "InjectionCardConnected fetches and passes nextDose to InjectionDialog",
         "InjectionCardConnected passes currentDose and dosesRemaining to InjectionCard"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DOSE-011",

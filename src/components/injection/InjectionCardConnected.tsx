@@ -120,6 +120,8 @@ export function InjectionCardConnected({
       lastInjection={data.lastInjection}
       suggestedSite={data.suggestedSite}
       suggestedDose={data.nextDose}
+      currentDose={data.currentDose}
+      dosesRemaining={data.dosesRemaining}
       medicationName={medicationName}
       injectionDayName={injectionDayName}
       onSubmit={handleSubmit}
