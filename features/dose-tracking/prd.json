@@ -177,7 +177,7 @@
         "Displayed near the injection date/site details",
         "Styling is subtle/secondary, not prominent"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DOSE-016",

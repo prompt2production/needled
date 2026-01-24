@@ -40,14 +40,13 @@ export function InjectionCard({
   lastInjection,
   suggestedSite,
   suggestedDose,
-  currentDose: _currentDose,
+  currentDose,
   dosesRemaining: _dosesRemaining,
   medicationName,
   injectionDayName,
   onSubmit,
   isSubmitting = false,
 }: InjectionCardProps) {
-  // currentDose and dosesRemaining are passed for future use (DOSE-015)
   const [dialogOpen, setDialogOpen] = useState(false)
 
   const handleSubmit = async (data: { site: InjectionSite; doseNumber: number; notes?: string; date: string }) => {
@@ -71,11 +70,13 @@ export function InjectionCard({
             <div className="flex-1">
               <h3 className="text-base font-medium text-white">Injection Done</h3>
               <p className="text-sm text-muted-foreground mt-1">
-                Logged {dayName}
+                Logged {dayName} &middot; {siteLabel}
               </p>
-              <p className="text-sm text-muted-foreground">
-                {siteLabel}
-              </p>
+              {currentDose && (
+                <p className="text-xs text-muted-foreground/70 mt-1">
+                  Dose {currentDose} of 4
+                </p>
+              )}
             </div>
           </div>
 

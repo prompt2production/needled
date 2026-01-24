@@ -82,3 +82,9 @@ Completed: 2026-01-24T11:17:00Z
 Files changed: src/app/injection/page.tsx
 Notes: Removed Site Rotation Summary section and recentInjections state. Added injectionStatus state and fetch from /api/injections/status. DosesRemainingCard now displays with dose data in the same grid layout. Works on desktop and mobile.
 ---
+---
+Story: DOSE-015 Show dose info in InjectionCard done state
+Completed: 2026-01-24T11:18:00Z
+Files changed: src/components/injection/InjectionCard.tsx
+Notes: Added 'Dose X of 4' display in done state using text-xs and text-muted-foreground/70 for subtle styling. Combined date and site on one line with middot separator.
+---
