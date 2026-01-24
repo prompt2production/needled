@@ -58,3 +58,9 @@ Completed: 2026-01-24T06:33:00Z
 Files changed: src/components/weigh-in/WeighInHistoryItem.tsx
 Notes: Added delete button with AlertDialog confirmation showing date and weight. Calls DELETE endpoint, shows toast on success, refreshes list.
 ---
+---
+Story: FLEX-011 Update injection POST to accept date parameter
+Completed: 2026-01-24T06:45:00Z
+Files changed: src/lib/validations/injection.ts, src/app/api/injections/route.ts, tests/unit/validations/injection.test.ts, tests/unit/api/injections.test.ts
+Notes: Added optional date field to injection schema using logDateSchema. Removed same-week restriction (409 conflict). Multiple injections per week now allowed. Tests updated to verify date acceptance and removal of week restriction.
+---

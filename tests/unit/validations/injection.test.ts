@@ -1,11 +1,20 @@
-import { describe, it, expect } from 'vitest'
-import { createInjectionSchema, injectionSiteEnum } from '@/lib/validations/injection'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
+import { createInjectionSchema, injectionSiteEnum, updateInjectionSchema } from '@/lib/validations/injection'
 
 describe('createInjectionSchema', () => {
   const validData = {
     userId: 'user123',
     site: 'ABDOMEN_LEFT' as const,
   }
+
+  beforeEach(() => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-01-24T12:00:00Z'))
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
 
   describe('userId validation', () => {
     it('should accept valid userId', () => {
@@ -100,6 +109,92 @@ describe('createInjectionSchema', () => {
       const result = createInjectionSchema.safeParse({ ...validData, notes: tooLongNotes })
       expect(result.success).toBe(false)
     })
+  })
+
+  describe('date validation (optional field)', () => {
+    it('should accept data without date (optional)', () => {
+      const result = createInjectionSchema.safeParse(validData)
+      expect(result.success).toBe(true)
+      if (result.success) {
+        expect(result.data.date).toBeUndefined()
+      }
+    })
+
+    it('should accept today\'s date', () => {
+      const result = createInjectionSchema.safeParse({
+        ...validData,
+        date: '2026-01-24',
+      })
+      expect(result.success).toBe(true)
+    })
+
+    it('should accept a past date within 90 days', () => {
+      const result = createInjectionSchema.safeParse({
+        ...validData,
+        date: '2025-12-25',
+      })
+      expect(result.success).toBe(true)
+    })
+
+    it('should reject a future date', () => {
+      const result = createInjectionSchema.safeParse({
+        ...validData,
+        date: '2026-01-25',
+      })
+      expect(result.success).toBe(false)
+    })
+
+    it('should reject a date more than 90 days in the past', () => {
+      const result = createInjectionSchema.safeParse({
+        ...validData,
+        date: '2025-10-25',
+      })
+      expect(result.success).toBe(false)
+    })
+  })
+})
+
+describe('updateInjectionSchema', () => {
+  const validData = {
+    userId: 'user123',
+  }
+
+  beforeEach(() => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-01-24T12:00:00Z'))
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('should accept userId only (all other fields optional)', () => {
+    const result = updateInjectionSchema.safeParse(validData)
+    expect(result.success).toBe(true)
+  })
+
+  it('should accept site update', () => {
+    const result = updateInjectionSchema.safeParse({
+      ...validData,
+      site: 'THIGH_RIGHT',
+    })
+    expect(result.success).toBe(true)
+  })
+
+  it('should accept date update', () => {
+    const result = updateInjectionSchema.safeParse({
+      ...validData,
+      date: '2026-01-20',
+    })
+    expect(result.success).toBe(true)
+  })
+
+  it('should accept notes update', () => {
+    const result = updateInjectionSchema.safeParse({
+      ...validData,
+      notes: 'Updated notes',
+    })
+    expect(result.success).toBe(true)
   })
 })
 

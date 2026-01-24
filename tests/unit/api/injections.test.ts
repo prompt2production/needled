@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { GET, POST } from '@/app/api/injections/route'
 import { NextRequest } from 'next/server'
 
@@ -6,7 +6,6 @@ vi.mock('@/lib/prisma', () => ({
   prisma: {
     injection: {
       create: vi.fn(),
-      findFirst: vi.fn(),
       findMany: vi.fn(),
     },
     user: {
@@ -18,7 +17,6 @@ vi.mock('@/lib/prisma', () => ({
 import { prisma } from '@/lib/prisma'
 
 const mockCreate = vi.mocked(prisma.injection.create)
-const mockFindFirst = vi.mocked(prisma.injection.findFirst)
 const mockFindMany = vi.mocked(prisma.injection.findMany)
 const mockUserFindUnique = vi.mocked(prisma.user.findUnique)
 
@@ -55,13 +53,19 @@ describe('POST /api/injections', () => {
     notes: null,
     date: new Date(),
     createdAt: new Date(),
+    updatedAt: new Date(),
   }
 
   beforeEach(() => {
     vi.clearAllMocks()
-    // Default: user exists, no existing injection this week
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-01-24T12:00:00Z'))
+    // Default: user exists
     mockUserFindUnique.mockResolvedValue(mockUser as any)
-    mockFindFirst.mockResolvedValue(null)
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
   })
 
   it('should return 201 with created injection on success', async () => {
@@ -100,16 +104,61 @@ describe('POST /api/injections', () => {
     })
   })
 
-  it('should return 409 Conflict if injection already exists for current injection week', async () => {
-    mockFindFirst.mockResolvedValue(mockInjection as any)
+  it('should allow multiple injections in the same week (no 409 conflict)', async () => {
+    mockCreate.mockResolvedValue(mockInjection as any)
+
+    // Create first injection
+    const request1 = createRequest(validData)
+    const response1 = await POST(request1)
+    expect(response1.status).toBe(201)
+
+    // Create second injection in the same week - should succeed
+    const request2 = createRequest(validData)
+    const response2 = await POST(request2)
+    expect(response2.status).toBe(201)
+  })
+
+  it('should accept optional date parameter', async () => {
+    mockCreate.mockResolvedValue(mockInjection as any)
+
+    const request = createRequest({ ...validData, date: '2026-01-20' })
+    const response = await POST(request)
+
+    expect(response.status).toBe(201)
+    expect(mockCreate).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        userId: 'user123',
+        site: 'ABDOMEN_LEFT',
+        date: new Date('2026-01-20T12:00:00Z'),
+      }),
+    })
+  })
+
+  it('should default to current date when date not provided', async () => {
+    mockCreate.mockResolvedValue(mockInjection as any)
 
     const request = createRequest(validData)
-    const response = await POST(request)
-    const data = await response.json()
+    await POST(request)
 
-    expect(response.status).toBe(409)
-    expect(data.error).toContain('already logged')
-    expect(mockCreate).not.toHaveBeenCalled()
+    expect(mockCreate).toHaveBeenCalledWith({
+      data: expect.objectContaining({
+        date: expect.any(Date),
+      }),
+    })
+  })
+
+  it('should return 400 for invalid date (future date)', async () => {
+    const request = createRequest({ ...validData, date: '2026-01-25' })
+    const response = await POST(request)
+
+    expect(response.status).toBe(400)
+  })
+
+  it('should return 400 for invalid date (too far in past)', async () => {
+    const request = createRequest({ ...validData, date: '2025-01-01' })
+    const response = await POST(request)
+
+    expect(response.status).toBe(400)
   })
 
   it('should return 404 if user not found', async () => {

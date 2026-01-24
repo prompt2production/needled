@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { createInjectionSchema } from '@/lib/validations/injection'
-import { getInjectionWeekStart, getInjectionWeekEnd } from '@/lib/injection-week'
 import { z } from 'zod'
 
 const DEFAULT_LIMIT = 10
@@ -43,7 +42,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const validated = createInjectionSchema.parse(body)
 
-    // Get user to find their injection day
+    // Get user to validate they exist
     const user = await prisma.user.findUnique({
       where: { id: validated.userId },
     })
@@ -55,34 +54,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if user has already logged an injection this injection week
-    const now = new Date()
-    const weekStart = getInjectionWeekStart(now, user.injectionDay)
-    const weekEnd = getInjectionWeekEnd(now, user.injectionDay)
-
-    const existingInjection = await prisma.injection.findFirst({
-      where: {
-        userId: validated.userId,
-        date: {
-          gte: weekStart,
-          lte: weekEnd,
-        },
-      },
-    })
-
-    if (existingInjection) {
-      return NextResponse.json(
-        { error: 'You have already logged an injection this week' },
-        { status: 409 }
-      )
-    }
+    // Use provided date or default to current date
+    const injectionDate = validated.date
+      ? new Date(validated.date + 'T12:00:00Z') // Noon UTC to avoid timezone issues
+      : new Date()
 
     const injection = await prisma.injection.create({
       data: {
         userId: validated.userId,
         site: validated.site,
         notes: validated.notes,
-        date: now,
+        date: injectionDate,
       },
     })
 
