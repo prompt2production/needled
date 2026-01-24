@@ -1,0 +1,6 @@
+---
+Story: FLEX-001 Add updatedAt fields to database schema
+Completed: 2026-01-24T06:18:00Z
+Files changed: prisma/schema.prisma, prisma/migrations/20260124000001_add_updatedat_fields/migration.sql
+Notes: Added updatedAt DateTime @updatedAt to WeighIn and Injection models. Migration deployed successfully. Prisma client types already had the fields.
+---

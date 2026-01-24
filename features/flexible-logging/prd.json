@@ -1,0 +1,299 @@
+{
+  "feature": "Flexible Logging",
+  "stories": [
+    {
+      "id": "FLEX-001",
+      "title": "Add updatedAt fields to database schema",
+      "description": "Add updatedAt timestamp fields to WeighIn and Injection models for tracking edits",
+      "acceptance_criteria": [
+        "prisma/schema.prisma has updatedAt DateTime field on WeighIn model with @updatedAt directive",
+        "prisma/schema.prisma has updatedAt DateTime field on Injection model with @updatedAt directive",
+        "Migration runs successfully with npx prisma migrate dev",
+        "npx prisma generate completes without errors"
+      ],
+      "passes": true
+    },
+    {
+      "id": "FLEX-002",
+      "title": "Create date validation schema",
+      "description": "Create Zod schema for validating log dates (not future, within 90 days)",
+      "acceptance_criteria": [
+        "src/lib/validations/log-date.ts exports logDateSchema that validates date strings",
+        "Schema rejects future dates",
+        "Schema rejects dates more than 90 days in the past",
+        "Schema accepts today's date",
+        "Schema accepts dates within 90 days",
+        "Unit test at tests/unit/validations/log-date.test.ts passes"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FLEX-003",
+      "title": "Update weigh-in POST to accept date parameter",
+      "description": "Modify POST /api/weigh-ins to accept optional date field, remove week restriction",
+      "acceptance_criteria": [
+        "src/lib/validations/weigh-in.ts schema includes optional date field using logDateSchema",
+        "POST /api/weigh-ins accepts date in request body",
+        "If date not provided, defaults to current date",
+        "Same-week conflict check (409 error) is removed",
+        "Multiple weigh-ins can be created in the same week",
+        "Unit test verifies date acceptance and default behavior"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FLEX-004",
+      "title": "Add hasWeighedThisWeek to weigh-in latest API",
+      "description": "Modify GET /api/weigh-ins/latest to include hasWeighedThisWeek boolean",
+      "acceptance_criteria": [
+        "GET /api/weigh-ins/latest response includes hasWeighedThisWeek boolean",
+        "hasWeighedThisWeek is true when user has at least one weigh-in in current week",
+        "hasWeighedThisWeek is false when user has no weigh-ins in current week",
+        "canWeighIn is always true (no restrictions)",
+        "Unit test verifies hasWeighedThisWeek behavior"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FLEX-005",
+      "title": "Create PATCH endpoint for weigh-ins",
+      "description": "Create PATCH /api/weigh-ins/[id] to update existing weigh-in entries",
+      "acceptance_criteria": [
+        "src/app/api/weigh-ins/[id]/route.ts exports PATCH handler",
+        "Accepts weight and date in request body",
+        "Validates user owns the weigh-in entry",
+        "Returns 404 if entry not found or not owned by user",
+        "Returns 400 for invalid data",
+        "Returns updated entry on success",
+        "Unit test verifies update and ownership validation"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FLEX-006",
+      "title": "Create DELETE endpoint for weigh-ins",
+      "description": "Create DELETE /api/weigh-ins/[id] to remove weigh-in entries",
+      "acceptance_criteria": [
+        "src/app/api/weigh-ins/[id]/route.ts exports DELETE handler",
+        "Validates user owns the weigh-in entry",
+        "Returns 404 if entry not found or not owned by user",
+        "Returns 204 No Content on successful deletion",
+        "Entry is permanently removed from database",
+        "Unit test verifies deletion and ownership validation"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FLEX-007",
+      "title": "Add date picker to weigh-in dialog",
+      "description": "Add date selection field to WeighInDialog component with today as default",
+      "acceptance_criteria": [
+        "shadcn Calendar and Popover components installed if not present",
+        "WeighInDialog includes date picker field above weight input",
+        "Date defaults to today's date",
+        "Future dates are disabled in the picker",
+        "Dates older than 90 days are disabled",
+        "Selected date is included in form submission"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FLEX-008",
+      "title": "Show encouragement message for multiple weigh-ins",
+      "description": "Display subtle reminder when user logs additional weigh-in in same week",
+      "acceptance_criteria": [
+        "WeighInCardConnected receives hasWeighedThisWeek from API",
+        "When hasWeighedThisWeek is true, dialog shows info message",
+        "Message text: 'You've already logged this week. Multiple entries are fine, but weekly tracking works best.'",
+        "Message uses muted styling (not blocking or alarming)",
+        "Message does not prevent form submission"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FLEX-009",
+      "title": "Add edit functionality to weigh-in history",
+      "description": "Add edit button to weigh-in history entries that opens pre-filled dialog",
+      "acceptance_criteria": [
+        "Each weigh-in history entry shows edit icon/button",
+        "Clicking edit opens WeighInDialog in edit mode",
+        "Dialog is pre-filled with existing weight and date values",
+        "Submitting calls PATCH /api/weigh-ins/[id]",
+        "Success updates the list and shows toast",
+        "Error shows appropriate message"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FLEX-010",
+      "title": "Add delete functionality to weigh-in history",
+      "description": "Add delete button to weigh-in history with confirmation dialog",
+      "acceptance_criteria": [
+        "Each weigh-in history entry shows delete icon/button",
+        "Clicking delete opens AlertDialog confirmation",
+        "Confirmation shows entry date and weight",
+        "Confirming calls DELETE /api/weigh-ins/[id]",
+        "Success removes entry from list and shows toast",
+        "Cancel closes dialog without action"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FLEX-011",
+      "title": "Update injection POST to accept date parameter",
+      "description": "Modify POST /api/injections to accept optional date field, remove week restriction",
+      "acceptance_criteria": [
+        "src/lib/validations/injection.ts schema includes optional date field using logDateSchema",
+        "POST /api/injections accepts date in request body",
+        "If date not provided, defaults to current date",
+        "Same-week conflict check (409 error) is removed",
+        "Multiple injections can be created in the same week",
+        "Unit test verifies date acceptance and default behavior"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FLEX-012",
+      "title": "Create PATCH endpoint for injections",
+      "description": "Create PATCH /api/injections/[id] to update existing injection entries",
+      "acceptance_criteria": [
+        "src/app/api/injections/[id]/route.ts exports PATCH handler",
+        "Accepts date, site, and notes in request body",
+        "Validates user owns the injection entry",
+        "Returns 404 if entry not found or not owned by user",
+        "Returns 400 for invalid data",
+        "Returns updated entry on success",
+        "Unit test verifies update and ownership validation"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FLEX-013",
+      "title": "Create DELETE endpoint for injections",
+      "description": "Create DELETE /api/injections/[id] to remove injection entries",
+      "acceptance_criteria": [
+        "src/app/api/injections/[id]/route.ts exports DELETE handler",
+        "Validates user owns the injection entry",
+        "Returns 404 if entry not found or not owned by user",
+        "Returns 204 No Content on successful deletion",
+        "Entry is permanently removed from database",
+        "Unit test verifies deletion and ownership validation"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FLEX-014",
+      "title": "Add date picker to injection dialog",
+      "description": "Add date selection field to InjectionDialog component with today as default",
+      "acceptance_criteria": [
+        "InjectionDialog includes date picker field above site selection",
+        "Date defaults to today's date",
+        "Future dates are disabled in the picker",
+        "Dates older than 90 days are disabled",
+        "Selected date is included in form submission"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FLEX-015",
+      "title": "Add edit functionality to injection history",
+      "description": "Add edit button to injection history entries that opens pre-filled dialog",
+      "acceptance_criteria": [
+        "Each injection history entry shows edit icon/button",
+        "Clicking edit opens InjectionDialog in edit mode",
+        "Dialog is pre-filled with existing date, site, and notes values",
+        "Submitting calls PATCH /api/injections/[id]",
+        "Success updates the list and shows toast",
+        "Error shows appropriate message"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FLEX-016",
+      "title": "Add delete functionality to injection history",
+      "description": "Add delete button to injection history with confirmation dialog",
+      "acceptance_criteria": [
+        "Each injection history entry shows delete icon/button",
+        "Clicking delete opens AlertDialog confirmation",
+        "Confirmation shows entry date and site",
+        "Confirming calls DELETE /api/injections/[id]",
+        "Success removes entry from list and shows toast",
+        "Cancel closes dialog without action"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FLEX-017",
+      "title": "E2E test for weigh-in date selection",
+      "description": "Add E2E test for logging weigh-in with custom date",
+      "acceptance_criteria": [
+        "tests/e2e/flexible-logging.spec.ts exists",
+        "Test logs in as authenticated user",
+        "Test opens weigh-in dialog",
+        "Test selects a past date from date picker",
+        "Test enters weight and submits",
+        "Test verifies entry appears in history with correct date",
+        "npx playwright test flexible-logging passes"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FLEX-018",
+      "title": "E2E test for weigh-in edit and delete",
+      "description": "Add E2E test for editing and deleting weigh-in entries",
+      "acceptance_criteria": [
+        "Test clicks edit on existing weigh-in entry",
+        "Test modifies weight value",
+        "Test submits and verifies updated value appears",
+        "Test clicks delete on weigh-in entry",
+        "Test confirms deletion in dialog",
+        "Test verifies entry is removed from list",
+        "npx playwright test flexible-logging passes"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FLEX-019",
+      "title": "E2E test for injection date selection",
+      "description": "Add E2E test for logging injection with custom date",
+      "acceptance_criteria": [
+        "Test opens injection dialog",
+        "Test selects a past date from date picker",
+        "Test selects injection site and submits",
+        "Test verifies entry appears in history with correct date",
+        "npx playwright test flexible-logging passes"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FLEX-020",
+      "title": "E2E test for injection edit and delete",
+      "description": "Add E2E test for editing and deleting injection entries",
+      "acceptance_criteria": [
+        "Test clicks edit on existing injection entry",
+        "Test modifies site or notes",
+        "Test submits and verifies updated value appears",
+        "Test clicks delete on injection entry",
+        "Test confirms deletion in dialog",
+        "Test verifies entry is removed from list",
+        "npx playwright test flexible-logging passes"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FLEX-021",
+      "title": "E2E test for multiple entries in same week",
+      "description": "Add E2E test verifying multiple entries can be logged in same week",
+      "acceptance_criteria": [
+        "Test logs a weigh-in entry",
+        "Test logs another weigh-in entry (same week)",
+        "Test verifies both entries appear in history (no 409 error)",
+        "Test logs an injection entry",
+        "Test logs another injection entry (same week)",
+        "Test verifies both entries appear in history (no 409 error)",
+        "npx playwright test flexible-logging passes"
+      ],
+      "passes": false
+    }
+  ]
+}
