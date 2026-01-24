@@ -46,3 +46,15 @@ Completed: 2026-01-24T06:30:00Z
 Files changed: src/components/weigh-in/WeighInInput.tsx, src/components/weigh-in/WeighInCardConnected.tsx
 Notes: Added hasWeighedThisWeek prop to WeighInInput. When true, displays muted info message about multiple entries being fine but weekly tracking working best.
 ---
+---
+Story: FLEX-009 Add edit functionality to weigh-in history
+Completed: 2026-01-24T06:33:00Z
+Files changed: src/components/weigh-in/WeighInHistoryItem.tsx, src/components/weigh-in/WeighInEditDialog.tsx, src/components/weigh-in/index.ts, src/app/weigh-in/page.tsx
+Notes: Created WeighInHistoryItem component with edit button. WeighInEditDialog pre-fills with existing values. Calls PATCH endpoint, shows toast on success/error.
+---
+---
+Story: FLEX-010 Add delete functionality to weigh-in history
+Completed: 2026-01-24T06:33:00Z
+Files changed: src/components/weigh-in/WeighInHistoryItem.tsx
+Notes: Added delete button with AlertDialog confirmation showing date and weight. Calls DELETE endpoint, shows toast on success, refreshes list.
+---

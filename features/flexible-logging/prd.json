@@ -122,7 +122,7 @@
         "Success updates the list and shows toast",
         "Error shows appropriate message"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FLEX-010",
@@ -136,7 +136,7 @@
         "Success removes entry from list and shows toast",
         "Cancel closes dialog without action"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FLEX-011",

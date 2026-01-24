@@ -1,9 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { format } from 'date-fns'
-import { Scale, TrendingDown, TrendingUp } from 'lucide-react'
-import { WeighInCardConnected } from '@/components/weigh-in'
+import { useState, useEffect, useCallback } from 'react'
+import { Scale } from 'lucide-react'
+import { WeighInCardConnected, WeighInHistoryItem } from '@/components/weigh-in'
 import { calculateProgress } from '@/lib/trends'
 
 interface User {
@@ -37,6 +36,34 @@ export default function WeighInPage() {
   const [latestData, setLatestData] = useState<LatestWeighInResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
+  const fetchData = useCallback(async (userId: string) => {
+    try {
+      // Fetch user data
+      const userResponse = await fetch(`/api/users/${userId}`)
+      if (!userResponse.ok) throw new Error('Failed to fetch user')
+      const userData = await userResponse.json()
+      setUser(userData)
+
+      // Fetch weigh-ins
+      const weighInsResponse = await fetch(`/api/weigh-ins?userId=${userId}&limit=10`)
+      if (weighInsResponse.ok) {
+        const weighInsData = await weighInsResponse.json()
+        setWeighIns(weighInsData)
+      }
+
+      // Fetch latest with trend data
+      const latestResponse = await fetch(`/api/weigh-ins/latest?userId=${userId}`)
+      if (latestResponse.ok) {
+        const latestData = await latestResponse.json()
+        setLatestData(latestData)
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
   useEffect(() => {
     const userId = localStorage.getItem('userId')
     if (!userId) {
@@ -44,36 +71,8 @@ export default function WeighInPage() {
       return
     }
 
-    const fetchData = async () => {
-      try {
-        // Fetch user data
-        const userResponse = await fetch(`/api/users/${userId}`)
-        if (!userResponse.ok) throw new Error('Failed to fetch user')
-        const userData = await userResponse.json()
-        setUser(userData)
-
-        // Fetch weigh-ins
-        const weighInsResponse = await fetch(`/api/weigh-ins?userId=${userId}&limit=10`)
-        if (weighInsResponse.ok) {
-          const weighInsData = await weighInsResponse.json()
-          setWeighIns(weighInsData)
-        }
-
-        // Fetch latest with trend data
-        const latestResponse = await fetch(`/api/weigh-ins/latest?userId=${userId}`)
-        if (latestResponse.ok) {
-          const latestData = await latestResponse.json()
-          setLatestData(latestData)
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [])
+    fetchData(userId)
+  }, [fetchData])
 
   if (isLoading || !user) {
     return (
@@ -147,44 +146,18 @@ export default function WeighInPage() {
             {weighIns.length > 0 && (
               <div className="bg-card rounded-xl border border-border p-4">
                 <h3 className="text-sm text-muted-foreground mb-3">History</h3>
-                <div className="space-y-3">
+                <div className="space-y-1">
                   {weighIns.map((weighIn, index) => {
                     const previousWeighIn = weighIns[index + 1]
-                    const change = previousWeighIn
-                      ? weighIn.weight - previousWeighIn.weight
-                      : null
-
                     return (
-                      <div
+                      <WeighInHistoryItem
                         key={weighIn.id}
-                        className="flex items-center justify-between py-2 border-b border-border last:border-0"
-                      >
-                        <div>
-                          <p className="text-sm text-white">
-                            {format(new Date(weighIn.date), 'EEE d MMM')}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          {change !== null && change !== 0 && (
-                            <span
-                              className={`text-xs flex items-center gap-0.5 ${
-                                change < 0 ? 'text-green-500' : 'text-red-500'
-                              }`}
-                            >
-                              {change < 0 ? (
-                                <TrendingDown className="h-3 w-3" />
-                              ) : (
-                                <TrendingUp className="h-3 w-3" />
-                              )}
-                              {change > 0 ? '+' : ''}
-                              {change.toFixed(1)}
-                            </span>
-                          )}
-                          <span className="text-white font-medium">
-                            {weighIn.weight.toFixed(1)} {user.weightUnit}
-                          </span>
-                        </div>
-                      </div>
+                        weighIn={weighIn}
+                        previousWeighIn={previousWeighIn}
+                        weightUnit={user.weightUnit}
+                        userId={user.id}
+                        onUpdate={() => fetchData(user.id)}
+                      />
                     )
                   })}
                 </div>
