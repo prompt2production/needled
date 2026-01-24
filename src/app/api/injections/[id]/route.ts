@@ -26,9 +26,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     // Build update data
-    const updateData: { site?: string; notes?: string; date?: Date } = {}
+    const updateData: { site?: string; doseNumber?: number; notes?: string; date?: Date } = {}
     if (validated.site !== undefined) {
       updateData.site = validated.site
+    }
+    if (validated.doseNumber !== undefined) {
+      updateData.doseNumber = validated.doseNumber
     }
     if (validated.notes !== undefined) {
       updateData.notes = validated.notes

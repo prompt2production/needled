@@ -22,3 +22,9 @@ Completed: 2026-01-24T10:57:00Z
 Files changed: src/app/api/injections/route.ts, tests/unit/api/injections.test.ts
 Notes: Added doseNumber handling to POST. Auto-calculates from last injection if not provided. Added 7 new tests for doseNumber handling.
 ---
+---
+Story: DOSE-005 Update PATCH /api/injections/[id] to handle doseNumber
+Completed: 2026-01-24T10:58:00Z
+Files changed: src/app/api/injections/[id]/route.ts, tests/unit/api/injections-id.test.ts
+Notes: Added doseNumber to updateData in PATCH handler. Added 5 new tests for doseNumber update handling.
+---

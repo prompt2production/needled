@@ -33,6 +33,7 @@ describe('PATCH /api/injections/[id]', () => {
     id: 'injection123',
     userId: 'user123',
     site: 'ABDOMEN_LEFT',
+    doseNumber: 1,
     notes: 'Original notes',
     date: new Date('2026-01-20'),
     createdAt: new Date(),
@@ -152,6 +153,69 @@ describe('PATCH /api/injections/[id]', () => {
 
     expect(response.status).toBe(500)
     expect(data.error).toBe('Internal server error')
+  })
+
+  describe('doseNumber update', () => {
+    it('should update doseNumber when provided', async () => {
+      const updatedInjection = { ...mockInjection, doseNumber: 3 }
+      mockUpdate.mockResolvedValue(updatedInjection)
+
+      const request = createPatchRequest({ userId: 'user123', doseNumber: 3 })
+      const response = await PATCH(request, createParams('injection123'))
+      const data = await response.json()
+
+      expect(response.status).toBe(200)
+      expect(data.doseNumber).toBe(3)
+      expect(mockUpdate).toHaveBeenCalledWith({
+        where: { id: 'injection123' },
+        data: { doseNumber: 3 },
+      })
+    })
+
+    it('should include doseNumber in response', async () => {
+      const updatedInjection = { ...mockInjection, doseNumber: 2 }
+      mockUpdate.mockResolvedValue(updatedInjection)
+
+      const request = createPatchRequest({ userId: 'user123', doseNumber: 2 })
+      const response = await PATCH(request, createParams('injection123'))
+      const data = await response.json()
+
+      expect(response.status).toBe(200)
+      expect(data.doseNumber).toBe(2)
+    })
+
+    it('should return 400 for invalid doseNumber (0)', async () => {
+      const request = createPatchRequest({ userId: 'user123', doseNumber: 0 })
+      const response = await PATCH(request, createParams('injection123'))
+
+      expect(response.status).toBe(400)
+      expect(mockUpdate).not.toHaveBeenCalled()
+    })
+
+    it('should return 400 for invalid doseNumber (5)', async () => {
+      const request = createPatchRequest({ userId: 'user123', doseNumber: 5 })
+      const response = await PATCH(request, createParams('injection123'))
+
+      expect(response.status).toBe(400)
+      expect(mockUpdate).not.toHaveBeenCalled()
+    })
+
+    it('should allow updating both doseNumber and site together', async () => {
+      const updatedInjection = { ...mockInjection, site: 'THIGH_LEFT', doseNumber: 4 }
+      mockUpdate.mockResolvedValue(updatedInjection)
+
+      const request = createPatchRequest({ userId: 'user123', site: 'THIGH_LEFT', doseNumber: 4 })
+      const response = await PATCH(request, createParams('injection123'))
+      const data = await response.json()
+
+      expect(response.status).toBe(200)
+      expect(data.site).toBe('THIGH_LEFT')
+      expect(data.doseNumber).toBe(4)
+      expect(mockUpdate).toHaveBeenCalledWith({
+        where: { id: 'injection123' },
+        data: { site: 'THIGH_LEFT', doseNumber: 4 },
+      })
+    })
   })
 })
 

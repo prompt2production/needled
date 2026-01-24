@@ -58,7 +58,7 @@
         "Response includes doseNumber field",
         "Invalid doseNumber values return 400 error"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DOSE-006",
