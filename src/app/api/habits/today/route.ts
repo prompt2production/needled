@@ -54,20 +54,39 @@ export async function PATCH(request: NextRequest) {
     const body = await request.json()
     const validated = toggleHabitSchema.parse(body)
 
-    const today = new Date()
-    const todayString = getDateString(today)
+    // Use provided date or default to today
+    const todayString = getDateString(new Date())
+    const targetDate = validated.date || todayString
+
+    // Only validate if a specific date was provided (not defaulting to today)
+    if (validated.date) {
+      const targetDateObj = new Date(targetDate)
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      targetDateObj.setHours(0, 0, 0, 0)
+
+      if (targetDateObj > today) {
+        return NextResponse.json({ error: 'Cannot log habits for future dates' }, { status: 400 })
+      }
+
+      const ninetyDaysAgo = new Date(today)
+      ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90)
+      if (targetDateObj < ninetyDaysAgo) {
+        return NextResponse.json({ error: 'Cannot log habits for dates more than 90 days ago' }, { status: 400 })
+      }
+    }
 
     // Upsert: create if doesn't exist, update if does
     const habit = await prisma.dailyHabit.upsert({
       where: {
         userId_date: {
           userId: validated.userId,
-          date: new Date(todayString),
+          date: new Date(targetDate),
         },
       },
       create: {
         userId: validated.userId,
-        date: new Date(todayString),
+        date: new Date(targetDate),
         water: validated.habit === 'water' ? validated.value : false,
         nutrition: validated.habit === 'nutrition' ? validated.value : false,
         exercise: validated.habit === 'exercise' ? validated.value : false,

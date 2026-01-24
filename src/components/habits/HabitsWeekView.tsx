@@ -50,14 +50,14 @@ export function HabitsWeekView({ userId }: HabitsWeekViewProps) {
     fetchHabits()
   }, [fetchHabits])
 
-  const handleToggle = async (habit: HabitType, value: boolean) => {
+  const handleToggle = async (habit: HabitType, value: boolean, date: string) => {
     setToggling(habit)
 
     try {
       const response = await fetch('/api/habits/today', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, habit, value }),
+        body: JSON.stringify({ userId, habit, value, date }),
       })
 
       if (!response.ok) throw new Error('Failed to toggle habit')
@@ -128,7 +128,7 @@ export function HabitsWeekView({ userId }: HabitsWeekViewProps) {
         icon={Droplets}
         weekData={getWeekData('water')}
         today={today}
-        onTodayToggle={handleToggle}
+        onToggle={handleToggle}
       />
       <HabitWeekGrid
         habit="nutrition"
@@ -136,7 +136,7 @@ export function HabitsWeekView({ userId }: HabitsWeekViewProps) {
         icon={Utensils}
         weekData={getWeekData('nutrition')}
         today={today}
-        onTodayToggle={handleToggle}
+        onToggle={handleToggle}
       />
       <HabitWeekGrid
         habit="exercise"
@@ -144,7 +144,7 @@ export function HabitsWeekView({ userId }: HabitsWeekViewProps) {
         icon={Dumbbell}
         weekData={getWeekData('exercise')}
         today={today}
-        onTodayToggle={handleToggle}
+        onToggle={handleToggle}
       />
     </div>
   )

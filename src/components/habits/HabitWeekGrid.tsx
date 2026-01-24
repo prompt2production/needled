@@ -16,7 +16,7 @@ interface HabitWeekGridProps {
   icon: LucideIcon
   weekData: WeekData[]
   today: string
-  onTodayToggle: (habit: HabitType, value: boolean) => void
+  onToggle: (habit: HabitType, value: boolean, date: string) => void
 }
 
 const DAY_LABELS = ['M', 'T', 'W', 'T', 'F', 'S', 'S']
@@ -27,7 +27,7 @@ export function HabitWeekGrid({
   icon: Icon,
   weekData,
   today,
-  onTodayToggle,
+  onToggle,
 }: HabitWeekGridProps) {
   // Create a map for quick lookup
   const completionMap = new Map<string, boolean>()
@@ -60,7 +60,8 @@ export function HabitWeekGrid({
         {weekData.map((data, index) => {
           const isCompleted = completionMap.get(data.date) ?? false
           const state = getDayState(data.date, isCompleted)
-          const isTodayDate = data.date === today
+          const date = new Date(data.date)
+          const canToggle = !isFuture(date) // Can toggle today and past days
 
           return (
             <HabitIndicator
@@ -68,8 +69,8 @@ export function HabitWeekGrid({
               state={state}
               label={DAY_LABELS[index]}
               onClick={
-                isTodayDate
-                  ? () => onTodayToggle(habit, !isCompleted)
+                canToggle
+                  ? () => onToggle(habit, !isCompleted, data.date)
                   : undefined
               }
             />
