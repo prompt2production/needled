@@ -34,3 +34,9 @@ Completed: 2026-01-24T10:32:00Z
 Files changed: package.json, package-lock.json, src/lib/email.ts
 Notes: Installed @sendgrid/mail package. Created sendEmail utility with error handling that returns boolean success indicator.
 ---
+---
+Story: NOTIF-007 Create injection reminder email template
+Completed: 2026-01-24T10:35:00Z
+Files changed: src/lib/email-templates/injection-reminder.ts
+Notes: Created dark-themed HTML email template with lime CTA button, unsubscribe link, and subject line helper.
+---

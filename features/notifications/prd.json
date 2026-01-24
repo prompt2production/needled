@@ -91,7 +91,7 @@
         "Includes unsubscribe link placeholder",
         "Subject line includes medication name"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NOTIF-008",
