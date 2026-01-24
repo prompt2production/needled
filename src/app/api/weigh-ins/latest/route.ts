@@ -49,7 +49,10 @@ export async function GET(request: NextRequest) {
       },
     })
 
-    const canWeighIn = !thisWeekWeighIn
+    // User can always weigh in (no restrictions)
+    const canWeighIn = true
+    // Track whether user has already logged this week
+    const hasWeighedThisWeek = !!thisWeekWeighIn
 
     // No weigh-in history
     if (recentWeighIns.length === 0) {
@@ -58,6 +61,7 @@ export async function GET(request: NextRequest) {
         weekChange: null,
         totalChange: null,
         canWeighIn,
+        hasWeighedThisWeek,
       })
     }
 
@@ -79,6 +83,7 @@ export async function GET(request: NextRequest) {
       weekChange,
       totalChange,
       canWeighIn,
+      hasWeighedThisWeek,
     })
   } catch (error) {
     console.error('Failed to fetch latest weigh-in:', error)

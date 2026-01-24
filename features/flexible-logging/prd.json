@@ -52,7 +52,7 @@
         "canWeighIn is always true (no restrictions)",
         "Unit test verifies hasWeighedThisWeek behavior"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FLEX-005",

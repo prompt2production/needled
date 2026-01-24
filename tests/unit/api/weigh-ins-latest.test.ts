@@ -86,9 +86,10 @@ describe('GET /api/weigh-ins/latest', () => {
     expect(data.weekChange).toBe(-2) // 85 - 87
     expect(data.totalChange).toBe(-5) // 85 - 90
     expect(data.canWeighIn).toBe(true)
+    expect(data.hasWeighedThisWeek).toBe(false) // No weigh-in this week by default
   })
 
-  it('should return canWeighIn false if weigh-in exists this week', async () => {
+  it('should return canWeighIn true and hasWeighedThisWeek true when weigh-in exists this week', async () => {
     mockWeighInFindFirst.mockResolvedValue(mockWeighIns[0])
 
     const request = createGetRequest({ userId: 'user123' })
@@ -96,7 +97,20 @@ describe('GET /api/weigh-ins/latest', () => {
     const data = await response.json()
 
     expect(response.status).toBe(200)
-    expect(data.canWeighIn).toBe(false)
+    expect(data.canWeighIn).toBe(true) // Always true now
+    expect(data.hasWeighedThisWeek).toBe(true)
+  })
+
+  it('should return hasWeighedThisWeek false when no weigh-in this week', async () => {
+    mockWeighInFindFirst.mockResolvedValue(null)
+
+    const request = createGetRequest({ userId: 'user123' })
+    const response = await GET(request)
+    const data = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(data.canWeighIn).toBe(true)
+    expect(data.hasWeighedThisWeek).toBe(false)
   })
 
   it('should return null for weighIn and weekChange when no history', async () => {
@@ -111,6 +125,7 @@ describe('GET /api/weigh-ins/latest', () => {
     expect(data.weekChange).toBeNull()
     expect(data.totalChange).toBeNull()
     expect(data.canWeighIn).toBe(true)
+    expect(data.hasWeighedThisWeek).toBe(false)
   })
 
   it('should return null weekChange when only one weigh-in exists', async () => {

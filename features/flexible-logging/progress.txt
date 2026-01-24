@@ -16,3 +16,9 @@ Completed: 2026-01-24T06:23:00Z
 Files changed: src/lib/validations/weigh-in.ts, src/app/api/weigh-ins/route.ts, tests/unit/validations/weigh-in.test.ts, tests/unit/api/weigh-ins.test.ts
 Notes: Added optional date field to weigh-in schema using logDateSchema. Removed same-week restriction (409 conflict). Multiple weigh-ins per week now allowed.
 ---
+---
+Story: FLEX-004 Add hasWeighedThisWeek to weigh-in latest API
+Completed: 2026-01-24T06:25:00Z
+Files changed: src/app/api/weigh-ins/latest/route.ts, tests/unit/api/weigh-ins-latest.test.ts
+Notes: Added hasWeighedThisWeek boolean to response. canWeighIn is now always true. hasWeighedThisWeek indicates whether user has logged a weigh-in in current week.
+---
