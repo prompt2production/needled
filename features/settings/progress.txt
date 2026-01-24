@@ -58,3 +58,9 @@ Completed: 2026-01-24T01:02:00Z
 Files changed: src/components/settings/EmailUpdateForm.tsx
 Notes: Implemented email update form with react-hook-form. Shows specific 409 error for email in use. Resets form after successful update.
 ---
+---
+Story: SETTINGS-011 Create PasswordChangeForm component
+Completed: 2026-01-24T01:03:00Z
+Files changed: src/components/settings/PasswordChangeForm.tsx, src/components/ui/collapsible.tsx
+Notes: Implemented collapsible password change form. Uses react-hook-form with passwordUpdateSchema. Clears form and closes collapsible on success. Installed shadcn collapsible component.
+---
