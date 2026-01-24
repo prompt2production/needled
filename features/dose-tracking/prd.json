@@ -80,7 +80,7 @@
         "GET /api/injections response includes doseNumber for each injection",
         "Existing injections without doseNumber show default value of 1"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DOSE-008",

@@ -34,3 +34,9 @@ Completed: 2026-01-24T11:00:00Z
 Files changed: src/app/api/injections/status/route.ts, tests/unit/api/injections-status.test.ts
 Notes: Added currentDose, nextDose, dosesRemaining to status response. Updated InjectionStatusResponse interface and added doseNumber to lastInjection. Added 9 new tests for dose tracking fields.
 ---
+---
+Story: DOSE-007 Update GET /api/injections to include doseNumber
+Completed: 2026-01-24T11:02:00Z
+Files changed: tests/unit/api/injections.test.ts
+Notes: Prisma already returns doseNumber field with default of 1. Added 2 tests to verify doseNumber is included in GET response.
+---

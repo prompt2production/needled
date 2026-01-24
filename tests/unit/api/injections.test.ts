@@ -327,6 +327,7 @@ describe('GET /api/injections', () => {
       id: 'injection1',
       userId: 'user123',
       site: 'ABDOMEN_LEFT',
+      doseNumber: 2,
       notes: null,
       date: new Date('2025-01-20'),
       createdAt: new Date('2025-01-20'),
@@ -335,6 +336,7 @@ describe('GET /api/injections', () => {
       id: 'injection2',
       userId: 'user123',
       site: 'ABDOMEN_RIGHT',
+      doseNumber: 1,
       notes: 'Second injection',
       date: new Date('2025-01-13'),
       createdAt: new Date('2025-01-13'),
@@ -426,5 +428,38 @@ describe('GET /api/injections', () => {
 
     expect(response.status).toBe(500)
     expect(data.error).toBe('Internal server error')
+  })
+
+  describe('doseNumber in response', () => {
+    it('should include doseNumber for each injection', async () => {
+      const request = createGetRequest({ userId: 'user123' })
+      const response = await GET(request)
+      const data = await response.json()
+
+      expect(response.status).toBe(200)
+      expect(data[0].doseNumber).toBe(2)
+      expect(data[1].doseNumber).toBe(1)
+    })
+
+    it('should show default doseNumber of 1 for existing injections without doseNumber', async () => {
+      // Simulating old injection without doseNumber - Prisma default is 1
+      const oldInjection = {
+        id: 'old-injection',
+        userId: 'user123',
+        site: 'THIGH_LEFT',
+        doseNumber: 1, // Default value from Prisma schema
+        notes: null,
+        date: new Date('2025-01-01'),
+        createdAt: new Date('2025-01-01'),
+      }
+      mockFindMany.mockResolvedValue([oldInjection] as any)
+
+      const request = createGetRequest({ userId: 'user123' })
+      const response = await GET(request)
+      const data = await response.json()
+
+      expect(response.status).toBe(200)
+      expect(data[0].doseNumber).toBe(1)
+    })
   })
 })
