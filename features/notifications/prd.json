@@ -169,7 +169,7 @@
         "Contains crons array with entry for /api/cron/notifications",
         "Schedule is '0 * * * *' (top of every hour)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NOTIF-014",

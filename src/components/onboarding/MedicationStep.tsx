@@ -57,7 +57,7 @@ export function MedicationStep({
 
       {/* Medication selection */}
       <div className="space-y-4">
-        <label className="text-sm text-muted-foreground">
+        <label className="text-sm text-muted-foreground mb-2 block">
           Which medication are you taking?
         </label>
         <div className="grid grid-cols-2 gap-2">
