@@ -586,7 +586,7 @@ A feature is complete when:
 
 **Project:** Needled - Weight Loss Journey Companion
 **Design:** Complete (desktop-first)
-**Features:** All planned features complete
+**Features:** Complete
 **Current Feature:** None
 
 ### Completed Features
@@ -600,6 +600,7 @@ A feature is complete when:
 - **login-session** (23 stories) — Email/password authentication with session management and route protection
 - **notifications** (23 stories) — Email notifications for injection, weigh-in, and habit reminders via SendGrid
 - **settings** (17 stories) — Profile editing, email/password changes, data export, account deletion with E2E tests
+- **flexible-logging** (21 stories) — Date selection for weigh-ins/injections, edit/delete entries, multiple entries per week
 
 ### Next Step
 All planned features complete!
