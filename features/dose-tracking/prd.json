@@ -154,7 +154,7 @@
         "When on dose 4, shows 'Last dose - time to reorder' message",
         "Follows DESIGN_SYSTEM.md card patterns"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DOSE-014",

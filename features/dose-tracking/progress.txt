@@ -70,3 +70,9 @@ Completed: 2026-01-24T11:11:00Z
 Files changed: src/components/injection/InjectionHistory.tsx
 Notes: Updated history item display to show 'Dose X - Site Label' format. Visible without expanding/hovering.
 ---
+---
+Story: DOSE-013 Create DosesRemainingCard component
+Completed: 2026-01-24T11:13:00Z
+Files changed: src/components/injection/DosesRemainingCard.tsx
+Notes: Created component with 4 circular indicators for dose tracking. Shows filled lime circles for used doses, empty circles for remaining. Displays 'Last dose - time to reorder' warning on dose 4.
+---
