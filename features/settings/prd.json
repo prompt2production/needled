@@ -56,7 +56,7 @@
         "Returns success response",
         "Unit test verifies email update and uniqueness check"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SETTINGS-005",

@@ -16,3 +16,9 @@ Completed: 2026-01-24T00:53:00Z
 Files changed: src/app/api/settings/profile/route.ts, tests/unit/api/settings-profile.test.ts
 Notes: Created authenticated endpoint to update user profile (name, goalWeight, medication, injectionDay). 10 unit tests covering validation and updates.
 ---
+---
+Story: SETTINGS-004 Create PUT /api/settings/email endpoint
+Completed: 2026-01-24T00:54:00Z
+Files changed: src/app/api/settings/email/route.ts, tests/unit/api/settings-email.test.ts
+Notes: Created authenticated endpoint to update email with uniqueness check. Returns 409 if email in use. 9 unit tests.
+---
