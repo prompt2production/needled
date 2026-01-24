@@ -587,7 +587,7 @@ A feature is complete when:
 **Project:** Needled - Weight Loss Journey Companion
 **Design:** Complete (desktop-first)
 **Features:** Planned (8 features across 4 phases)
-**Current Feature:** settings (17 stories)
+**Current Feature:** None
 
 ### Completed Features
 - **user-onboarding** (14 stories) — User profile creation with name, weight, goal, medication, injection day
@@ -598,6 +598,7 @@ A feature is complete when:
 - **dashboard** (14 stories) — Home screen with weight progress ring, journey stats, integrated with dashboard API
 - **progress-calendar** (14 stories) — Calendar view showing habit completion patterns, weigh-in history, and injection data
 - **login-session** (23 stories) — Email/password authentication with session management and route protection
+- **notifications** (23 stories) — Email notifications for injection, weigh-in, and habit reminders via SendGrid
 
 ### Next Step
-Run Ralph to implement settings feature
+Next feature: settings - To continue, run: Plan feature: settings
