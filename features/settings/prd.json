@@ -26,7 +26,7 @@
         "Does NOT return passwordHash",
         "Unit test verifies endpoint returns correct data shape"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SETTINGS-003",

@@ -4,3 +4,9 @@ Completed: 2026-01-24T00:50:00Z
 Files changed: src/lib/validations/settings.ts, tests/unit/settings-validations.test.ts
 Notes: Created 4 validation schemas (profileUpdateSchema, emailUpdateSchema, passwordUpdateSchema, accountDeleteSchema) with 43 unit tests all passing.
 ---
+---
+Story: SETTINGS-002 Create GET /api/settings endpoint
+Completed: 2026-01-24T00:52:00Z
+Files changed: src/app/api/settings/route.ts, tests/unit/api/settings.test.ts
+Notes: Created authenticated endpoint returning user settings without passwordHash. 7 unit tests covering auth, data shape, and error handling.
+---
