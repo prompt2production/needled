@@ -95,7 +95,7 @@
         "Dates older than 90 days are disabled",
         "Selected date is included in form submission"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FLEX-008",
@@ -108,7 +108,7 @@
         "Message uses muted styling (not blocking or alarming)",
         "Message does not prevent form submission"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FLEX-009",

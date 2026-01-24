@@ -34,3 +34,15 @@ Completed: 2026-01-24T06:27:00Z
 Files changed: src/app/api/weigh-ins/[id]/route.ts, tests/unit/api/weigh-ins-id.test.ts
 Notes: Created DELETE endpoint with ownership validation. Returns 404 for not found or wrong user, 204 No Content on successful deletion.
 ---
+---
+Story: FLEX-007 Add date picker to weigh-in dialog
+Completed: 2026-01-24T06:30:00Z
+Files changed: src/components/weigh-in/WeighInInput.tsx, src/components/weigh-in/WeighInCard.tsx, src/components/weigh-in/WeighInCardConnected.tsx, src/components/ui/calendar.tsx, src/components/ui/popover.tsx
+Notes: Added shadcn Calendar and Popover components. Added date picker above weight input, defaults to today, disables future dates and dates older than 90 days. Form now submits date alongside weight.
+---
+---
+Story: FLEX-008 Show encouragement message for multiple weigh-ins
+Completed: 2026-01-24T06:30:00Z
+Files changed: src/components/weigh-in/WeighInInput.tsx, src/components/weigh-in/WeighInCardConnected.tsx
+Notes: Added hasWeighedThisWeek prop to WeighInInput. When true, displays muted info message about multiple entries being fine but weekly tracking working best.
+---

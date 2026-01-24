@@ -14,12 +14,13 @@ interface WeighInData {
 interface WeighInCardProps {
   canWeighIn: boolean
   weightUnit: 'kg' | 'lbs'
-  onSubmit: (weight: number) => Promise<void>
+  onSubmit: (weight: number, date: string) => Promise<void>
   isLoading?: boolean
   weighIn?: WeighInData | null
   weekChange?: number | null
   startWeight?: number
   isFirstTime?: boolean
+  hasWeighedThisWeek?: boolean
 }
 
 export function WeighInCard({
@@ -31,6 +32,7 @@ export function WeighInCard({
   weekChange,
   startWeight,
   isFirstTime = false,
+  hasWeighedThisWeek = false,
 }: WeighInCardProps) {
   const [drawerOpen, setDrawerOpen] = useState(false)
 
@@ -118,6 +120,7 @@ export function WeighInCard({
           onSubmit={onSubmit}
           weightUnit={weightUnit}
           isLoading={isLoading}
+          hasWeighedThisWeek={hasWeighedThisWeek}
         />
       </>
     )
@@ -154,6 +157,7 @@ export function WeighInCard({
         onSubmit={onSubmit}
         weightUnit={weightUnit}
         isLoading={isLoading}
+        hasWeighedThisWeek={hasWeighedThisWeek}
       />
     </>
   )

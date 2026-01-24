@@ -13,6 +13,7 @@ interface LatestWeighInResponse {
   weekChange: number | null
   totalChange: number | null
   canWeighIn: boolean
+  hasWeighedThisWeek: boolean
 }
 
 interface WeighInCardConnectedProps {
@@ -56,14 +57,14 @@ export function WeighInCardConnected({
     fetchLatestWeighIn()
   }, [fetchLatestWeighIn])
 
-  const handleSubmit = async (weight: number) => {
+  const handleSubmit = async (weight: number, date: string) => {
     setIsSubmitting(true)
 
     try {
       const response = await fetch('/api/weigh-ins', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, weight }),
+        body: JSON.stringify({ userId, weight, date }),
       })
 
       if (!response.ok) {
@@ -140,6 +141,7 @@ export function WeighInCardConnected({
       weekChange={data?.weekChange}
       startWeight={startWeight}
       isFirstTime={isFirstTime}
+      hasWeighedThisWeek={data?.hasWeighedThisWeek ?? false}
     />
   )
 }
