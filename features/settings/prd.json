@@ -208,7 +208,7 @@
         "Settings link uses Settings icon from lucide-react",
         "Shows active state when on /settings route"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SETTINGS-015",
