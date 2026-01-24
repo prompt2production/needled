@@ -51,3 +51,39 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
+
+export async function DELETE(request: NextRequest, { params }: RouteParams) {
+  try {
+    const { id } = await params
+    const { searchParams } = new URL(request.url)
+    const userId = searchParams.get('userId')
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'userId is required' },
+        { status: 400 }
+      )
+    }
+
+    // Check if injection exists and belongs to user
+    const existing = await prisma.injection.findUnique({
+      where: { id },
+    })
+
+    if (!existing || existing.userId !== userId) {
+      return NextResponse.json(
+        { error: 'Injection not found' },
+        { status: 404 }
+      )
+    }
+
+    await prisma.injection.delete({
+      where: { id },
+    })
+
+    return new NextResponse(null, { status: 204 })
+  } catch (error) {
+    console.error('Failed to delete injection:', error)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  }
+}

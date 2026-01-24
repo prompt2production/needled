@@ -179,7 +179,7 @@
         "Entry is permanently removed from database",
         "Unit test verifies deletion and ownership validation"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FLEX-014",

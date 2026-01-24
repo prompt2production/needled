@@ -70,3 +70,9 @@ Completed: 2026-01-24T06:50:00Z
 Files changed: src/app/api/injections/[id]/route.ts, tests/unit/api/injections-id.test.ts
 Notes: Created PATCH endpoint for injections with ownership validation. Accepts date, site, and notes. Returns 404 for not found or wrong user, 400 for invalid data, 200 with updated entry on success.
 ---
+---
+Story: FLEX-013 Create DELETE endpoint for injections
+Completed: 2026-01-24T06:55:00Z
+Files changed: src/app/api/injections/[id]/route.ts, tests/unit/api/injections-id.test.ts
+Notes: Added DELETE handler to injection [id] route. Returns 400 if userId not provided, 404 if not found or wrong user, 204 on successful deletion.
+---

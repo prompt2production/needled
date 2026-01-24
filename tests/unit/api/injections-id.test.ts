@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { PATCH } from '@/app/api/injections/[id]/route'
+import { PATCH, DELETE } from '@/app/api/injections/[id]/route'
 import { NextRequest } from 'next/server'
 
 vi.mock('@/lib/prisma', () => ({
@@ -16,6 +16,7 @@ import { prisma } from '@/lib/prisma'
 
 const mockFindUnique = vi.mocked(prisma.injection.findUnique)
 const mockUpdate = vi.mocked(prisma.injection.update)
+const mockDelete = vi.mocked(prisma.injection.delete)
 
 function createPatchRequest(body: unknown): NextRequest {
   return new NextRequest('http://localhost:3000/api/injections/injection123', {
@@ -147,6 +148,88 @@ describe('PATCH /api/injections/[id]', () => {
 
     const request = createPatchRequest({ userId: 'user123', site: 'ABDOMEN_RIGHT' })
     const response = await PATCH(request, createParams('injection123'))
+    const data = await response.json()
+
+    expect(response.status).toBe(500)
+    expect(data.error).toBe('Internal server error')
+  })
+})
+
+function createDeleteRequest(userId: string): NextRequest {
+  return new NextRequest(
+    `http://localhost:3000/api/injections/injection123?userId=${userId}`,
+    { method: 'DELETE' }
+  )
+}
+
+describe('DELETE /api/injections/[id]', () => {
+  const mockInjection = {
+    id: 'injection123',
+    userId: 'user123',
+    site: 'ABDOMEN_LEFT',
+    notes: null,
+    date: new Date('2026-01-20'),
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockFindUnique.mockResolvedValue(mockInjection)
+  })
+
+  it('should return 204 on successful deletion', async () => {
+    mockDelete.mockResolvedValue(mockInjection)
+
+    const request = createDeleteRequest('user123')
+    const response = await DELETE(request, createParams('injection123'))
+
+    expect(response.status).toBe(204)
+    expect(mockDelete).toHaveBeenCalledWith({
+      where: { id: 'injection123' },
+    })
+  })
+
+  it('should return 400 if userId not provided', async () => {
+    const request = new NextRequest(
+      'http://localhost:3000/api/injections/injection123',
+      { method: 'DELETE' }
+    )
+    const response = await DELETE(request, createParams('injection123'))
+    const data = await response.json()
+
+    expect(response.status).toBe(400)
+    expect(data.error).toBe('userId is required')
+    expect(mockDelete).not.toHaveBeenCalled()
+  })
+
+  it('should return 404 if injection not found', async () => {
+    mockFindUnique.mockResolvedValue(null)
+
+    const request = createDeleteRequest('user123')
+    const response = await DELETE(request, createParams('nonexistent'))
+    const data = await response.json()
+
+    expect(response.status).toBe(404)
+    expect(data.error).toBe('Injection not found')
+    expect(mockDelete).not.toHaveBeenCalled()
+  })
+
+  it('should return 404 if injection belongs to different user', async () => {
+    const request = createDeleteRequest('different-user')
+    const response = await DELETE(request, createParams('injection123'))
+    const data = await response.json()
+
+    expect(response.status).toBe(404)
+    expect(data.error).toBe('Injection not found')
+    expect(mockDelete).not.toHaveBeenCalled()
+  })
+
+  it('should return 500 on database error', async () => {
+    mockDelete.mockRejectedValue(new Error('Database error'))
+
+    const request = createDeleteRequest('user123')
+    const response = await DELETE(request, createParams('injection123'))
     const data = await response.json()
 
     expect(response.status).toBe(500)
