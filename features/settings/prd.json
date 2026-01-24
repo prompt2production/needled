@@ -102,7 +102,7 @@
         "Returns success response",
         "Unit test verifies account deletion"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SETTINGS-008",
