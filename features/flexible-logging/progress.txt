@@ -82,3 +82,9 @@ Completed: 2026-01-24T07:00:00Z
 Files changed: src/components/injection/InjectionDialog.tsx, src/components/injection/InjectionCard.tsx, src/components/injection/InjectionCardConnected.tsx
 Notes: Added date picker to InjectionDialog above site selection. Uses Calendar and Popover components. Defaults to today, disables future dates and dates older than 90 days. Date is included in form submission.
 ---
+---
+Story: FLEX-015 Add edit functionality to injection history
+Completed: 2026-01-24T07:05:00Z
+Files changed: src/components/injection/InjectionEditDialog.tsx, src/components/injection/InjectionHistory.tsx
+Notes: Created InjectionEditDialog with date picker, site selector, and notes input. Pre-fills with existing values. Added edit button to InjectionHistory items (visible on hover). Calls PATCH endpoint and shows toast on success.
+---

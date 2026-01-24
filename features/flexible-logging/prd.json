@@ -206,7 +206,7 @@
         "Success updates the list and shows toast",
         "Error shows appropriate message"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FLEX-016",
