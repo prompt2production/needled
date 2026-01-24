@@ -10,3 +10,9 @@ Completed: 2026-01-24T10:53:00Z
 Files changed: src/lib/validations/injection.ts, tests/unit/validations/injection.test.ts
 Notes: Added doseNumberSchema and integrated it into both createInjectionSchema and updateInjectionSchema. Added comprehensive unit tests for valid (1-4) and invalid (0, 5, decimals, strings, negative) values.
 ---
+---
+Story: DOSE-003 Create dose calculation utility function
+Completed: 2026-01-24T10:54:00Z
+Files changed: src/lib/dose-tracking.ts, tests/unit/dose-tracking.test.ts
+Notes: Created getNextDoseNumber function that cycles 1→2→3→4→1 (new pen). Handles null for first injection.
+---

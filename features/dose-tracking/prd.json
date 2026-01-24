@@ -34,7 +34,7 @@
         "Returns 1 if lastDoseNumber is 4 (new pen)",
         "Unit tests cover all cases in tests/unit/dose-tracking.test.ts"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DOSE-004",
