@@ -166,7 +166,7 @@
         "Card receives currentDose and dosesRemaining from status data",
         "Layout still works on both desktop and mobile viewports"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DOSE-015",

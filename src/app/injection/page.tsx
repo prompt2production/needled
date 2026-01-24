@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react'
 import { InjectionCardConnected } from '@/components/injection/InjectionCardConnected'
 import { InjectionHistory } from '@/components/injection/InjectionHistory'
-import { SITE_ROTATION_ORDER, getSiteLabel } from '@/lib/injection-site'
-import type { InjectionSite } from '@/lib/validations/injection'
+import { DosesRemainingCard } from '@/components/injection/DosesRemainingCard'
 
 interface User {
   id: string
@@ -13,10 +12,9 @@ interface User {
   injectionDay: number
 }
 
-interface Injection {
-  id: string
-  site: string
-  date: string
+interface InjectionStatus {
+  currentDose: number | null
+  dosesRemaining: number
 }
 
 const DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
@@ -31,7 +29,7 @@ const MEDICATION_NAMES: Record<string, string> = {
 
 export default function InjectionPage() {
   const [user, setUser] = useState<User | null>(null)
-  const [recentInjections, setRecentInjections] = useState<Injection[]>([])
+  const [injectionStatus, setInjectionStatus] = useState<InjectionStatus | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -49,11 +47,14 @@ export default function InjectionPage() {
         const userData = await userResponse.json()
         setUser(userData)
 
-        // Fetch recent injections for site rotation summary
-        const injectionsResponse = await fetch(`/api/injections?userId=${userId}&limit=6`)
-        if (injectionsResponse.ok) {
-          const injectionsData = await injectionsResponse.json()
-          setRecentInjections(injectionsData)
+        // Fetch injection status for dose tracking
+        const statusResponse = await fetch(`/api/injections/status?userId=${userId}`)
+        if (statusResponse.ok) {
+          const statusData = await statusResponse.json()
+          setInjectionStatus({
+            currentDose: statusData.currentDose,
+            dosesRemaining: statusData.dosesRemaining,
+          })
         }
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -79,9 +80,6 @@ export default function InjectionPage() {
     )
   }
 
-  // Calculate which sites have been used recently
-  const recentSites = new Set(recentInjections.map(inj => inj.site))
-
   return (
     <main className="min-h-screen bg-background">
       <div className="px-6 py-6 max-w-5xl mx-auto">
@@ -99,34 +97,15 @@ export default function InjectionPage() {
             injectionDayName={DAY_NAMES[user.injectionDay]}
           />
 
-          {/* Site Rotation and History - side by side on desktop */}
+          {/* Doses Remaining and History - side by side on desktop */}
           <div className="grid gap-6 lg:grid-cols-2">
-            {/* Site Rotation Summary */}
-            <div className="bg-card rounded-xl border border-border p-4">
-              <h3 className="text-sm text-muted-foreground mb-3">Site Rotation</h3>
-              <div className="grid grid-cols-3 gap-2">
-                {SITE_ROTATION_ORDER.map((site) => {
-                  const isRecentlyUsed = recentSites.has(site)
-                  const label = getSiteLabel(site)
-
-                  return (
-                    <div
-                      key={site}
-                      className={`px-3 py-2 rounded-lg text-center text-sm ${
-                        isRecentlyUsed
-                          ? 'bg-lime/10 text-lime border border-lime/20'
-                          : 'bg-white/5 text-muted-foreground'
-                      }`}
-                    >
-                      {label}
-                    </div>
-                  )
-                })}
-              </div>
-              <p className="text-xs text-muted-foreground mt-3">
-                Highlighted sites were used in recent injections
-              </p>
-            </div>
+            {/* Doses Remaining Card */}
+            {injectionStatus && (
+              <DosesRemainingCard
+                currentDose={injectionStatus.currentDose}
+                dosesRemaining={injectionStatus.dosesRemaining}
+              />
+            )}
 
             {/* History */}
             <div>
