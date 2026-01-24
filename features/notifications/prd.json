@@ -77,7 +77,7 @@
         "Function uses SENDGRID_API_KEY and SENDGRID_FROM_EMAIL env vars",
         "Function handles errors gracefully and logs them"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NOTIF-007",

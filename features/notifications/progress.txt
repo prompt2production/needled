@@ -28,3 +28,9 @@ Completed: 2026-01-24T10:28:00Z
 Files changed: tests/unit/notifications-preferences-api.test.ts
 Notes: Created 8 unit tests covering GET/PUT endpoints, auth checks, validation, and upsert behavior.
 ---
+---
+Story: NOTIF-006 Install SendGrid package and create email client
+Completed: 2026-01-24T10:32:00Z
+Files changed: package.json, package-lock.json, src/lib/email.ts
+Notes: Installed @sendgrid/mail package. Created sendEmail utility with error handling that returns boolean success indicator.
+---
