@@ -40,3 +40,9 @@ Completed: 2026-01-24T10:35:00Z
 Files changed: src/lib/email-templates/injection-reminder.ts
 Notes: Created dark-themed HTML email template with lime CTA button, unsubscribe link, and subject line helper.
 ---
+---
+Story: NOTIF-008 Create weigh-in reminder email template
+Completed: 2026-01-24T10:38:00Z
+Files changed: src/lib/email-templates/weigh-in-reminder.ts
+Notes: Created dark-themed HTML email template following same pattern as injection template.
+---

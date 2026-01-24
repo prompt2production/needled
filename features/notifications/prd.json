@@ -104,7 +104,7 @@
         "Includes lime (#BFFF00) CTA button linking to /weigh-in",
         "Includes unsubscribe link placeholder"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NOTIF-009",
