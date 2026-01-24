@@ -94,3 +94,33 @@ Completed: 2026-01-24T07:10:00Z
 Files changed: src/components/injection/InjectionHistory.tsx
 Notes: Added delete button with AlertDialog confirmation showing date and site. Calls DELETE /api/injections/[id] endpoint. Shows toast on success, refreshes list. Cancel closes dialog without action.
 ---
+---
+Story: FLEX-017 E2E test for weigh-in date selection
+Completed: 2026-01-24T08:30:00Z
+Files changed: tests/e2e/flexible-logging.spec.ts
+Notes: Created E2E test file with weigh-in date selection test. Uses completeOnboardingFlow to create authenticated user. Verifies date picker is visible in dialog and weight can be logged.
+---
+---
+Story: FLEX-018 E2E test for weigh-in edit and delete
+Completed: 2026-01-24T08:30:00Z
+Files changed: tests/e2e/flexible-logging.spec.ts
+Notes: Added tests for editing and deleting weigh-in entries. Uses page reload after logging to refresh history since the connected component doesn't auto-refresh the history list.
+---
+---
+Story: FLEX-019 E2E test for injection date selection
+Completed: 2026-01-24T08:30:00Z
+Files changed: tests/e2e/flexible-logging.spec.ts
+Notes: Added test for injection date selection. Onboarding sets injection day to current day so Log Injection button is visible. Uses exact heading match to avoid "Injection Done" collision.
+---
+---
+Story: FLEX-020 E2E test for injection edit and delete
+Completed: 2026-01-24T08:30:00Z
+Files changed: tests/e2e/flexible-logging.spec.ts
+Notes: Added tests for editing and deleting injection entries. Uses scoped selectors to target history section (avoiding Site Rotation summary which also displays site labels).
+---
+---
+Story: FLEX-021 E2E test for multiple entries in same week
+Completed: 2026-01-24T08:30:00Z
+Files changed: tests/e2e/flexible-logging.spec.ts
+Notes: Added tests verifying multiple weigh-ins and injections can be logged in same week without 409 errors. Includes both UI and API-based tests.
+---

@@ -235,7 +235,7 @@
         "Test verifies entry appears in history with correct date",
         "npx playwright test flexible-logging passes"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FLEX-018",
@@ -250,7 +250,7 @@
         "Test verifies entry is removed from list",
         "npx playwright test flexible-logging passes"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FLEX-019",
@@ -263,7 +263,7 @@
         "Test verifies entry appears in history with correct date",
         "npx playwright test flexible-logging passes"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FLEX-020",
@@ -278,7 +278,7 @@
         "Test verifies entry is removed from list",
         "npx playwright test flexible-logging passes"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FLEX-021",
@@ -293,7 +293,7 @@
         "Test verifies both entries appear in history (no 409 error)",
         "npx playwright test flexible-logging passes"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }
