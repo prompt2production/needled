@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
-import { createInjectionSchema, injectionSiteEnum, updateInjectionSchema } from '@/lib/validations/injection'
+import { createInjectionSchema, doseNumberSchema, injectionSiteEnum, updateInjectionSchema } from '@/lib/validations/injection'
 
 describe('createInjectionSchema', () => {
   const validData = {
@@ -111,6 +111,58 @@ describe('createInjectionSchema', () => {
     })
   })
 
+  describe('doseNumber validation', () => {
+    it('should accept doseNumber 1', () => {
+      const result = createInjectionSchema.safeParse({ ...validData, doseNumber: 1 })
+      expect(result.success).toBe(true)
+    })
+
+    it('should accept doseNumber 2', () => {
+      const result = createInjectionSchema.safeParse({ ...validData, doseNumber: 2 })
+      expect(result.success).toBe(true)
+    })
+
+    it('should accept doseNumber 3', () => {
+      const result = createInjectionSchema.safeParse({ ...validData, doseNumber: 3 })
+      expect(result.success).toBe(true)
+    })
+
+    it('should accept doseNumber 4', () => {
+      const result = createInjectionSchema.safeParse({ ...validData, doseNumber: 4 })
+      expect(result.success).toBe(true)
+    })
+
+    it('should accept missing doseNumber (optional)', () => {
+      const result = createInjectionSchema.safeParse(validData)
+      expect(result.success).toBe(true)
+    })
+
+    it('should reject doseNumber 0', () => {
+      const result = createInjectionSchema.safeParse({ ...validData, doseNumber: 0 })
+      expect(result.success).toBe(false)
+    })
+
+    it('should reject doseNumber 5', () => {
+      const result = createInjectionSchema.safeParse({ ...validData, doseNumber: 5 })
+      expect(result.success).toBe(false)
+    })
+
+    it('should reject decimal doseNumber', () => {
+      const result = createInjectionSchema.safeParse({ ...validData, doseNumber: 2.5 })
+      expect(result.success).toBe(false)
+    })
+
+    it('should reject string doseNumber', () => {
+      const result = createInjectionSchema.safeParse({ ...validData, doseNumber: '2' })
+      expect(result.success).toBe(false)
+    })
+
+    it('should reject negative doseNumber', () => {
+      const result = createInjectionSchema.safeParse({ ...validData, doseNumber: -1 })
+      expect(result.success).toBe(false)
+    })
+  })
+
   describe('date validation (optional field)', () => {
     it('should accept data without date (optional)', () => {
       const result = createInjectionSchema.safeParse(validData)
@@ -195,6 +247,57 @@ describe('updateInjectionSchema', () => {
       notes: 'Updated notes',
     })
     expect(result.success).toBe(true)
+  })
+
+  describe('doseNumber update', () => {
+    it('should accept valid doseNumber update (1-4)', () => {
+      const result = updateInjectionSchema.safeParse({
+        ...validData,
+        doseNumber: 3,
+      })
+      expect(result.success).toBe(true)
+    })
+
+    it('should reject invalid doseNumber update (0)', () => {
+      const result = updateInjectionSchema.safeParse({
+        ...validData,
+        doseNumber: 0,
+      })
+      expect(result.success).toBe(false)
+    })
+
+    it('should reject invalid doseNumber update (5)', () => {
+      const result = updateInjectionSchema.safeParse({
+        ...validData,
+        doseNumber: 5,
+      })
+      expect(result.success).toBe(false)
+    })
+
+    it('should reject decimal doseNumber update', () => {
+      const result = updateInjectionSchema.safeParse({
+        ...validData,
+        doseNumber: 1.5,
+      })
+      expect(result.success).toBe(false)
+    })
+  })
+})
+
+describe('doseNumberSchema', () => {
+  it('should accept valid dose numbers 1-4', () => {
+    expect(doseNumberSchema.safeParse(1).success).toBe(true)
+    expect(doseNumberSchema.safeParse(2).success).toBe(true)
+    expect(doseNumberSchema.safeParse(3).success).toBe(true)
+    expect(doseNumberSchema.safeParse(4).success).toBe(true)
+  })
+
+  it('should reject invalid dose numbers', () => {
+    expect(doseNumberSchema.safeParse(0).success).toBe(false)
+    expect(doseNumberSchema.safeParse(5).success).toBe(false)
+    expect(doseNumberSchema.safeParse(-1).success).toBe(false)
+    expect(doseNumberSchema.safeParse(2.5).success).toBe(false)
+    expect(doseNumberSchema.safeParse('2').success).toBe(false)
   })
 })
 

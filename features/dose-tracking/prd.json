@@ -21,7 +21,7 @@
         "src/lib/validations/injection.ts updateInjectionSchema includes doseNumber as optional z.number().int().min(1).max(4)",
         "Unit tests pass for doseNumber validation (valid: 1-4, invalid: 0, 5, decimals, strings)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DOSE-003",
