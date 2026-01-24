@@ -148,7 +148,7 @@
         "Shows specific error for 'email already in use' (409)",
         "Shows generic error for other failures"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SETTINGS-011",

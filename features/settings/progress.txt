@@ -52,3 +52,9 @@ Completed: 2026-01-24T01:01:00Z
 Files changed: src/components/settings/ProfileSettingsForm.tsx
 Notes: Implemented profile form with react-hook-form, zodResolver. Fields: Name, Goal Weight (with unit), Medication (select), Injection Day (select). Save button disabled when pristine/submitting.
 ---
+---
+Story: SETTINGS-010 Create EmailUpdateForm component
+Completed: 2026-01-24T01:02:00Z
+Files changed: src/components/settings/EmailUpdateForm.tsx
+Notes: Implemented email update form with react-hook-form. Shows specific 409 error for email in use. Resets form after successful update.
+---
