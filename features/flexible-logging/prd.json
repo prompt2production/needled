@@ -25,7 +25,7 @@
         "Schema accepts dates within 90 days",
         "Unit test at tests/unit/validations/log-date.test.ts passes"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FLEX-003",

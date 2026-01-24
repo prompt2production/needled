@@ -4,3 +4,9 @@ Completed: 2026-01-24T06:18:00Z
 Files changed: prisma/schema.prisma, prisma/migrations/20260124000001_add_updatedat_fields/migration.sql
 Notes: Added updatedAt DateTime @updatedAt to WeighIn and Injection models. Migration deployed successfully. Prisma client types already had the fields.
 ---
+---
+Story: FLEX-002 Create date validation schema
+Completed: 2026-01-24T06:20:00Z
+Files changed: src/lib/validations/log-date.ts, tests/unit/validations/log-date.test.ts
+Notes: Created logDateSchema that validates dates in YYYY-MM-DD format, rejects future dates and dates more than 90 days in the past.
+---
