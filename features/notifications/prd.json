@@ -251,7 +251,7 @@
         "Links to /settings",
         "Shows active state when on settings page"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NOTIF-020",

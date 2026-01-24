@@ -112,3 +112,9 @@ Completed: 2026-01-24T11:00:00Z
 Files changed: src/app/settings/page.tsx
 Notes: Created settings page with max-w-5xl layout. Fetches user email from /api/auth/session.
 ---
+---
+Story: NOTIF-019 Add Settings link to header navigation
+Completed: 2026-01-24T11:02:00Z
+Files changed: src/components/navigation/Header.tsx
+Notes: Added Settings to NAV_ITEMS array with Settings icon. Appears in both desktop nav and mobile menu.
+---
