@@ -10,3 +10,9 @@ Completed: 2026-01-24T10:18:00Z
 Files changed: src/lib/validations/notification-preferences.ts
 Notes: Created Zod schema with HH:mm time format validation regex. Exports both input schema and full schema with database fields.
 ---
+---
+Story: NOTIF-003 Create GET /api/notifications/preferences endpoint
+Completed: 2026-01-24T10:22:00Z
+Files changed: src/app/api/notifications/preferences/route.ts
+Notes: Uses getSessionToken and validateSession pattern from auth routes. Creates default preferences if none exist.
+---

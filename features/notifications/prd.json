@@ -37,7 +37,7 @@
         "GET creates and returns default preferences if none exist for user",
         "Default preferences: injectionReminder=true, weighInReminder=true, habitReminder=false, reminderTime='09:00', habitReminderTime='20:00', timezone='Europe/London'"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NOTIF-004",
