@@ -88,3 +88,21 @@ Completed: 2026-01-24T11:18:00Z
 Files changed: src/components/injection/InjectionCard.tsx
 Notes: Added 'Dose X of 4' display in done state using text-xs and text-muted-foreground/70 for subtle styling. Combined date and site on one line with middot separator.
 ---
+---
+Story: DOSE-016 Add E2E test for logging injection with dose
+Completed: 2026-01-24T11:25:00Z
+Files changed: tests/e2e/dose-tracking.spec.ts
+Notes: Created comprehensive E2E test file with 7 tests. Tests cover logging with default dose, selecting different dose, and verifying dose appears in history.
+---
+---
+Story: DOSE-017 Add E2E test for editing injection dose
+Completed: 2026-01-24T11:25:00Z
+Files changed: tests/e2e/dose-tracking.spec.ts
+Notes: Added test for editing dose number on existing injection, verifying updated dose appears in history.
+---
+---
+Story: DOSE-018 Add E2E test for doses remaining display
+Completed: 2026-01-24T11:25:00Z
+Files changed: tests/e2e/dose-tracking.spec.ts
+Notes: Added tests for DosesRemainingCard visibility, dose count updates after logging, and reorder message on dose 4.
+---

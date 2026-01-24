@@ -189,7 +189,7 @@
         "Tests that dose appears in history after logging",
         "All E2E tests pass with npx playwright test"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DOSE-017",
@@ -200,7 +200,7 @@
         "Tests that updated dose appears correctly in history",
         "All E2E tests pass"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DOSE-018",
@@ -212,7 +212,7 @@
         "Tests reorder message appears on dose 4",
         "All E2E tests pass"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }
