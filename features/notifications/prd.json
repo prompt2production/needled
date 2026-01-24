@@ -289,7 +289,7 @@
         "Shows loading state while sending",
         "Shows toast on success/failure"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NOTIF-023",

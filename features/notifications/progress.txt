@@ -124,3 +124,9 @@ Completed: 2026-01-24T11:05:00Z
 Files changed: src/app/api/notifications/test/route.ts
 Notes: Created POST endpoint with type validation. Adds [TEST] prefix to subject lines.
 ---
+---
+Story: NOTIF-022 Add test email button to NotificationSettings
+Completed: 2026-01-24T11:08:00Z
+Files changed: src/components/notifications/NotificationSettings.tsx
+Notes: Added Send test button to each notification toggle row with loading state and toast notifications.
+---

@@ -1,12 +1,13 @@
 'use client'
 
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { Loader2, Syringe, Scale, Activity } from 'lucide-react'
+import { Loader2, Syringe, Scale, Activity, Send } from 'lucide-react'
 import { Switch } from '@/components/ui/switch'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 
 interface NotificationPreferences {
@@ -45,6 +46,7 @@ export function NotificationSettings({ hasEmail }: NotificationSettingsProps) {
   const [preferences, setPreferences] = useState<NotificationPreferences | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
+  const [sendingTestEmail, setSendingTestEmail] = useState<'injection' | 'weigh-in' | 'habit' | null>(null)
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Fetch preferences on mount
@@ -112,6 +114,30 @@ export function NotificationSettings({ hasEmail }: NotificationSettingsProps) {
     }, 500)
   }, [preferences, savePreferences])
 
+  // Send test email
+  const sendTestEmail = useCallback(async (type: 'injection' | 'weigh-in' | 'habit') => {
+    setSendingTestEmail(type)
+    try {
+      const response = await fetch('/api/notifications/test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type }),
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to send test email')
+      }
+
+      toast.success('Test email sent! Check your inbox.')
+    } catch (error) {
+      console.error('Failed to send test email:', error)
+      toast.error(error instanceof Error ? error.message : 'Failed to send test email')
+    } finally {
+      setSendingTestEmail(null)
+    }
+  }, [])
+
   if (isLoading) {
     return (
       <Card className="border-border">
@@ -166,11 +192,27 @@ export function NotificationSettings({ hasEmail }: NotificationSettingsProps) {
                 <p className="text-sm text-muted-foreground">Get reminded on your injection day</p>
               </div>
             </div>
-            <Switch
-              checked={preferences.injectionReminder}
-              onCheckedChange={(checked) => updatePreference({ injectionReminder: checked })}
-              disabled={notificationsDisabled}
-            />
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => sendTestEmail('injection')}
+                disabled={notificationsDisabled || !preferences.injectionReminder || sendingTestEmail !== null}
+                className="text-xs"
+              >
+                {sendingTestEmail === 'injection' ? (
+                  <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                ) : (
+                  <Send className="h-3 w-3 mr-1" />
+                )}
+                Send test
+              </Button>
+              <Switch
+                checked={preferences.injectionReminder}
+                onCheckedChange={(checked) => updatePreference({ injectionReminder: checked })}
+                disabled={notificationsDisabled}
+              />
+            </div>
           </div>
 
           {/* Weigh-in Reminder */}
@@ -184,11 +226,27 @@ export function NotificationSettings({ hasEmail }: NotificationSettingsProps) {
                 <p className="text-sm text-muted-foreground">Get reminded to log your weekly weight</p>
               </div>
             </div>
-            <Switch
-              checked={preferences.weighInReminder}
-              onCheckedChange={(checked) => updatePreference({ weighInReminder: checked })}
-              disabled={notificationsDisabled}
-            />
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => sendTestEmail('weigh-in')}
+                disabled={notificationsDisabled || !preferences.weighInReminder || sendingTestEmail !== null}
+                className="text-xs"
+              >
+                {sendingTestEmail === 'weigh-in' ? (
+                  <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                ) : (
+                  <Send className="h-3 w-3 mr-1" />
+                )}
+                Send test
+              </Button>
+              <Switch
+                checked={preferences.weighInReminder}
+                onCheckedChange={(checked) => updatePreference({ weighInReminder: checked })}
+                disabled={notificationsDisabled}
+              />
+            </div>
           </div>
 
           {/* Habit Reminder */}
@@ -202,11 +260,27 @@ export function NotificationSettings({ hasEmail }: NotificationSettingsProps) {
                 <p className="text-sm text-muted-foreground">Get reminded to log your daily habits</p>
               </div>
             </div>
-            <Switch
-              checked={preferences.habitReminder}
-              onCheckedChange={(checked) => updatePreference({ habitReminder: checked })}
-              disabled={notificationsDisabled}
-            />
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => sendTestEmail('habit')}
+                disabled={notificationsDisabled || !preferences.habitReminder || sendingTestEmail !== null}
+                className="text-xs"
+              >
+                {sendingTestEmail === 'habit' ? (
+                  <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                ) : (
+                  <Send className="h-3 w-3 mr-1" />
+                )}
+                Send test
+              </Button>
+              <Switch
+                checked={preferences.habitReminder}
+                onCheckedChange={(checked) => updatePreference({ habitReminder: checked })}
+                disabled={notificationsDisabled}
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
