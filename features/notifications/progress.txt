@@ -4,3 +4,9 @@ Completed: 2026-01-24T10:15:00Z
 Files changed: prisma/schema.prisma
 Notes: Added NotificationPreference model with all required fields. Used prisma db push instead of migrate dev due to existing drift in dev database.
 ---
+---
+Story: NOTIF-002 Create notification preferences Zod validation schema
+Completed: 2026-01-24T10:18:00Z
+Files changed: src/lib/validations/notification-preferences.ts
+Notes: Created Zod schema with HH:mm time format validation regex. Exports both input schema and full schema with database fields.
+---

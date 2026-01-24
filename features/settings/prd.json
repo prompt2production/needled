@@ -1,0 +1,259 @@
+{
+  "feature": "Settings",
+  "stories": [
+    {
+      "id": "SETTINGS-001",
+      "title": "Create settings validation schemas",
+      "description": "Create Zod validation schemas for all settings-related operations",
+      "acceptance_criteria": [
+        "Create src/lib/validations/settings.ts with profileUpdateSchema (name, goalWeight, medication, injectionDay)",
+        "Create emailUpdateSchema (email required, valid email format)",
+        "Create passwordUpdateSchema (currentPassword, newPassword min 8 chars, confirmPassword)",
+        "Create accountDeleteSchema (password required)",
+        "Export all schemas and inferred types",
+        "Unit tests pass for all schemas in tests/unit/settings-validations.test.ts"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SETTINGS-002",
+      "title": "Create GET /api/settings endpoint",
+      "description": "API endpoint to fetch current user's settings data",
+      "acceptance_criteria": [
+        "Create src/app/api/settings/route.ts with GET handler",
+        "Requires authentication (returns 401 if no valid session)",
+        "Returns user profile: id, name, email, goalWeight, weightUnit, medication, injectionDay",
+        "Does NOT return passwordHash",
+        "Unit test verifies endpoint returns correct data shape"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SETTINGS-003",
+      "title": "Create PUT /api/settings/profile endpoint",
+      "description": "API endpoint to update user profile settings",
+      "acceptance_criteria": [
+        "Create src/app/api/settings/profile/route.ts with PUT handler",
+        "Requires authentication",
+        "Validates request body with profileUpdateSchema",
+        "Updates user name, goalWeight, medication, injectionDay in database",
+        "Returns updated user object (without passwordHash)",
+        "Returns 400 for validation errors",
+        "Unit test verifies profile update works correctly"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SETTINGS-004",
+      "title": "Create PUT /api/settings/email endpoint",
+      "description": "API endpoint to update user email address",
+      "acceptance_criteria": [
+        "Create src/app/api/settings/email/route.ts with PUT handler",
+        "Requires authentication",
+        "Validates request body with emailUpdateSchema",
+        "Checks email uniqueness (returns 409 if email already in use)",
+        "Updates user email in database",
+        "Returns success response",
+        "Unit test verifies email update and uniqueness check"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SETTINGS-005",
+      "title": "Create PUT /api/settings/password endpoint",
+      "description": "API endpoint to change user password",
+      "acceptance_criteria": [
+        "Create src/app/api/settings/password/route.ts with PUT handler",
+        "Requires authentication",
+        "Validates request body with passwordUpdateSchema",
+        "Verifies currentPassword matches stored hash (returns 400 if incorrect)",
+        "Hashes newPassword and updates passwordHash in database",
+        "Returns success response (no sensitive data)",
+        "Unit test verifies password change flow"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SETTINGS-006",
+      "title": "Create GET /api/settings/export endpoint",
+      "description": "API endpoint to export all user data as JSON",
+      "acceptance_criteria": [
+        "Create src/app/api/settings/export/route.ts with GET handler",
+        "Requires authentication",
+        "Fetches user profile, all weighIns, all injections, all dailyHabits",
+        "Returns JSON with Content-Disposition header for download",
+        "Filename format: needled-export-{date}.json",
+        "Excludes sensitive data (passwordHash, session tokens)",
+        "Unit test verifies export data structure"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SETTINGS-007",
+      "title": "Create DELETE /api/settings/account endpoint",
+      "description": "API endpoint to delete user account and all data",
+      "acceptance_criteria": [
+        "Create src/app/api/settings/account/route.ts with DELETE handler",
+        "Requires authentication",
+        "Validates request body with accountDeleteSchema (password required)",
+        "Verifies password matches stored hash",
+        "Deletes user (cascades to all related data)",
+        "Clears session cookie in response",
+        "Returns success response",
+        "Unit test verifies account deletion"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SETTINGS-008",
+      "title": "Create settings page layout",
+      "description": "Create the main settings page with section cards",
+      "acceptance_criteria": [
+        "Create src/app/settings/page.tsx as authenticated route",
+        "Page title: Settings",
+        "Three card sections: Profile, Account, Data",
+        "Each card has heading per DESIGN_SYSTEM.md",
+        "Uses max-w-xl for single-column content width",
+        "Fetches initial data from GET /api/settings on load",
+        "Shows loading skeleton while fetching"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SETTINGS-009",
+      "title": "Create ProfileSettingsForm component",
+      "description": "Form component for editing profile settings",
+      "acceptance_criteria": [
+        "Create src/components/settings/ProfileSettingsForm.tsx",
+        "Fields: Name (input), Goal Weight (number input with unit), Medication (select), Injection Day (select)",
+        "Uses react-hook-form with zodResolver and profileUpdateSchema",
+        "Displays current values as defaults",
+        "Save button disabled when form is pristine or submitting",
+        "Submits to PUT /api/settings/profile",
+        "Shows success toast on save",
+        "Shows error toast on failure"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SETTINGS-010",
+      "title": "Create EmailUpdateForm component",
+      "description": "Form component for updating email address",
+      "acceptance_criteria": [
+        "Create src/components/settings/EmailUpdateForm.tsx",
+        "Shows current email with Update button",
+        "Uses react-hook-form with zodResolver and emailUpdateSchema",
+        "Submits to PUT /api/settings/email",
+        "Shows success toast on update",
+        "Shows specific error for 'email already in use' (409)",
+        "Shows generic error for other failures"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SETTINGS-011",
+      "title": "Create PasswordChangeForm component",
+      "description": "Form component for changing password",
+      "acceptance_criteria": [
+        "Create src/components/settings/PasswordChangeForm.tsx",
+        "Collapsible section (collapsed by default)",
+        "Fields: Current Password, New Password, Confirm Password (all password type)",
+        "Uses react-hook-form with zodResolver and passwordUpdateSchema",
+        "Validates confirmPassword matches newPassword",
+        "Submits to PUT /api/settings/password",
+        "Shows success toast and clears form on success",
+        "Shows error for 'incorrect current password'"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SETTINGS-012",
+      "title": "Create ExportDataButton component",
+      "description": "Button component to trigger data export download",
+      "acceptance_criteria": [
+        "Create src/components/settings/ExportDataButton.tsx",
+        "Button with Download icon per DESIGN_SYSTEM.md",
+        "On click, fetches GET /api/settings/export",
+        "Triggers browser download of returned JSON",
+        "Shows loading state while fetching",
+        "Shows success toast: 'Your data is downloading...'",
+        "Shows error toast on failure"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SETTINGS-013",
+      "title": "Create DeleteAccountButton component",
+      "description": "Button and confirmation dialog for account deletion",
+      "acceptance_criteria": [
+        "Create src/components/settings/DeleteAccountButton.tsx",
+        "Destructive variant button: 'Delete Account'",
+        "Opens confirmation dialog on click",
+        "Dialog has warning text about permanent data loss",
+        "Dialog requires password input to confirm",
+        "Submits to DELETE /api/settings/account",
+        "On success: shows toast, redirects to landing page",
+        "On password error: shows 'Incorrect password' error"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SETTINGS-014",
+      "title": "Add Settings link to header navigation",
+      "description": "Add navigation link to settings page in header",
+      "acceptance_criteria": [
+        "Update src/components/layout/Header.tsx",
+        "Add Settings icon link to desktop navigation (after Profile)",
+        "Add Settings link to mobile hamburger menu",
+        "Settings link uses Settings icon from lucide-react",
+        "Shows active state when on /settings route"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SETTINGS-015",
+      "title": "E2E test: Update profile settings",
+      "description": "End-to-end test for profile settings update flow",
+      "acceptance_criteria": [
+        "Create tests/e2e/settings-profile.spec.ts",
+        "Test logs in and navigates to /settings",
+        "Test updates name and saves",
+        "Test verifies name persists after page reload",
+        "Test updates goal weight and medication",
+        "Test verifies changes persist after page reload"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SETTINGS-016",
+      "title": "E2E test: Change email and password",
+      "description": "End-to-end test for account credential changes",
+      "acceptance_criteria": [
+        "Create tests/e2e/settings-account.spec.ts",
+        "Test logs in and navigates to /settings",
+        "Test updates email address",
+        "Test logs out and logs back in with new email",
+        "Test changes password",
+        "Test logs out and logs back in with new password",
+        "Test verifies old password no longer works"
+      ],
+      "passes": false
+    },
+    {
+      "id": "SETTINGS-017",
+      "title": "E2E test: Export data and delete account",
+      "description": "End-to-end test for data export and account deletion",
+      "acceptance_criteria": [
+        "Create tests/e2e/settings-data.spec.ts",
+        "Test logs in and navigates to /settings",
+        "Test clicks export button and verifies download initiates",
+        "Test verifies exported JSON contains expected data structure",
+        "Test clicks delete account button",
+        "Test confirms deletion with password",
+        "Test verifies redirect to landing page",
+        "Test verifies login with old credentials fails"
+      ],
+      "passes": false
+    }
+  ]
+}

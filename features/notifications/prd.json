@@ -24,7 +24,7 @@
         "Schema validates timezone as non-empty string",
         "Schema exports types for NotificationPreferencesInput and NotificationPreferences"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NOTIF-003",
