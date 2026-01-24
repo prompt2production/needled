@@ -88,3 +88,9 @@ Completed: 2026-01-24T01:25:00Z
 Files changed: tests/e2e/settings-profile.spec.ts, src/middleware.ts, src/app/dashboard/page.tsx
 Notes: Created E2E tests for profile settings. Fixed middleware to use Node.js runtime (runtime = 'nodejs') for Prisma compatibility. Created /dashboard page as alias to /home. 6 tests passing covering navigation, profile updates, and form state.
 ---
+---
+Story: SETTINGS-016 E2E test: Change email and password
+Completed: 2026-01-24T01:35:00Z
+Files changed: tests/e2e/settings-account.spec.ts
+Notes: Created E2E tests for account credential changes. 5 tests covering email updates, duplicate email error, password changes, incorrect password rejection, and verifying old password invalidation after change.
+---

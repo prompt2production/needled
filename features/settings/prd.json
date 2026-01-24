@@ -237,7 +237,7 @@
         "Test logs out and logs back in with new password",
         "Test verifies old password no longer works"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SETTINGS-017",
