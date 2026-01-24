@@ -276,7 +276,7 @@
         "Sends appropriate test email to user",
         "Returns 200 on success, 400/500 on failure"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NOTIF-022",

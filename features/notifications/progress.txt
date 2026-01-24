@@ -118,3 +118,9 @@ Completed: 2026-01-24T11:02:00Z
 Files changed: src/components/navigation/Header.tsx
 Notes: Added Settings to NAV_ITEMS array with Settings icon. Appears in both desktop nav and mobile menu.
 ---
+---
+Story: NOTIF-021 Create test email endpoint
+Completed: 2026-01-24T11:05:00Z
+Files changed: src/app/api/notifications/test/route.ts
+Notes: Created POST endpoint with type validation. Adds [TEST] prefix to subject lines.
+---
