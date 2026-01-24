@@ -1,0 +1,6 @@
+---
+Story: NOTIF-001 Add NotificationPreference model to Prisma schema
+Completed: 2026-01-24T10:15:00Z
+Files changed: prisma/schema.prisma
+Notes: Added NotificationPreference model with all required fields. Used prisma db push instead of migrate dev due to existing drift in dev database.
+---

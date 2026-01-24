@@ -34,21 +34,22 @@ enum Status {
 // ===========================================
 
 model User {
-  id           String       @id @default(cuid())
-  name         String
-  email        String?      @unique
-  passwordHash String?
-  startWeight  Float
-  goalWeight   Float?
-  weightUnit   WeightUnit
-  medication   Medication
-  injectionDay Int          // 0 = Monday, 6 = Sunday
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  weighIns     WeighIn[]
-  injections   Injection[]
-  dailyHabits  DailyHabit[]
-  sessions     Session[]
+  id                     String                  @id @default(cuid())
+  name                   String
+  email                  String?                 @unique
+  passwordHash           String?
+  startWeight            Float
+  goalWeight             Float?
+  weightUnit             WeightUnit
+  medication             Medication
+  injectionDay           Int                     // 0 = Monday, 6 = Sunday
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+  weighIns               WeighIn[]
+  injections             Injection[]
+  dailyHabits            DailyHabit[]
+  sessions               Session[]
+  notificationPreference NotificationPreference?
 }
 
 model Session {
@@ -121,4 +122,18 @@ model DailyHabit {
 
   @@unique([userId, date])
   @@index([userId, date])
+}
+
+model NotificationPreference {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  injectionReminder  Boolean  @default(true)
+  weighInReminder    Boolean  @default(true)
+  habitReminder      Boolean  @default(false)
+  reminderTime       String   @default("09:00")
+  habitReminderTime  String   @default("20:00")
+  timezone           String   @default("Europe/London")
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

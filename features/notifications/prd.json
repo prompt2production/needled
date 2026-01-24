@@ -1,0 +1,309 @@
+{
+  "feature": "Email Notifications",
+  "stories": [
+    {
+      "id": "NOTIF-001",
+      "title": "Add NotificationPreference model to Prisma schema",
+      "description": "Create the NotificationPreference model with fields for injection, weigh-in, and habit reminders, reminder times, and timezone. Add relation to User model.",
+      "acceptance_criteria": [
+        "NotificationPreference model exists in prisma/schema.prisma with id, userId, injectionReminder, weighInReminder, habitReminder, reminderTime, habitReminderTime, timezone, createdAt, updatedAt",
+        "User model has notificationPreference relation",
+        "Migration runs successfully with npx prisma migrate dev",
+        "Prisma client regenerates with npx prisma generate"
+      ],
+      "passes": true
+    },
+    {
+      "id": "NOTIF-002",
+      "title": "Create notification preferences Zod validation schema",
+      "description": "Create Zod schemas for validating notification preference inputs including timezone validation.",
+      "acceptance_criteria": [
+        "File exists at src/lib/validations/notification-preferences.ts",
+        "Schema validates injectionReminder, weighInReminder, habitReminder as booleans",
+        "Schema validates reminderTime and habitReminderTime as HH:mm format strings",
+        "Schema validates timezone as non-empty string",
+        "Schema exports types for NotificationPreferencesInput and NotificationPreferences"
+      ],
+      "passes": false
+    },
+    {
+      "id": "NOTIF-003",
+      "title": "Create GET /api/notifications/preferences endpoint",
+      "description": "API endpoint to retrieve notification preferences for authenticated user. Creates default preferences if none exist.",
+      "acceptance_criteria": [
+        "File exists at src/app/api/notifications/preferences/route.ts",
+        "GET returns 401 if no userId cookie",
+        "GET returns existing preferences if found",
+        "GET creates and returns default preferences if none exist for user",
+        "Default preferences: injectionReminder=true, weighInReminder=true, habitReminder=false, reminderTime='09:00', habitReminderTime='20:00', timezone='Europe/London'"
+      ],
+      "passes": false
+    },
+    {
+      "id": "NOTIF-004",
+      "title": "Create PUT /api/notifications/preferences endpoint",
+      "description": "API endpoint to update notification preferences for authenticated user.",
+      "acceptance_criteria": [
+        "PUT handler added to src/app/api/notifications/preferences/route.ts",
+        "Returns 401 if no userId cookie",
+        "Returns 400 for invalid input with Zod error details",
+        "Successfully updates and returns preferences",
+        "Creates preferences if none exist (upsert behavior)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "NOTIF-005",
+      "title": "Create unit tests for notification preferences API",
+      "description": "Unit tests for the notification preferences API endpoints.",
+      "acceptance_criteria": [
+        "File exists at tests/unit/notifications-preferences-api.test.ts",
+        "Tests GET returns 401 without auth",
+        "Tests GET returns preferences for authenticated user",
+        "Tests PUT validates input",
+        "Tests PUT updates preferences successfully",
+        "All tests pass with npm run test"
+      ],
+      "passes": false
+    },
+    {
+      "id": "NOTIF-006",
+      "title": "Install SendGrid package and create email client",
+      "description": "Install @sendgrid/mail package and create email client utility with proper configuration.",
+      "acceptance_criteria": [
+        "@sendgrid/mail is in package.json dependencies",
+        "File exists at src/lib/email.ts",
+        "Exports sendEmail function that accepts to, subject, html parameters",
+        "Function uses SENDGRID_API_KEY and SENDGRID_FROM_EMAIL env vars",
+        "Function handles errors gracefully and logs them"
+      ],
+      "passes": false
+    },
+    {
+      "id": "NOTIF-007",
+      "title": "Create injection reminder email template",
+      "description": "Create HTML email template for injection day reminders.",
+      "acceptance_criteria": [
+        "File exists at src/lib/email-templates/injection-reminder.ts",
+        "Exports renderInjectionReminder function accepting user name and medication",
+        "Returns HTML string with dark theme (#050505 background)",
+        "Includes lime (#BFFF00) CTA button linking to /injections",
+        "Includes unsubscribe link placeholder",
+        "Subject line includes medication name"
+      ],
+      "passes": false
+    },
+    {
+      "id": "NOTIF-008",
+      "title": "Create weigh-in reminder email template",
+      "description": "Create HTML email template for weekly weigh-in reminders.",
+      "acceptance_criteria": [
+        "File exists at src/lib/email-templates/weigh-in-reminder.ts",
+        "Exports renderWeighInReminder function accepting user name",
+        "Returns HTML string with dark theme (#050505 background)",
+        "Includes lime (#BFFF00) CTA button linking to /weigh-in",
+        "Includes unsubscribe link placeholder"
+      ],
+      "passes": false
+    },
+    {
+      "id": "NOTIF-009",
+      "title": "Create habit reminder email template",
+      "description": "Create HTML email template for daily habit check-in reminders.",
+      "acceptance_criteria": [
+        "File exists at src/lib/email-templates/habit-reminder.ts",
+        "Exports renderHabitReminder function accepting user name",
+        "Returns HTML string with dark theme (#050505 background)",
+        "Includes lime (#BFFF00) CTA button linking to /habits",
+        "Mentions water, nutrition, and exercise habits",
+        "Includes unsubscribe link placeholder"
+      ],
+      "passes": false
+    },
+    {
+      "id": "NOTIF-010",
+      "title": "Create email template index and types",
+      "description": "Create index file exporting all email templates and shared types.",
+      "acceptance_criteria": [
+        "File exists at src/lib/email-templates/index.ts",
+        "Re-exports all three template functions",
+        "Exports EmailType union type: 'injection-reminder' | 'weigh-in-reminder' | 'habit-reminder'",
+        "Exports getEmailSubject helper function that returns appropriate subject for each type"
+      ],
+      "passes": false
+    },
+    {
+      "id": "NOTIF-011",
+      "title": "Create notification sending service",
+      "description": "Create service that determines which notifications to send and sends them.",
+      "acceptance_criteria": [
+        "File exists at src/lib/services/notification-service.ts",
+        "Exports checkAndSendInjectionReminders function",
+        "Exports checkAndSendWeighInReminders function",
+        "Exports checkAndSendHabitReminders function",
+        "Functions check user preferences, timezone, and whether action already taken today",
+        "Functions use sendEmail from email client"
+      ],
+      "passes": false
+    },
+    {
+      "id": "NOTIF-012",
+      "title": "Create cron endpoint for notifications",
+      "description": "Create API endpoint that runs hourly to send due notifications.",
+      "acceptance_criteria": [
+        "File exists at src/app/api/cron/notifications/route.ts",
+        "GET handler verifies CRON_SECRET header matches env var",
+        "Returns 401 if secret doesn't match",
+        "Calls all three notification check functions",
+        "Returns JSON with counts of emails sent",
+        "Handles errors gracefully without failing entire batch"
+      ],
+      "passes": false
+    },
+    {
+      "id": "NOTIF-013",
+      "title": "Add vercel.json cron configuration",
+      "description": "Configure Vercel cron to run notification endpoint hourly.",
+      "acceptance_criteria": [
+        "File exists at vercel.json (create or update)",
+        "Contains crons array with entry for /api/cron/notifications",
+        "Schedule is '0 * * * *' (top of every hour)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "NOTIF-014",
+      "title": "Create unsubscribe token utility",
+      "description": "Create utility for generating and verifying signed unsubscribe tokens.",
+      "acceptance_criteria": [
+        "File exists at src/lib/unsubscribe-token.ts",
+        "Exports generateUnsubscribeToken(userId) function",
+        "Exports verifyUnsubscribeToken(token) function returning userId or null",
+        "Uses UNSUBSCRIBE_SECRET env var for signing",
+        "Tokens expire after 30 days"
+      ],
+      "passes": false
+    },
+    {
+      "id": "NOTIF-015",
+      "title": "Create unsubscribe API endpoint",
+      "description": "Create endpoint for one-click email unsubscribe.",
+      "acceptance_criteria": [
+        "File exists at src/app/api/notifications/unsubscribe/route.ts",
+        "GET handler accepts token query parameter",
+        "Returns 400 if token missing or invalid",
+        "Sets all notification preferences to false for user",
+        "Returns success message"
+      ],
+      "passes": false
+    },
+    {
+      "id": "NOTIF-016",
+      "title": "Create unsubscribe confirmation page",
+      "description": "Create page shown after successful unsubscribe.",
+      "acceptance_criteria": [
+        "File exists at src/app/unsubscribe/page.tsx",
+        "Reads token from URL search params",
+        "Calls unsubscribe API on mount",
+        "Shows success message with Needled branding",
+        "Shows link to re-enable notifications in settings",
+        "Follows DESIGN_SYSTEM.md styling (dark theme, centered layout)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "NOTIF-017",
+      "title": "Create NotificationSettings component",
+      "description": "Create component for managing notification preferences with toggles and time pickers.",
+      "acceptance_criteria": [
+        "File exists at src/components/notifications/NotificationSettings.tsx",
+        "Uses 'use client' directive",
+        "Fetches preferences on mount from /api/notifications/preferences",
+        "Shows toggle switches for injectionReminder, weighInReminder, habitReminder",
+        "Shows time inputs for reminderTime and habitReminderTime",
+        "Shows timezone selector with common timezones",
+        "Saves changes on toggle/input change with debounce",
+        "Shows toast on save success/failure"
+      ],
+      "passes": false
+    },
+    {
+      "id": "NOTIF-018",
+      "title": "Create settings page with notification settings",
+      "description": "Create settings page that includes the NotificationSettings component.",
+      "acceptance_criteria": [
+        "File exists at src/app/settings/page.tsx",
+        "Page is protected (redirects to / if no userId cookie)",
+        "Includes NotificationSettings component",
+        "Follows DESIGN_SYSTEM.md layout (header nav, max-w-5xl container)",
+        "Page title is 'Settings'"
+      ],
+      "passes": false
+    },
+    {
+      "id": "NOTIF-019",
+      "title": "Add Settings link to header navigation",
+      "description": "Add Settings nav item to the header component.",
+      "acceptance_criteria": [
+        "Settings link appears in Header component desktop nav",
+        "Settings link appears in mobile hamburger menu",
+        "Uses Settings icon from lucide-react",
+        "Links to /settings",
+        "Shows active state when on settings page"
+      ],
+      "passes": false
+    },
+    {
+      "id": "NOTIF-020",
+      "title": "Add email requirement notice for notifications",
+      "description": "Show notice in NotificationSettings if user has no email address.",
+      "acceptance_criteria": [
+        "NotificationSettings checks if user has email from profile",
+        "If no email, shows alert card explaining email is required",
+        "Alert includes link/button to add email in profile",
+        "Notification toggles are disabled when no email"
+      ],
+      "passes": false
+    },
+    {
+      "id": "NOTIF-021",
+      "title": "Create test email endpoint",
+      "description": "Create endpoint to send a test email to verify delivery.",
+      "acceptance_criteria": [
+        "File exists at src/app/api/notifications/test/route.ts",
+        "POST handler requires authenticated user with email",
+        "Accepts type parameter: 'injection' | 'weigh-in' | 'habit'",
+        "Sends appropriate test email to user",
+        "Returns 200 on success, 400/500 on failure"
+      ],
+      "passes": false
+    },
+    {
+      "id": "NOTIF-022",
+      "title": "Add test email button to NotificationSettings",
+      "description": "Add button to send test email for each notification type.",
+      "acceptance_criteria": [
+        "Each notification toggle row has 'Send test' button",
+        "Button is disabled if notification is toggled off",
+        "Button calls /api/notifications/test with correct type",
+        "Shows loading state while sending",
+        "Shows toast on success/failure"
+      ],
+      "passes": false
+    },
+    {
+      "id": "NOTIF-023",
+      "title": "Create E2E tests for notification settings",
+      "description": "End-to-end tests for the notification settings page flow.",
+      "acceptance_criteria": [
+        "File exists at tests/e2e/notification-settings.spec.ts",
+        "Tests loading settings page",
+        "Tests toggling notification preferences",
+        "Tests changing reminder times",
+        "Tests email required notice shows when no email",
+        "All tests pass with npx playwright test"
+      ],
+      "passes": false
+    }
+  ]
+}
