@@ -238,7 +238,7 @@
         "Follows DESIGN_SYSTEM.md layout (header nav, max-w-5xl container)",
         "Page title is 'Settings'"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NOTIF-019",

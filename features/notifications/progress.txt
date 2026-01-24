@@ -106,3 +106,9 @@ Completed: 2026-01-24T10:58:00Z
 Files changed: (included in NOTIF-017)
 Notes: Implemented as part of NotificationSettings component via hasEmail prop.
 ---
+---
+Story: NOTIF-018 Create settings page with notification settings
+Completed: 2026-01-24T11:00:00Z
+Files changed: src/app/settings/page.tsx
+Notes: Created settings page with max-w-5xl layout. Fetches user email from /api/auth/session.
+---
