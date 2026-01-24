@@ -70,3 +70,9 @@ Completed: 2026-01-24T10:45:00Z
 Files changed: src/lib/unsubscribe-token.ts
 Notes: Created signed token utility with HMAC-SHA256. Implemented as dependency for NOTIF-011.
 ---
+---
+Story: NOTIF-012 Create cron endpoint for notifications
+Completed: 2026-01-24T10:48:00Z
+Files changed: src/app/api/cron/notifications/route.ts
+Notes: Created cron endpoint with CRON_SECRET auth, calls all notification services, handles errors gracefully.
+---

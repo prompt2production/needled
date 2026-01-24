@@ -158,7 +158,7 @@
         "Returns JSON with counts of emails sent",
         "Handles errors gracefully without failing entire batch"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NOTIF-013",
