@@ -22,3 +22,15 @@ Completed: 2026-01-24T06:25:00Z
 Files changed: src/app/api/weigh-ins/latest/route.ts, tests/unit/api/weigh-ins-latest.test.ts
 Notes: Added hasWeighedThisWeek boolean to response. canWeighIn is now always true. hasWeighedThisWeek indicates whether user has logged a weigh-in in current week.
 ---
+---
+Story: FLEX-005 Create PATCH endpoint for weigh-ins
+Completed: 2026-01-24T06:27:00Z
+Files changed: src/app/api/weigh-ins/[id]/route.ts, src/lib/validations/weigh-in.ts, tests/unit/api/weigh-ins-id.test.ts
+Notes: Created PATCH endpoint with ownership validation. Added updateWeighInSchema. Returns 404 for not found or wrong user, 400 for invalid data, 200 with updated entry on success.
+---
+---
+Story: FLEX-006 Create DELETE endpoint for weigh-ins
+Completed: 2026-01-24T06:27:00Z
+Files changed: src/app/api/weigh-ins/[id]/route.ts, tests/unit/api/weigh-ins-id.test.ts
+Notes: Created DELETE endpoint with ownership validation. Returns 404 for not found or wrong user, 204 No Content on successful deletion.
+---

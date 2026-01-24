@@ -67,7 +67,7 @@
         "Returns updated entry on success",
         "Unit test verifies update and ownership validation"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FLEX-006",
@@ -81,7 +81,7 @@
         "Entry is permanently removed from database",
         "Unit test verifies deletion and ownership validation"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FLEX-007",
