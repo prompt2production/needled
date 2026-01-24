@@ -118,7 +118,7 @@
         "Mentions water, nutrition, and exercise habits",
         "Includes unsubscribe link placeholder"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NOTIF-010",

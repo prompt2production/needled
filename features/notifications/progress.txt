@@ -46,3 +46,9 @@ Completed: 2026-01-24T10:38:00Z
 Files changed: src/lib/email-templates/weigh-in-reminder.ts
 Notes: Created dark-themed HTML email template following same pattern as injection template.
 ---
+---
+Story: NOTIF-009 Create habit reminder email template
+Completed: 2026-01-24T10:40:00Z
+Files changed: src/lib/email-templates/habit-reminder.ts
+Notes: Created dark-themed HTML email template with bullet list mentioning water, nutrition, and exercise.
+---
