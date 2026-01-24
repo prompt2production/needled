@@ -10,3 +10,9 @@ Completed: 2026-01-24T00:52:00Z
 Files changed: src/app/api/settings/route.ts, tests/unit/api/settings.test.ts
 Notes: Created authenticated endpoint returning user settings without passwordHash. 7 unit tests covering auth, data shape, and error handling.
 ---
+---
+Story: SETTINGS-003 Create PUT /api/settings/profile endpoint
+Completed: 2026-01-24T00:53:00Z
+Files changed: src/app/api/settings/profile/route.ts, tests/unit/api/settings-profile.test.ts
+Notes: Created authenticated endpoint to update user profile (name, goalWeight, medication, injectionDay). 10 unit tests covering validation and updates.
+---

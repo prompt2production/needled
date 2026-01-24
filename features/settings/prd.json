@@ -41,7 +41,7 @@
         "Returns 400 for validation errors",
         "Unit test verifies profile update works correctly"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SETTINGS-004",
