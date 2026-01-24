@@ -94,3 +94,15 @@ Completed: 2026-01-24T10:55:00Z
 Files changed: src/app/unsubscribe/page.tsx
 Notes: Created page with loading, success, and error states. Follows dark theme with centered layout.
 ---
+---
+Story: NOTIF-017 Create NotificationSettings component
+Completed: 2026-01-24T10:58:00Z
+Files changed: src/components/notifications/NotificationSettings.tsx, src/components/ui/switch.tsx
+Notes: Created component with toggles, time inputs, timezone selector. Installed shadcn Switch. Also implements NOTIF-020 (email requirement notice).
+---
+---
+Story: NOTIF-020 Add email requirement notice for notifications
+Completed: 2026-01-24T10:58:00Z
+Files changed: (included in NOTIF-017)
+Notes: Implemented as part of NotificationSettings component via hasEmail prop.
+---

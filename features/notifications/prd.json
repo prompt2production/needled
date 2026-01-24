@@ -225,7 +225,7 @@
         "Saves changes on toggle/input change with debounce",
         "Shows toast on save success/failure"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NOTIF-018",
@@ -263,7 +263,7 @@
         "Alert includes link/button to add email in profile",
         "Notification toggles are disabled when no email"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NOTIF-021",
