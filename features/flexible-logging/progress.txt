@@ -88,3 +88,9 @@ Completed: 2026-01-24T07:05:00Z
 Files changed: src/components/injection/InjectionEditDialog.tsx, src/components/injection/InjectionHistory.tsx
 Notes: Created InjectionEditDialog with date picker, site selector, and notes input. Pre-fills with existing values. Added edit button to InjectionHistory items (visible on hover). Calls PATCH endpoint and shows toast on success.
 ---
+---
+Story: FLEX-016 Add delete functionality to injection history
+Completed: 2026-01-24T07:10:00Z
+Files changed: src/components/injection/InjectionHistory.tsx
+Notes: Added delete button with AlertDialog confirmation showing date and site. Calls DELETE /api/injections/[id] endpoint. Shows toast on success, refreshes list. Cancel closes dialog without action.
+---
