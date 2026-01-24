@@ -128,7 +128,7 @@
         "Updated dose is included in PATCH request",
         "No suggestedDose shown when editing (just selected state)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DOSE-012",

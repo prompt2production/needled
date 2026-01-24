@@ -23,6 +23,7 @@ interface Injection {
   id: string
   userId: string
   site: string
+  doseNumber: number
   notes: string | null
   date: string
   createdAt: string

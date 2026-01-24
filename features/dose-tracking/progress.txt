@@ -58,3 +58,9 @@ Completed: 2026-01-24T11:08:00Z
 Files changed: src/components/injection/InjectionCard.tsx, src/components/injection/InjectionCardConnected.tsx
 Notes: Added currentDose and dosesRemaining props to InjectionCard. InjectionCardConnected now passes all dose tracking data from status API. Props are prefixed with underscore for now since they'll be used in DOSE-015.
 ---
+---
+Story: DOSE-011 Add DoseSelector to InjectionEditDialog
+Completed: 2026-01-24T11:10:00Z
+Files changed: src/components/injection/InjectionEditDialog.tsx, src/components/injection/InjectionHistory.tsx
+Notes: Added DoseSelector to edit dialog. Initializes with existing injection's doseNumber. Updated Injection interface to include doseNumber. No suggestedDose prop passed for editing mode.
+---

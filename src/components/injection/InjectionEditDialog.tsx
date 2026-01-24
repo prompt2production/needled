@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 import { InjectionSiteSelector } from './InjectionSiteSelector'
+import { DoseSelector } from './DoseSelector'
 import type { InjectionSite } from '@/lib/validations/injection'
 
 interface InjectionEditDialogProps {
@@ -30,6 +31,7 @@ interface InjectionEditDialogProps {
   injection: {
     id: string
     site: string
+    doseNumber: number
     notes: string | null
     date: string
   }
@@ -47,6 +49,7 @@ export function InjectionEditDialog({
   onSuccess,
 }: InjectionEditDialogProps) {
   const [site, setSite] = useState<InjectionSite | null>(null)
+  const [doseNumber, setDoseNumber] = useState<number | null>(null)
   const [notes, setNotes] = useState('')
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
   const [error, setError] = useState<string | null>(null)
@@ -56,6 +59,7 @@ export function InjectionEditDialog({
   useEffect(() => {
     if (open) {
       setSite(injection.site as InjectionSite)
+      setDoseNumber(injection.doseNumber)
       setNotes(injection.notes || '')
       setSelectedDate(new Date(injection.date))
       setError(null)
@@ -63,7 +67,7 @@ export function InjectionEditDialog({
   }, [open, injection])
 
   const handleSubmit = async () => {
-    if (!site) return
+    if (!site || !doseNumber) return
     setError(null)
     setIsLoading(true)
 
@@ -75,6 +79,7 @@ export function InjectionEditDialog({
         body: JSON.stringify({
           userId,
           site,
+          doseNumber,
           notes: notes.trim() || undefined,
           date: dateString,
         }),
@@ -156,6 +161,17 @@ export function InjectionEditDialog({
             />
           </div>
 
+          {/* Dose selection */}
+          <div className="space-y-3">
+            <Label className="text-sm text-muted-foreground">
+              Dose Number
+            </Label>
+            <DoseSelector
+              value={doseNumber}
+              onChange={setDoseNumber}
+            />
+          </div>
+
           {/* Notes */}
           <div className="space-y-2">
             <Label htmlFor="edit-notes" className="text-sm text-muted-foreground">
@@ -187,7 +203,7 @@ export function InjectionEditDialog({
           </Button>
           <Button
             onClick={handleSubmit}
-            disabled={!site || isLoading}
+            disabled={!site || !doseNumber || isLoading}
             className="bg-lime text-black hover:bg-lime-muted font-medium w-full sm:w-auto"
           >
             {isLoading ? 'Saving...' : 'Save Changes'}
