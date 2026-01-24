@@ -57,7 +57,7 @@ export function MedicationStep({
 
       {/* Medication selection */}
       <div className="space-y-4">
-        <label className="text-sm text-muted-foreground mb-2 block">
+        <label className="text-sm text-muted-foreground mb-4 block">
           Which medication are you taking?
         </label>
         <div className="grid grid-cols-2 gap-2">
@@ -80,7 +80,7 @@ export function MedicationStep({
 
       {/* Injection day selection */}
       <div className="space-y-4">
-        <label className="text-sm text-muted-foreground">
+        <label className="text-sm text-muted-foreground mb-4 block">
           What day do you take your injection?
         </label>
         <div className="flex justify-center gap-2">

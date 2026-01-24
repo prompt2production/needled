@@ -195,7 +195,7 @@
         "Sets all notification preferences to false for user",
         "Returns success message"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NOTIF-016",

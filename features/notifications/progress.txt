@@ -82,3 +82,9 @@ Completed: 2026-01-24T10:50:00Z
 Files changed: vercel.json
 Notes: Created vercel.json with cron schedule '0 * * * *' for hourly notifications.
 ---
+---
+Story: NOTIF-015 Create unsubscribe API endpoint
+Completed: 2026-01-24T10:52:00Z
+Files changed: src/app/api/notifications/unsubscribe/route.ts
+Notes: Created GET endpoint that verifies token and disables all notifications via upsert.
+---
