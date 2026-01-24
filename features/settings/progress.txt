@@ -46,3 +46,9 @@ Completed: 2026-01-24T00:59:00Z
 Files changed: src/app/settings/page.tsx, src/components/settings/*.tsx, src/components/ui/select.tsx
 Notes: Updated settings page with Profile, Account, Notifications, and Data sections. Added loading skeletons. Created placeholder components for forms. Installed shadcn select component.
 ---
+---
+Story: SETTINGS-009 Create ProfileSettingsForm component
+Completed: 2026-01-24T01:01:00Z
+Files changed: src/components/settings/ProfileSettingsForm.tsx
+Notes: Implemented profile form with react-hook-form, zodResolver. Fields: Name, Goal Weight (with unit), Medication (select), Injection Day (select). Save button disabled when pristine/submitting.
+---
