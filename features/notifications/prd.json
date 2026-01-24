@@ -130,7 +130,7 @@
         "Exports EmailType union type: 'injection-reminder' | 'weigh-in-reminder' | 'habit-reminder'",
         "Exports getEmailSubject helper function that returns appropriate subject for each type"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NOTIF-011",

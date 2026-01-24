@@ -52,3 +52,9 @@ Completed: 2026-01-24T10:40:00Z
 Files changed: src/lib/email-templates/habit-reminder.ts
 Notes: Created dark-themed HTML email template with bullet list mentioning water, nutrition, and exercise.
 ---
+---
+Story: NOTIF-010 Create email template index and types
+Completed: 2026-01-24T10:42:00Z
+Files changed: src/lib/email-templates/index.ts
+Notes: Created index file re-exporting all templates, EmailType union, and getEmailSubject helper.
+---
