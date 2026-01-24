@@ -253,7 +253,7 @@
         "Test verifies redirect to landing page",
         "Test verifies login with old credentials fails"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }

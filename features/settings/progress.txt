@@ -94,3 +94,9 @@ Completed: 2026-01-24T01:35:00Z
 Files changed: tests/e2e/settings-account.spec.ts
 Notes: Created E2E tests for account credential changes. 5 tests covering email updates, duplicate email error, password changes, incorrect password rejection, and verifying old password invalidation after change.
 ---
+---
+Story: SETTINGS-017 E2E test: Export data and delete account
+Completed: 2026-01-24T01:40:00Z
+Files changed: tests/e2e/settings-data.spec.ts
+Notes: Created E2E tests for data export and account deletion. 6 tests covering data export with download, verifying JSON structure, delete account dialog, incorrect password rejection, successful deletion with redirect, and verifying login fails after deletion.
+---
