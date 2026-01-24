@@ -24,6 +24,10 @@ Based on the project brief, here are the recommended features in build order.
 - [x] **settings** — Edit profile, change injection day, adjust goals, export data
 - [x] **login-session** — Ensure users revisiting can easily log back in. Ensure users who have logged in and still have an active session and revisit home page are taken straight to dashboard (No Cloud sync)
 
+## Phase 5: Enhancements
+
+- [x] **dose-tracking** — Track which dose (1-4) of current pen, show doses remaining, auto-calculate next dose
+
 ---
 
 ## Feature Dependencies

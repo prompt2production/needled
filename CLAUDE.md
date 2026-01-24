@@ -601,6 +601,7 @@ A feature is complete when:
 - **notifications** (23 stories) — Email notifications for injection, weigh-in, and habit reminders via SendGrid
 - **settings** (17 stories) — Profile editing, email/password changes, data export, account deletion with E2E tests
 - **flexible-logging** (21 stories) — Date selection for weigh-ins/injections, edit/delete entries, multiple entries per week
+- **dose-tracking** (18 stories) — Track which dose (1-4) of current pen, show doses remaining, auto-calculate next dose
 
 ### Next Step
 All planned features complete!
