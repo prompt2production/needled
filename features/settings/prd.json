@@ -195,7 +195,7 @@
         "On success: shows toast, redirects to landing page",
         "On password error: shows 'Incorrect password' error"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "SETTINGS-014",

@@ -70,3 +70,9 @@ Completed: 2026-01-24T01:04:00Z
 Files changed: src/components/settings/ExportDataButton.tsx
 Notes: Implemented export button with Download icon. Fetches export API, creates blob, and triggers browser download. Shows loading state and success/error toasts.
 ---
+---
+Story: SETTINGS-013 Create DeleteAccountButton component
+Completed: 2026-01-24T01:05:00Z
+Files changed: src/components/settings/DeleteAccountButton.tsx
+Notes: Implemented delete account button with confirmation dialog. Lists all data that will be deleted. Requires password confirmation. Redirects to landing page on success, shows error on incorrect password.
+---
