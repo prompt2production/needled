@@ -10,3 +10,9 @@ Completed: 2026-01-24T06:20:00Z
 Files changed: src/lib/validations/log-date.ts, tests/unit/validations/log-date.test.ts
 Notes: Created logDateSchema that validates dates in YYYY-MM-DD format, rejects future dates and dates more than 90 days in the past.
 ---
+---
+Story: FLEX-003 Update weigh-in POST to accept date parameter
+Completed: 2026-01-24T06:23:00Z
+Files changed: src/lib/validations/weigh-in.ts, src/app/api/weigh-ins/route.ts, tests/unit/validations/weigh-in.test.ts, tests/unit/api/weigh-ins.test.ts
+Notes: Added optional date field to weigh-in schema using logDateSchema. Removed same-week restriction (409 conflict). Multiple weigh-ins per week now allowed.
+---
