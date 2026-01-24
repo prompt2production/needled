@@ -13,6 +13,7 @@ import type { InjectionStatus } from '@/app/api/injections/status/route'
 interface InjectionData {
   id: string
   site: string
+  doseNumber: number
   date: string
   notes: string | null
 }
@@ -23,9 +24,10 @@ interface InjectionCardProps {
   daysOverdue: number
   lastInjection: InjectionData | null
   suggestedSite: InjectionSite
+  suggestedDose: number
   medicationName: string
   injectionDayName: string
-  onSubmit: (data: { site: InjectionSite; notes?: string; date: string }) => Promise<void>
+  onSubmit: (data: { site: InjectionSite; doseNumber: number; notes?: string; date: string }) => Promise<void>
   isSubmitting?: boolean
 }
 
@@ -35,6 +37,7 @@ export function InjectionCard({
   daysOverdue,
   lastInjection,
   suggestedSite,
+  suggestedDose,
   medicationName,
   injectionDayName,
   onSubmit,
@@ -42,7 +45,7 @@ export function InjectionCard({
 }: InjectionCardProps) {
   const [dialogOpen, setDialogOpen] = useState(false)
 
-  const handleSubmit = async (data: { site: InjectionSite; notes?: string; date: string }) => {
+  const handleSubmit = async (data: { site: InjectionSite; doseNumber: number; notes?: string; date: string }) => {
     await onSubmit(data)
     setDialogOpen(false)
   }
@@ -75,15 +78,15 @@ export function InjectionCard({
             <Button
               variant="outline"
               onClick={() => setDialogOpen(true)}
-              className="border-border text-muted-foreground hover:text-white hover:bg-white/5 text-sm"
+              className="border-lime/30 text-lime/80 hover:text-lime hover:bg-lime/5 hover:border-lime/50 text-sm"
               disabled={isSubmitting}
             >
               Log Another
             </Button>
             <Link href="/injection">
               <Button
-                variant="ghost"
-                className="text-muted-foreground hover:text-white hover:bg-white/5 text-sm"
+                variant="outline"
+                className="border-lime/30 text-lime/80 hover:text-lime hover:bg-lime/5 hover:border-lime/50 text-sm"
               >
                 View History
               </Button>
@@ -97,6 +100,7 @@ export function InjectionCard({
           onSubmit={handleSubmit}
           suggestedSite={suggestedSite}
           lastUsedSite={lastInjection?.site as InjectionSite | undefined}
+          suggestedDose={suggestedDose}
           isSubmitting={isSubmitting}
         />
       </>
@@ -135,6 +139,7 @@ export function InjectionCard({
           onSubmit={handleSubmit}
           suggestedSite={suggestedSite}
           lastUsedSite={lastInjection?.site as InjectionSite | undefined}
+          suggestedDose={suggestedDose}
           isSubmitting={isSubmitting}
         />
       </>
@@ -179,6 +184,7 @@ export function InjectionCard({
           onSubmit={handleSubmit}
           suggestedSite={suggestedSite}
           lastUsedSite={lastInjection?.site as InjectionSite | undefined}
+          suggestedDose={suggestedDose}
           isSubmitting={isSubmitting}
         />
       </>

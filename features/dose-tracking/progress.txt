@@ -46,3 +46,9 @@ Completed: 2026-01-24T11:03:00Z
 Files changed: src/components/injection/DoseSelector.tsx
 Notes: Created DoseSelector with 4 horizontal buttons. Follows InjectionSiteSelector pattern for consistent styling. Uses lime styling for suggested/selected states.
 ---
+---
+Story: DOSE-009 Add DoseSelector to InjectionDialog
+Completed: 2026-01-24T11:06:00Z
+Files changed: src/components/injection/InjectionDialog.tsx, src/components/injection/InjectionCard.tsx, src/components/injection/InjectionCardConnected.tsx
+Notes: Added DoseSelector below site selector. Updated onSubmit interface to include doseNumber. Default selection is suggestedDose. Updated InjectionCard and InjectionCardConnected to pass suggestedDose (from nextDose in status API).
+---

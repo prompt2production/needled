@@ -48,7 +48,7 @@ export function InjectionCardConnected({
     fetchStatus()
   }, [fetchStatus])
 
-  const handleSubmit = async (submitData: { site: InjectionSite; notes?: string; date: string }) => {
+  const handleSubmit = async (submitData: { site: InjectionSite; doseNumber: number; notes?: string; date: string }) => {
     setIsSubmitting(true)
 
     try {
@@ -119,6 +119,7 @@ export function InjectionCardConnected({
       daysOverdue={data.daysOverdue}
       lastInjection={data.lastInjection}
       suggestedSite={data.suggestedSite}
+      suggestedDose={data.nextDose}
       medicationName={medicationName}
       injectionDayName={injectionDayName}
       onSubmit={handleSubmit}

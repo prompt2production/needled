@@ -106,7 +106,7 @@
         "Selected dose is included in form submission",
         "Default selection is the suggested dose"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DOSE-010",

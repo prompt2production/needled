@@ -21,14 +21,16 @@ import {
 } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 import { InjectionSiteSelector } from './InjectionSiteSelector'
+import { DoseSelector } from './DoseSelector'
 import type { InjectionSite } from '@/lib/validations/injection'
 
 interface InjectionDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onSubmit: (data: { site: InjectionSite; notes?: string; date: string }) => Promise<void>
+  onSubmit: (data: { site: InjectionSite; doseNumber: number; notes?: string; date: string }) => Promise<void>
   suggestedSite?: InjectionSite | null
   lastUsedSite?: InjectionSite | null
+  suggestedDose?: number | null
   isSubmitting?: boolean
 }
 
@@ -40,9 +42,11 @@ export function InjectionDialog({
   onSubmit,
   suggestedSite = null,
   lastUsedSite = null,
+  suggestedDose = null,
   isSubmitting = false,
 }: InjectionDialogProps) {
   const [site, setSite] = useState<InjectionSite | null>(null)
+  const [doseNumber, setDoseNumber] = useState<number | null>(null)
   const [notes, setNotes] = useState('')
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())
 
@@ -50,10 +54,11 @@ export function InjectionDialog({
   useEffect(() => {
     if (open) {
       setSite(null)
+      setDoseNumber(suggestedDose)
       setNotes('')
       setSelectedDate(new Date())
     }
-  }, [open])
+  }, [open, suggestedDose])
 
   const today = startOfDay(new Date())
   const minDate = subDays(today, MAX_DAYS_IN_PAST)
@@ -65,11 +70,12 @@ export function InjectionDialog({
   }
 
   const handleSubmit = async () => {
-    if (!site) return
+    if (!site || !doseNumber) return
     const dateString = format(selectedDate, 'yyyy-MM-dd')
-    await onSubmit({ site, notes: notes.trim() || undefined, date: dateString })
+    await onSubmit({ site, doseNumber, notes: notes.trim() || undefined, date: dateString })
     // Reset state after successful submission
     setSite(null)
+    setDoseNumber(suggestedDose)
     setNotes('')
     setSelectedDate(new Date())
   }
@@ -78,6 +84,7 @@ export function InjectionDialog({
     if (!newOpen) {
       // Reset state when closing
       setSite(null)
+      setDoseNumber(suggestedDose)
       setNotes('')
       setSelectedDate(new Date())
     }
@@ -138,6 +145,18 @@ export function InjectionDialog({
             />
           </div>
 
+          {/* Dose selection */}
+          <div className="space-y-3">
+            <Label className="text-sm text-muted-foreground">
+              Dose Number
+            </Label>
+            <DoseSelector
+              value={doseNumber}
+              onChange={setDoseNumber}
+              suggestedDose={suggestedDose}
+            />
+          </div>
+
           {/* Notes */}
           <div className="space-y-2">
             <Label htmlFor="notes" className="text-sm text-muted-foreground">
@@ -165,7 +184,7 @@ export function InjectionDialog({
           </Button>
           <Button
             onClick={handleSubmit}
-            disabled={!site || isSubmitting}
+            disabled={!site || !doseNumber || isSubmitting}
             className="bg-lime text-black hover:bg-lime-muted font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting ? 'Logging...' : 'Log Injection'}
