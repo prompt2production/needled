@@ -142,7 +142,9 @@ export function InjectionHistory({ userId }: InjectionHistoryProps) {
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-white font-medium">{formattedDate}</p>
-                  <p className="text-sm text-muted-foreground mt-1">{siteLabel}</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Dose {injection.doseNumber} - {siteLabel}
+                  </p>
                   {injection.notes && (
                     <p className="text-sm text-muted-foreground mt-2 italic">
                       {injection.notes}

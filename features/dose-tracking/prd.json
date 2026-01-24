@@ -139,7 +139,7 @@
         "Format: 'Dose X - Left Abdomen' or similar clear format",
         "Dose number visible without expanding/hovering"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "DOSE-013",
