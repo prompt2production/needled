@@ -64,7 +64,7 @@
         "Tests PUT updates preferences successfully",
         "All tests pass with npm run test"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NOTIF-006",
