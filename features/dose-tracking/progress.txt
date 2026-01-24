@@ -1,0 +1,6 @@
+---
+Story: DOSE-001 Add doseNumber field to Injection model
+Completed: 2026-01-24T10:30:00Z
+Files changed: prisma/schema.prisma, prisma/migrations/20260124100000_add_session_and_notifications/migration.sql, prisma/migrations/20260124110000_add_dose_number/migration.sql
+Notes: Added doseNumber Int @default(1) field to Injection model. Also created migration files to resolve drift from previous development (Session, NotificationPreference tables). Used db push + manual migration files due to migration drift.
+---

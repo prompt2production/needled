@@ -1,0 +1,218 @@
+{
+  "feature": "Dose Tracking",
+  "stories": [
+    {
+      "id": "DOSE-001",
+      "title": "Add doseNumber field to Injection model",
+      "description": "Add a doseNumber integer field (1-4) to the Injection model in Prisma schema",
+      "acceptance_criteria": [
+        "prisma/schema.prisma has doseNumber Int @default(1) field on Injection model",
+        "Migration created with npx prisma migrate dev --name add-dose-number",
+        "Prisma client regenerated with npx prisma generate"
+      ],
+      "passes": true
+    },
+    {
+      "id": "DOSE-002",
+      "title": "Update injection validation schemas for doseNumber",
+      "description": "Add doseNumber validation to injection Zod schemas",
+      "acceptance_criteria": [
+        "src/lib/validations/injection.ts createInjectionSchema includes doseNumber as optional z.number().int().min(1).max(4)",
+        "src/lib/validations/injection.ts updateInjectionSchema includes doseNumber as optional z.number().int().min(1).max(4)",
+        "Unit tests pass for doseNumber validation (valid: 1-4, invalid: 0, 5, decimals, strings)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DOSE-003",
+      "title": "Create dose calculation utility function",
+      "description": "Create helper function to calculate the next dose number based on last injection",
+      "acceptance_criteria": [
+        "src/lib/dose-tracking.ts exports getNextDoseNumber(lastDoseNumber: number | null): number",
+        "Returns 1 if lastDoseNumber is null (no previous injection)",
+        "Returns lastDoseNumber + 1 if lastDoseNumber is 1, 2, or 3",
+        "Returns 1 if lastDoseNumber is 4 (new pen)",
+        "Unit tests cover all cases in tests/unit/dose-tracking.test.ts"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DOSE-004",
+      "title": "Update POST /api/injections to handle doseNumber",
+      "description": "Modify injection creation API to accept and auto-calculate doseNumber",
+      "acceptance_criteria": [
+        "POST /api/injections accepts optional doseNumber in request body",
+        "If doseNumber not provided, auto-calculates from user's last injection using getNextDoseNumber",
+        "Response includes doseNumber field",
+        "Invalid doseNumber values (0, 5, etc) return 400 error"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DOSE-005",
+      "title": "Update PATCH /api/injections/[id] to handle doseNumber",
+      "description": "Modify injection update API to accept doseNumber changes",
+      "acceptance_criteria": [
+        "PATCH /api/injections/[id] accepts optional doseNumber in request body",
+        "doseNumber is updated when provided",
+        "Response includes doseNumber field",
+        "Invalid doseNumber values return 400 error"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DOSE-006",
+      "title": "Update GET /api/injections/status to include dose information",
+      "description": "Add dose tracking fields to injection status response",
+      "acceptance_criteria": [
+        "GET /api/injections/status response includes currentDose (number or null)",
+        "Response includes nextDose (calculated next dose number 1-4)",
+        "Response includes dosesRemaining (number of doses left: 4 - currentDose, or 4 if currentDose is 4)",
+        "Fields populated from most recent injection's doseNumber"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DOSE-007",
+      "title": "Update GET /api/injections to include doseNumber",
+      "description": "Ensure injection list responses include doseNumber",
+      "acceptance_criteria": [
+        "GET /api/injections response includes doseNumber for each injection",
+        "Existing injections without doseNumber show default value of 1"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DOSE-008",
+      "title": "Create DoseSelector component",
+      "description": "Create reusable dose number selector UI component",
+      "acceptance_criteria": [
+        "src/components/injection/DoseSelector.tsx exports DoseSelector component",
+        "Displays 4 horizontal buttons labeled 1, 2, 3, 4",
+        "Props: value (selected dose), suggestedDose, onChange callback",
+        "Suggested dose has lime/primary styling with 'Suggested' label",
+        "Selected dose has distinct selected styling",
+        "Follows DESIGN_SYSTEM.md patterns"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DOSE-009",
+      "title": "Add DoseSelector to InjectionDialog",
+      "description": "Integrate dose selector into the injection logging dialog",
+      "acceptance_criteria": [
+        "InjectionDialog.tsx includes DoseSelector component below site selector",
+        "Dose selector receives suggestedDose prop (calculated from last injection)",
+        "Selected dose is included in form submission",
+        "Default selection is the suggested dose"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DOSE-010",
+      "title": "Update InjectionCardConnected to pass dose information",
+      "description": "Pass dose tracking data from status API to components",
+      "acceptance_criteria": [
+        "InjectionCardConnected fetches and passes nextDose to InjectionDialog",
+        "InjectionCardConnected passes currentDose and dosesRemaining to InjectionCard"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DOSE-011",
+      "title": "Add DoseSelector to InjectionEditDialog",
+      "description": "Allow editing dose number on existing injections",
+      "acceptance_criteria": [
+        "InjectionEditDialog.tsx includes DoseSelector component",
+        "Initializes with existing injection's doseNumber",
+        "Updated dose is included in PATCH request",
+        "No suggestedDose shown when editing (just selected state)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DOSE-012",
+      "title": "Display dose number in InjectionHistory",
+      "description": "Show dose number alongside site in history items",
+      "acceptance_criteria": [
+        "InjectionHistory items display dose number",
+        "Format: 'Dose X - Left Abdomen' or similar clear format",
+        "Dose number visible without expanding/hovering"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DOSE-013",
+      "title": "Create DosesRemainingCard component",
+      "description": "Create component to display current pen dose status",
+      "acceptance_criteria": [
+        "src/components/injection/DosesRemainingCard.tsx exports DosesRemainingCard",
+        "Props: currentDose (number | null), dosesRemaining (number)",
+        "Displays 'Dose X of 4' with visual progress indicator (4 dots/circles)",
+        "Shows filled circles for used doses, empty for remaining",
+        "Shows 'X doses remaining' text",
+        "When on dose 4, shows 'Last dose - time to reorder' message",
+        "Follows DESIGN_SYSTEM.md card patterns"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DOSE-014",
+      "title": "Replace Site Rotation card with DosesRemainingCard on injection page",
+      "description": "Update injection page layout to show doses remaining instead of site rotation",
+      "acceptance_criteria": [
+        "src/app/injection/page.tsx removes Site Rotation Summary section",
+        "DosesRemainingCard displayed in its place",
+        "Card receives currentDose and dosesRemaining from status data",
+        "Layout still works on both desktop and mobile viewports"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DOSE-015",
+      "title": "Show dose info in InjectionCard done state",
+      "description": "Display dose number when injection is complete",
+      "acceptance_criteria": [
+        "InjectionCard in 'done' status shows 'Dose X of 4' information",
+        "Displayed near the injection date/site details",
+        "Styling is subtle/secondary, not prominent"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DOSE-016",
+      "title": "Add E2E test for logging injection with dose",
+      "description": "Test the complete injection logging flow with dose selection",
+      "acceptance_criteria": [
+        "tests/e2e/dose-tracking.spec.ts tests logging injection with default dose",
+        "Tests selecting a different dose number",
+        "Tests that dose appears in history after logging",
+        "All E2E tests pass with npx playwright test"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DOSE-017",
+      "title": "Add E2E test for editing injection dose",
+      "description": "Test editing dose number on existing injections",
+      "acceptance_criteria": [
+        "tests/e2e/dose-tracking.spec.ts tests editing dose on existing injection",
+        "Tests that updated dose appears correctly in history",
+        "All E2E tests pass"
+      ],
+      "passes": false
+    },
+    {
+      "id": "DOSE-018",
+      "title": "Add E2E test for doses remaining display",
+      "description": "Test that doses remaining card shows correct information",
+      "acceptance_criteria": [
+        "tests/e2e/dose-tracking.spec.ts tests doses remaining card visibility",
+        "Tests that dose count updates after logging injection",
+        "Tests reorder message appears on dose 4",
+        "All E2E tests pass"
+      ],
+      "passes": false
+    }
+  ]
+}
