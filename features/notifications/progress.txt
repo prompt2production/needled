@@ -88,3 +88,9 @@ Completed: 2026-01-24T10:52:00Z
 Files changed: src/app/api/notifications/unsubscribe/route.ts
 Notes: Created GET endpoint that verifies token and disables all notifications via upsert.
 ---
+---
+Story: NOTIF-016 Create unsubscribe confirmation page
+Completed: 2026-01-24T10:55:00Z
+Files changed: src/app/unsubscribe/page.tsx
+Notes: Created page with loading, success, and error states. Follows dark theme with centered layout.
+---

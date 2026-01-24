@@ -209,7 +209,7 @@
         "Shows link to re-enable notifications in settings",
         "Follows DESIGN_SYSTEM.md styling (dark theme, centered layout)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NOTIF-017",
