@@ -144,7 +144,7 @@
         "Functions check user preferences, timezone, and whether action already taken today",
         "Functions use sendEmail from email client"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NOTIF-012",
@@ -182,7 +182,7 @@
         "Uses UNSUBSCRIBE_SECRET env var for signing",
         "Tokens expire after 30 days"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "NOTIF-015",

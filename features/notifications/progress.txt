@@ -58,3 +58,15 @@ Completed: 2026-01-24T10:42:00Z
 Files changed: src/lib/email-templates/index.ts
 Notes: Created index file re-exporting all templates, EmailType union, and getEmailSubject helper.
 ---
+---
+Story: NOTIF-011 Create notification sending service
+Completed: 2026-01-24T10:45:00Z
+Files changed: src/lib/services/notification-service.ts, package.json (added date-fns-tz)
+Notes: Created service with timezone-aware reminder checking. Also implemented NOTIF-014 (unsubscribe-token.ts) as dependency.
+---
+---
+Story: NOTIF-014 Create unsubscribe token utility
+Completed: 2026-01-24T10:45:00Z
+Files changed: src/lib/unsubscribe-token.ts
+Notes: Created signed token utility with HMAC-SHA256. Implemented as dependency for NOTIF-011.
+---
