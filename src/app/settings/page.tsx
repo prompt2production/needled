@@ -66,39 +66,56 @@ export default function SettingsPage() {
             <header className="mb-6">
               <div className="h-8 w-32 bg-white/5 rounded animate-pulse" />
             </header>
-            <div className="max-w-xl space-y-6">
-              {/* Profile skeleton */}
-              <Card className="border-border">
-                <CardHeader>
-                  <div className="h-5 w-24 bg-white/5 rounded animate-pulse" />
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="h-10 bg-white/5 rounded animate-pulse" />
-                  <div className="h-10 bg-white/5 rounded animate-pulse" />
-                  <div className="h-10 bg-white/5 rounded animate-pulse" />
-                  <div className="h-10 bg-white/5 rounded animate-pulse" />
-                </CardContent>
-              </Card>
-              {/* Account skeleton */}
-              <Card className="border-border">
-                <CardHeader>
-                  <div className="h-5 w-24 bg-white/5 rounded animate-pulse" />
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="h-10 bg-white/5 rounded animate-pulse" />
-                  <div className="h-10 bg-white/5 rounded animate-pulse" />
-                </CardContent>
-              </Card>
-              {/* Data skeleton */}
-              <Card className="border-border">
-                <CardHeader>
-                  <div className="h-5 w-16 bg-white/5 rounded animate-pulse" />
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="h-10 bg-white/5 rounded animate-pulse" />
-                  <div className="h-10 bg-white/5 rounded animate-pulse" />
-                </CardContent>
-              </Card>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Left Column */}
+              <div className="space-y-6">
+                {/* Profile skeleton */}
+                <Card className="border-border">
+                  <CardHeader>
+                    <div className="h-5 w-24 bg-white/5 rounded animate-pulse" />
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="h-10 bg-white/5 rounded animate-pulse" />
+                    <div className="h-10 bg-white/5 rounded animate-pulse" />
+                    <div className="h-10 bg-white/5 rounded animate-pulse" />
+                    <div className="h-10 bg-white/5 rounded animate-pulse" />
+                  </CardContent>
+                </Card>
+                {/* Account skeleton */}
+                <Card className="border-border">
+                  <CardHeader>
+                    <div className="h-5 w-24 bg-white/5 rounded animate-pulse" />
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="h-10 bg-white/5 rounded animate-pulse" />
+                    <div className="h-10 bg-white/5 rounded animate-pulse" />
+                  </CardContent>
+                </Card>
+              </div>
+              {/* Right Column */}
+              <div className="space-y-6">
+                {/* Notifications skeleton */}
+                <Card className="border-border">
+                  <CardHeader>
+                    <div className="h-5 w-28 bg-white/5 rounded animate-pulse" />
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="h-10 bg-white/5 rounded animate-pulse" />
+                    <div className="h-10 bg-white/5 rounded animate-pulse" />
+                    <div className="h-10 bg-white/5 rounded animate-pulse" />
+                  </CardContent>
+                </Card>
+                {/* Data skeleton */}
+                <Card className="border-border">
+                  <CardHeader>
+                    <div className="h-5 w-16 bg-white/5 rounded animate-pulse" />
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="h-10 bg-white/5 rounded animate-pulse" />
+                    <div className="h-10 bg-white/5 rounded animate-pulse" />
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
         </div>
@@ -122,51 +139,57 @@ export default function SettingsPage() {
             <h1 className="text-2xl font-semibold text-white">Settings</h1>
           </header>
 
-          <div className="max-w-xl space-y-6">
-            {/* Profile Settings */}
-            <Card className="border-border">
-              <CardHeader>
-                <CardTitle className="text-lg text-white">Profile</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ProfileSettingsForm
-                  settings={settings}
-                  onUpdate={handleProfileUpdate}
-                />
-              </CardContent>
-            </Card>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left Column */}
+            <div className="space-y-6">
+              {/* Profile Settings */}
+              <Card className="border-border">
+                <CardHeader>
+                  <CardTitle className="text-lg text-white">Profile</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ProfileSettingsForm
+                    settings={settings}
+                    onUpdate={handleProfileUpdate}
+                  />
+                </CardContent>
+              </Card>
 
-            {/* Account Settings */}
-            <Card className="border-border">
-              <CardHeader>
-                <CardTitle className="text-lg text-white">Account</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <EmailUpdateForm
-                  currentEmail={settings.email}
-                  onUpdate={handleEmailUpdate}
-                />
-                <div className="border-t border-border pt-6">
-                  <PasswordChangeForm />
-                </div>
-              </CardContent>
-            </Card>
+              {/* Account Settings */}
+              <Card className="border-border">
+                <CardHeader>
+                  <CardTitle className="text-lg text-white">Account</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <EmailUpdateForm
+                    currentEmail={settings.email}
+                    onUpdate={handleEmailUpdate}
+                  />
+                  <div className="border-t border-border pt-6">
+                    <PasswordChangeForm />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
 
-            {/* Notifications */}
-            <NotificationSettings hasEmail={!!settings.email} />
+            {/* Right Column */}
+            <div className="space-y-6">
+              {/* Notifications */}
+              <NotificationSettings hasEmail={!!settings.email} />
 
-            {/* Data Settings */}
-            <Card className="border-border">
-              <CardHeader>
-                <CardTitle className="text-lg text-white">Data</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <ExportDataButton />
-                <div className="border-t border-border pt-4">
-                  <DeleteAccountButton />
-                </div>
-              </CardContent>
-            </Card>
+              {/* Data Settings */}
+              <Card className="border-border">
+                <CardHeader>
+                  <CardTitle className="text-lg text-white">Data</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <ExportDataButton />
+                  <div className="border-t border-border pt-4">
+                    <DeleteAccountButton />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </div>

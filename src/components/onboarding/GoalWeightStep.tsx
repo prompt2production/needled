@@ -31,7 +31,8 @@ export function GoalWeightStep({
 
   const difference = startWeight - weightNum
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
     if (isValid) {
       onNext({ goalWeight: weightNum })
     }
@@ -42,7 +43,7 @@ export function GoalWeightStep({
   }
 
   return (
-    <div className="flex flex-col px-4 space-y-8">
+    <form onSubmit={handleSubmit} className="flex flex-col px-4 space-y-8">
       {/* Heading */}
       <div className="text-center space-y-2">
         <h1 className="text-2xl font-semibold text-white">
@@ -97,7 +98,7 @@ export function GoalWeightStep({
       {/* CTAs */}
       <div className="space-y-3">
         <Button
-          onClick={handleSubmit}
+          type="submit"
           disabled={!isValid}
           className="bg-lime text-black hover:bg-lime-muted font-medium w-full h-12 text-base disabled:opacity-50 disabled:cursor-not-allowed"
         >
@@ -111,6 +112,6 @@ export function GoalWeightStep({
           Skip for now
         </button>
       </div>
-    </div>
+    </form>
   )
 }

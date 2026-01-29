@@ -12,20 +12,14 @@ vi.mock('@/lib/prisma', () => ({
   },
 }))
 
-vi.mock('@/lib/cookies', () => ({
-  getSessionToken: vi.fn(),
-}))
-
-vi.mock('@/lib/auth', () => ({
-  validateSession: vi.fn(),
+vi.mock('@/lib/api-auth', () => ({
+  authenticateRequest: vi.fn(),
 }))
 
 import { prisma } from '@/lib/prisma'
-import { getSessionToken } from '@/lib/cookies'
-import { validateSession } from '@/lib/auth'
+import { authenticateRequest } from '@/lib/api-auth'
 
-const mockGetSessionToken = vi.mocked(getSessionToken)
-const mockValidateSession = vi.mocked(validateSession)
+const mockAuthenticateRequest = vi.mocked(authenticateRequest)
 const mockUserFindUnique = vi.mocked(prisma.user.findUnique)
 const mockUserUpdate = vi.mocked(prisma.user.update)
 
@@ -57,7 +51,7 @@ describe('PUT /api/settings/email', () => {
   })
 
   it('should return 401 without auth token', async () => {
-    mockGetSessionToken.mockResolvedValue(null)
+    mockAuthenticateRequest.mockResolvedValue(null)
 
     const request = createPutRequest({ email: 'newemail@example.com' })
     const response = await PUT(request)
@@ -68,8 +62,7 @@ describe('PUT /api/settings/email', () => {
   })
 
   it('should return 401 for invalid session', async () => {
-    mockGetSessionToken.mockResolvedValue('invalid-token')
-    mockValidateSession.mockResolvedValue(null)
+    mockAuthenticateRequest.mockResolvedValue(null)
 
     const request = createPutRequest({ email: 'newemail@example.com' })
     const response = await PUT(request)
@@ -80,8 +73,11 @@ describe('PUT /api/settings/email', () => {
   })
 
   it('should update email successfully', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockUserFindUnique.mockResolvedValue(null) // No existing user with this email
     mockUserUpdate.mockResolvedValue(mockUser as never)
 
@@ -98,8 +94,11 @@ describe('PUT /api/settings/email', () => {
   })
 
   it('should allow keeping the same email', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     // Return the same user when checking for existing email
     mockUserFindUnique.mockResolvedValue(mockUser as never)
     mockUserUpdate.mockResolvedValue(mockUser as never)
@@ -113,8 +112,11 @@ describe('PUT /api/settings/email', () => {
   })
 
   it('should return 409 if email is already in use by another user', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     // Return a different user with this email
     mockUserFindUnique.mockResolvedValue({
       ...mockUser,
@@ -132,8 +134,11 @@ describe('PUT /api/settings/email', () => {
   })
 
   it('should return 400 for invalid email format', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
 
     const request = createPutRequest({ email: 'not-an-email' })
     const response = await PUT(request)
@@ -145,8 +150,11 @@ describe('PUT /api/settings/email', () => {
   })
 
   it('should return 400 for empty email', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
 
     const request = createPutRequest({ email: '' })
     const response = await PUT(request)
@@ -157,8 +165,11 @@ describe('PUT /api/settings/email', () => {
   })
 
   it('should return 400 for missing email field', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
 
     const request = createPutRequest({})
     const response = await PUT(request)
@@ -169,8 +180,11 @@ describe('PUT /api/settings/email', () => {
   })
 
   it('should return 500 on database error', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockUserFindUnique.mockRejectedValue(new Error('Database error'))
 
     const request = createPutRequest({ email: 'newemail@example.com' })
@@ -179,5 +193,29 @@ describe('PUT /api/settings/email', () => {
 
     expect(response.status).toBe(500)
     expect(data.error).toBe('Internal server error')
+  })
+
+  it('should work with Bearer token authentication', async () => {
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'bearer-token',
+      source: 'bearer',
+    })
+    mockUserFindUnique.mockResolvedValue(null)
+    mockUserUpdate.mockResolvedValue(mockUser as never)
+
+    const request = new NextRequest('http://localhost:3000/api/settings/email', {
+      method: 'PUT',
+      body: JSON.stringify({ email: 'newemail@example.com' }),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer bearer-token',
+      },
+    })
+    const response = await PUT(request)
+    const data = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(data.message).toBe('Email updated successfully')
   })
 })

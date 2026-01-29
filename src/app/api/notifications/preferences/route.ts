@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getSessionToken } from '@/lib/cookies'
-import { validateSession } from '@/lib/auth'
+import { authenticateRequest } from '@/lib/api-auth'
 import { notificationPreferencesInputSchema } from '@/lib/validations/notification-preferences'
 import { z } from 'zod'
 
@@ -14,20 +13,11 @@ const DEFAULT_PREFERENCES = {
   timezone: 'Europe/London',
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const token = await getSessionToken()
+    const auth = await authenticateRequest(request)
 
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Not authenticated' },
-        { status: 401 }
-      )
-    }
-
-    const user = await validateSession(token)
-
-    if (!user) {
+    if (!auth) {
       return NextResponse.json(
         { error: 'Not authenticated' },
         { status: 401 }
@@ -36,14 +26,14 @@ export async function GET() {
 
     // Try to find existing preferences
     let preferences = await prisma.notificationPreference.findUnique({
-      where: { userId: user.id },
+      where: { userId: auth.user.id },
     })
 
     // Create default preferences if none exist
     if (!preferences) {
       preferences = await prisma.notificationPreference.create({
         data: {
-          userId: user.id,
+          userId: auth.user.id,
           ...DEFAULT_PREFERENCES,
         },
       })
@@ -61,18 +51,9 @@ export async function GET() {
 
 export async function PUT(request: NextRequest) {
   try {
-    const token = await getSessionToken()
+    const auth = await authenticateRequest(request)
 
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Not authenticated' },
-        { status: 401 }
-      )
-    }
-
-    const user = await validateSession(token)
-
-    if (!user) {
+    if (!auth) {
       return NextResponse.json(
         { error: 'Not authenticated' },
         { status: 401 }
@@ -84,9 +65,9 @@ export async function PUT(request: NextRequest) {
 
     // Upsert preferences - create if doesn't exist, update if exists
     const preferences = await prisma.notificationPreference.upsert({
-      where: { userId: user.id },
+      where: { userId: auth.user.id },
       create: {
-        userId: user.id,
+        userId: auth.user.id,
         ...validated,
       },
       update: validated,

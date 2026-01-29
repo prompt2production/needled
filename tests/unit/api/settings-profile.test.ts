@@ -11,20 +11,14 @@ vi.mock('@/lib/prisma', () => ({
   },
 }))
 
-vi.mock('@/lib/cookies', () => ({
-  getSessionToken: vi.fn(),
-}))
-
-vi.mock('@/lib/auth', () => ({
-  validateSession: vi.fn(),
+vi.mock('@/lib/api-auth', () => ({
+  authenticateRequest: vi.fn(),
 }))
 
 import { prisma } from '@/lib/prisma'
-import { getSessionToken } from '@/lib/cookies'
-import { validateSession } from '@/lib/auth'
+import { authenticateRequest } from '@/lib/api-auth'
 
-const mockGetSessionToken = vi.mocked(getSessionToken)
-const mockValidateSession = vi.mocked(validateSession)
+const mockAuthenticateRequest = vi.mocked(authenticateRequest)
 const mockUserUpdate = vi.mocked(prisma.user.update)
 
 const mockUser = {
@@ -72,7 +66,7 @@ describe('PUT /api/settings/profile', () => {
   })
 
   it('should return 401 without auth token', async () => {
-    mockGetSessionToken.mockResolvedValue(null)
+    mockAuthenticateRequest.mockResolvedValue(null)
 
     const request = createPutRequest(validInput)
     const response = await PUT(request)
@@ -83,8 +77,7 @@ describe('PUT /api/settings/profile', () => {
   })
 
   it('should return 401 for invalid session', async () => {
-    mockGetSessionToken.mockResolvedValue('invalid-token')
-    mockValidateSession.mockResolvedValue(null)
+    mockAuthenticateRequest.mockResolvedValue(null)
 
     const request = createPutRequest(validInput)
     const response = await PUT(request)
@@ -95,8 +88,11 @@ describe('PUT /api/settings/profile', () => {
   })
 
   it('should update profile for authenticated user', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockUserUpdate.mockResolvedValue(mockUpdatedUserResponse as never)
 
     const request = createPutRequest(validInput)
@@ -111,8 +107,11 @@ describe('PUT /api/settings/profile', () => {
   })
 
   it('should NOT return passwordHash in response', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockUserUpdate.mockResolvedValue(mockUpdatedUserResponse as never)
 
     const request = createPutRequest(validInput)
@@ -124,8 +123,11 @@ describe('PUT /api/settings/profile', () => {
   })
 
   it('should call prisma.user.update with correct data', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockUserUpdate.mockResolvedValue(mockUpdatedUserResponse as never)
 
     const request = createPutRequest(validInput)
@@ -152,8 +154,11 @@ describe('PUT /api/settings/profile', () => {
   })
 
   it('should return 400 for invalid name', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
 
     const invalidInput = { ...validInput, name: 'A' } // Too short
     const request = createPutRequest(invalidInput)
@@ -166,8 +171,11 @@ describe('PUT /api/settings/profile', () => {
   })
 
   it('should return 400 for invalid medication', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
 
     const invalidInput = { ...validInput, medication: 'INVALID' }
     const request = createPutRequest(invalidInput)
@@ -179,8 +187,11 @@ describe('PUT /api/settings/profile', () => {
   })
 
   it('should return 400 for invalid injection day', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
 
     const invalidInput = { ...validInput, injectionDay: 7 } // Out of range
     const request = createPutRequest(invalidInput)
@@ -192,8 +203,11 @@ describe('PUT /api/settings/profile', () => {
   })
 
   it('should allow null goalWeight', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockUserUpdate.mockResolvedValue({ ...mockUpdatedUserResponse, goalWeight: null } as never)
 
     const inputWithNullGoal = { ...validInput, goalWeight: null }
@@ -206,8 +220,11 @@ describe('PUT /api/settings/profile', () => {
   })
 
   it('should return 500 on database error', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockUserUpdate.mockRejectedValue(new Error('Database error'))
 
     const request = createPutRequest(validInput)
@@ -216,5 +233,28 @@ describe('PUT /api/settings/profile', () => {
 
     expect(response.status).toBe(500)
     expect(data.error).toBe('Internal server error')
+  })
+
+  it('should work with Bearer token authentication', async () => {
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'bearer-token',
+      source: 'bearer',
+    })
+    mockUserUpdate.mockResolvedValue(mockUpdatedUserResponse as never)
+
+    const request = new NextRequest('http://localhost:3000/api/settings/profile', {
+      method: 'PUT',
+      body: JSON.stringify(validInput),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer bearer-token',
+      },
+    })
+    const response = await PUT(request)
+    const data = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(data.name).toBe('Updated Name')
   })
 })

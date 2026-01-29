@@ -105,13 +105,16 @@ export function WeighInCard({
             </div>
           </div>
 
-          <Button
-            onClick={() => setDrawerOpen(true)}
-            className="bg-lime text-black hover:bg-lime-muted font-medium w-full mt-4"
-            disabled={isLoading}
-          >
-            Log Weight
-          </Button>
+          <div className="mt-4 flex justify-end">
+            <Button
+              variant="outline"
+              onClick={() => setDrawerOpen(true)}
+              className="border-lime/30 text-lime/80 hover:text-lime hover:bg-lime/5 hover:border-lime/50 text-sm"
+              disabled={isLoading}
+            >
+              Log Weight
+            </Button>
+          </div>
         </div>
 
         <WeighInInput
@@ -142,13 +145,16 @@ export function WeighInCard({
           </div>
         </div>
 
-        <Button
-          onClick={() => setDrawerOpen(true)}
-          className="bg-lime text-black hover:bg-lime-muted font-medium w-full mt-4"
-          disabled={isLoading}
-        >
-          Log Weight
-        </Button>
+        <div className="mt-4 flex justify-end">
+          <Button
+            variant="outline"
+            onClick={() => setDrawerOpen(true)}
+            className="border-lime/30 text-lime/80 hover:text-lime hover:bg-lime/5 hover:border-lime/50 text-sm"
+            disabled={isLoading}
+          >
+            Log Weight
+          </Button>
+        </div>
       </div>
 
       <WeighInInput

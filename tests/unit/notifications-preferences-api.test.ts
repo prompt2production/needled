@@ -13,20 +13,14 @@ vi.mock('@/lib/prisma', () => ({
   },
 }))
 
-vi.mock('@/lib/cookies', () => ({
-  getSessionToken: vi.fn(),
-}))
-
-vi.mock('@/lib/auth', () => ({
-  validateSession: vi.fn(),
+vi.mock('@/lib/api-auth', () => ({
+  authenticateRequest: vi.fn(),
 }))
 
 import { prisma } from '@/lib/prisma'
-import { getSessionToken } from '@/lib/cookies'
-import { validateSession } from '@/lib/auth'
+import { authenticateRequest } from '@/lib/api-auth'
 
-const mockGetSessionToken = vi.mocked(getSessionToken)
-const mockValidateSession = vi.mocked(validateSession)
+const mockAuthenticateRequest = vi.mocked(authenticateRequest)
 const mockFindUnique = vi.mocked(prisma.notificationPreference.findUnique)
 const mockCreate = vi.mocked(prisma.notificationPreference.create)
 const mockUpsert = vi.mocked(prisma.notificationPreference.upsert)
@@ -58,15 +52,22 @@ const mockPreferences = {
   updatedAt: new Date(),
 }
 
+function createGetRequest(): NextRequest {
+  return new NextRequest('http://localhost:3000/api/notifications/preferences', {
+    method: 'GET',
+  })
+}
+
 describe('GET /api/notifications/preferences', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   it('should return 401 without auth', async () => {
-    mockGetSessionToken.mockResolvedValue(null)
+    mockAuthenticateRequest.mockResolvedValue(null)
 
-    const response = await GET()
+    const request = createGetRequest()
+    const response = await GET(request)
     const data = await response.json()
 
     expect(response.status).toBe(401)
@@ -74,10 +75,10 @@ describe('GET /api/notifications/preferences', () => {
   })
 
   it('should return 401 for invalid session', async () => {
-    mockGetSessionToken.mockResolvedValue('invalid-token')
-    mockValidateSession.mockResolvedValue(null)
+    mockAuthenticateRequest.mockResolvedValue(null)
 
-    const response = await GET()
+    const request = createGetRequest()
+    const response = await GET(request)
     const data = await response.json()
 
     expect(response.status).toBe(401)
@@ -85,11 +86,15 @@ describe('GET /api/notifications/preferences', () => {
   })
 
   it('should return preferences for authenticated user', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockFindUnique.mockResolvedValue(mockPreferences as never)
 
-    const response = await GET()
+    const request = createGetRequest()
+    const response = await GET(request)
     const data = await response.json()
 
     expect(response.status).toBe(200)
@@ -98,12 +103,16 @@ describe('GET /api/notifications/preferences', () => {
   })
 
   it('should create default preferences if none exist', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockFindUnique.mockResolvedValue(null)
     mockCreate.mockResolvedValue(mockPreferences as never)
 
-    const response = await GET()
+    const request = createGetRequest()
+    const response = await GET(request)
     const data = await response.json()
 
     expect(response.status).toBe(200)
@@ -118,6 +127,25 @@ describe('GET /api/notifications/preferences', () => {
         timezone: 'Europe/London',
       }),
     })
+    expect(data.userId).toBe('user123')
+  })
+
+  it('should work with Bearer token authentication', async () => {
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'bearer-token',
+      source: 'bearer',
+    })
+    mockFindUnique.mockResolvedValue(mockPreferences as never)
+
+    const request = new NextRequest('http://localhost:3000/api/notifications/preferences', {
+      method: 'GET',
+      headers: { 'Authorization': 'Bearer bearer-token' },
+    })
+    const response = await GET(request)
+    const data = await response.json()
+
+    expect(response.status).toBe(200)
     expect(data.userId).toBe('user123')
   })
 })
@@ -145,7 +173,7 @@ describe('PUT /api/notifications/preferences', () => {
   })
 
   it('should return 401 without auth', async () => {
-    mockGetSessionToken.mockResolvedValue(null)
+    mockAuthenticateRequest.mockResolvedValue(null)
 
     const request = createPutRequest(validInput)
     const response = await PUT(request)
@@ -156,8 +184,11 @@ describe('PUT /api/notifications/preferences', () => {
   })
 
   it('should return 400 for invalid input', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
 
     const invalidInput = {
       injectionReminder: 'not a boolean', // should be boolean
@@ -178,8 +209,11 @@ describe('PUT /api/notifications/preferences', () => {
   })
 
   it('should update preferences successfully', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
 
     const updatedPreferences = {
       ...mockPreferences,
@@ -206,8 +240,11 @@ describe('PUT /api/notifications/preferences', () => {
   })
 
   it('should create preferences if none exist (upsert)', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
 
     const newPreferences = {
       id: 'new-pref',
@@ -223,5 +260,33 @@ describe('PUT /api/notifications/preferences', () => {
 
     expect(response.status).toBe(200)
     expect(mockUpsert).toHaveBeenCalled()
+  })
+
+  it('should work with Bearer token authentication', async () => {
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'bearer-token',
+      source: 'bearer',
+    })
+
+    const updatedPreferences = {
+      ...mockPreferences,
+      ...validInput,
+    }
+    mockUpsert.mockResolvedValue(updatedPreferences as never)
+
+    const request = new NextRequest('http://localhost:3000/api/notifications/preferences', {
+      method: 'PUT',
+      body: JSON.stringify(validInput),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer bearer-token',
+      },
+    })
+    const response = await PUT(request)
+    const data = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(data.injectionReminder).toBe(false)
   })
 })

@@ -1,24 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { validateSession } from '@/lib/auth'
-import { getSessionToken } from '@/lib/cookies'
+import { authenticateRequest } from '@/lib/api-auth'
 import { profileUpdateSchema } from '@/lib/validations/settings'
 import { z } from 'zod'
 
 export async function PUT(request: NextRequest) {
   try {
-    const token = await getSessionToken()
+    const auth = await authenticateRequest(request)
 
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Not authenticated' },
-        { status: 401 }
-      )
-    }
-
-    const user = await validateSession(token)
-
-    if (!user) {
+    if (!auth) {
       return NextResponse.json(
         { error: 'Not authenticated' },
         { status: 401 }
@@ -30,7 +20,7 @@ export async function PUT(request: NextRequest) {
 
     // Update user profile
     const updatedUser = await prisma.user.update({
-      where: { id: user.id },
+      where: { id: auth.user.id },
       data: {
         name: validated.name,
         goalWeight: validated.goalWeight,

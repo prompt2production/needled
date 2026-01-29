@@ -1,24 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { validateSession } from '@/lib/auth'
-import { getSessionToken } from '@/lib/cookies'
+import { authenticateRequest } from '@/lib/api-auth'
 import { emailUpdateSchema } from '@/lib/validations/settings'
 import { z } from 'zod'
 
 export async function PUT(request: NextRequest) {
   try {
-    const token = await getSessionToken()
+    const auth = await authenticateRequest(request)
 
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Not authenticated' },
-        { status: 401 }
-      )
-    }
-
-    const user = await validateSession(token)
-
-    if (!user) {
+    if (!auth) {
       return NextResponse.json(
         { error: 'Not authenticated' },
         { status: 401 }
@@ -33,7 +23,7 @@ export async function PUT(request: NextRequest) {
       where: { email: validated.email },
     })
 
-    if (existingUser && existingUser.id !== user.id) {
+    if (existingUser && existingUser.id !== auth.user.id) {
       return NextResponse.json(
         { error: 'Email already in use' },
         { status: 409 }
@@ -42,7 +32,7 @@ export async function PUT(request: NextRequest) {
 
     // Update user email
     await prisma.user.update({
-      where: { id: user.id },
+      where: { id: auth.user.id },
       data: { email: validated.email },
     })
 

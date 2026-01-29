@@ -1,21 +1,11 @@
-import { NextResponse } from 'next/server'
-import { validateSession } from '@/lib/auth'
-import { getSessionToken } from '@/lib/cookies'
+import { NextRequest, NextResponse } from 'next/server'
+import { authenticateRequest } from '@/lib/api-auth'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const token = await getSessionToken()
+    const auth = await authenticateRequest(request)
 
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Not authenticated' },
-        { status: 401 }
-      )
-    }
-
-    const user = await validateSession(token)
-
-    if (!user) {
+    if (!auth) {
       return NextResponse.json(
         { error: 'Not authenticated' },
         { status: 401 }
@@ -23,7 +13,7 @@ export async function GET() {
     }
 
     // Return user data without passwordHash
-    const { passwordHash: _, ...userWithoutPassword } = user
+    const { passwordHash: _, ...userWithoutPassword } = auth.user
     return NextResponse.json(userWithoutPassword, { status: 200 })
   } catch (error) {
     console.error('Session check error:', error)

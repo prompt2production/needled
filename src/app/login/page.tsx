@@ -29,8 +29,9 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       })
 
+      const data = await response.json()
+
       if (!response.ok) {
-        const data = await response.json()
         if (response.status === 401) {
           setError('Invalid email or password')
         } else if (data.error) {
@@ -40,6 +41,9 @@ export default function LoginPage() {
         }
         return
       }
+
+      // Save user ID to localStorage for dashboard
+      localStorage.setItem('userId', data.id)
 
       // Success - show toast and redirect to dashboard
       toast.success('Welcome back!', {

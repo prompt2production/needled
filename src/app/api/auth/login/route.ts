@@ -43,9 +43,9 @@ export async function POST(request: NextRequest) {
     const token = await createSession(user.id)
     await setSessionCookie(token)
 
-    // Return user data without passwordHash
+    // Return user data without passwordHash, plus token for native apps
     const { passwordHash: _, ...userWithoutPassword } = user
-    return NextResponse.json(userWithoutPassword, { status: 200 })
+    return NextResponse.json({ ...userWithoutPassword, token }, { status: 200 })
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: error.errors }, { status: 400 })

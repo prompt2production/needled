@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSessionToken } from '@/lib/cookies'
-import { validateSession } from '@/lib/auth'
+import { authenticateRequest } from '@/lib/api-auth'
 import { sendEmail } from '@/lib/email'
 import {
   renderInjectionReminder,
@@ -19,23 +18,16 @@ const testEmailSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    const token = await getSessionToken()
+    const auth = await authenticateRequest(request)
 
-    if (!token) {
+    if (!auth) {
       return NextResponse.json(
         { error: 'Not authenticated' },
         { status: 401 }
       )
     }
 
-    const user = await validateSession(token)
-
-    if (!user) {
-      return NextResponse.json(
-        { error: 'Not authenticated' },
-        { status: 401 }
-      )
-    }
+    const { user } = auth
 
     if (!user.email) {
       return NextResponse.json(

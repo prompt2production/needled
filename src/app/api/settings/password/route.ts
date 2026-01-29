@@ -1,24 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { validateSession, verifyPassword, hashPassword } from '@/lib/auth'
-import { getSessionToken } from '@/lib/cookies'
+import { verifyPassword, hashPassword } from '@/lib/auth'
+import { authenticateRequest } from '@/lib/api-auth'
 import { passwordUpdateSchema } from '@/lib/validations/settings'
 import { z } from 'zod'
 
 export async function PUT(request: NextRequest) {
   try {
-    const token = await getSessionToken()
+    const auth = await authenticateRequest(request)
 
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Not authenticated' },
-        { status: 401 }
-      )
-    }
-
-    const user = await validateSession(token)
-
-    if (!user) {
+    if (!auth) {
       return NextResponse.json(
         { error: 'Not authenticated' },
         { status: 401 }
@@ -29,7 +20,7 @@ export async function PUT(request: NextRequest) {
     const validated = passwordUpdateSchema.parse(body)
 
     // Verify current password
-    if (!user.passwordHash) {
+    if (!auth.user.passwordHash) {
       return NextResponse.json(
         { error: 'Password not set for this account' },
         { status: 400 }
@@ -38,7 +29,7 @@ export async function PUT(request: NextRequest) {
 
     const isCurrentPasswordValid = await verifyPassword(
       validated.currentPassword,
-      user.passwordHash
+      auth.user.passwordHash
     )
 
     if (!isCurrentPasswordValid) {
@@ -52,7 +43,7 @@ export async function PUT(request: NextRequest) {
     const newPasswordHash = await hashPassword(validated.newPassword)
 
     await prisma.user.update({
-      where: { id: user.id },
+      where: { id: auth.user.id },
       data: { passwordHash: newPasswordHash },
     })
 

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { GET } from '@/app/api/settings/route'
+import { NextRequest } from 'next/server'
 
 // Mock dependencies
 vi.mock('@/lib/prisma', () => ({
@@ -10,20 +11,14 @@ vi.mock('@/lib/prisma', () => ({
   },
 }))
 
-vi.mock('@/lib/cookies', () => ({
-  getSessionToken: vi.fn(),
-}))
-
-vi.mock('@/lib/auth', () => ({
-  validateSession: vi.fn(),
+vi.mock('@/lib/api-auth', () => ({
+  authenticateRequest: vi.fn(),
 }))
 
 import { prisma } from '@/lib/prisma'
-import { getSessionToken } from '@/lib/cookies'
-import { validateSession } from '@/lib/auth'
+import { authenticateRequest } from '@/lib/api-auth'
 
-const mockGetSessionToken = vi.mocked(getSessionToken)
-const mockValidateSession = vi.mocked(validateSession)
+const mockAuthenticateRequest = vi.mocked(authenticateRequest)
 const mockUserFindUnique = vi.mocked(prisma.user.findUnique)
 
 const mockUser = {
@@ -50,15 +45,22 @@ const mockUserResponse = {
   injectionDay: 0,
 }
 
+function createGetRequest(): NextRequest {
+  return new NextRequest('http://localhost:3000/api/settings', {
+    method: 'GET',
+  })
+}
+
 describe('GET /api/settings', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
   it('should return 401 without auth token', async () => {
-    mockGetSessionToken.mockResolvedValue(null)
+    mockAuthenticateRequest.mockResolvedValue(null)
 
-    const response = await GET()
+    const request = createGetRequest()
+    const response = await GET(request)
     const data = await response.json()
 
     expect(response.status).toBe(401)
@@ -66,10 +68,10 @@ describe('GET /api/settings', () => {
   })
 
   it('should return 401 for invalid session', async () => {
-    mockGetSessionToken.mockResolvedValue('invalid-token')
-    mockValidateSession.mockResolvedValue(null)
+    mockAuthenticateRequest.mockResolvedValue(null)
 
-    const response = await GET()
+    const request = createGetRequest()
+    const response = await GET(request)
     const data = await response.json()
 
     expect(response.status).toBe(401)
@@ -77,11 +79,15 @@ describe('GET /api/settings', () => {
   })
 
   it('should return user settings for authenticated user', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockUserFindUnique.mockResolvedValue(mockUserResponse as never)
 
-    const response = await GET()
+    const request = createGetRequest()
+    const response = await GET(request)
     const data = await response.json()
 
     expect(response.status).toBe(200)
@@ -89,11 +95,15 @@ describe('GET /api/settings', () => {
   })
 
   it('should NOT return passwordHash in response', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockUserFindUnique.mockResolvedValue(mockUserResponse as never)
 
-    const response = await GET()
+    const request = createGetRequest()
+    const response = await GET(request)
     const data = await response.json()
 
     expect(response.status).toBe(200)
@@ -101,11 +111,15 @@ describe('GET /api/settings', () => {
   })
 
   it('should return correct data shape', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockUserFindUnique.mockResolvedValue(mockUserResponse as never)
 
-    const response = await GET()
+    const request = createGetRequest()
+    const response = await GET(request)
     const data = await response.json()
 
     expect(response.status).toBe(200)
@@ -119,11 +133,15 @@ describe('GET /api/settings', () => {
   })
 
   it('should return 404 if user not found in database', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockUserFindUnique.mockResolvedValue(null)
 
-    const response = await GET()
+    const request = createGetRequest()
+    const response = await GET(request)
     const data = await response.json()
 
     expect(response.status).toBe(404)
@@ -131,14 +149,37 @@ describe('GET /api/settings', () => {
   })
 
   it('should return 500 on database error', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockUserFindUnique.mockRejectedValue(new Error('Database error'))
 
-    const response = await GET()
+    const request = createGetRequest()
+    const response = await GET(request)
     const data = await response.json()
 
     expect(response.status).toBe(500)
     expect(data.error).toBe('Internal server error')
+  })
+
+  it('should work with Bearer token authentication', async () => {
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'bearer-token',
+      source: 'bearer',
+    })
+    mockUserFindUnique.mockResolvedValue(mockUserResponse as never)
+
+    const request = new NextRequest('http://localhost:3000/api/settings', {
+      method: 'GET',
+      headers: { 'Authorization': 'Bearer bearer-token' },
+    })
+    const response = await GET(request)
+    const data = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(data).toEqual(mockUserResponse)
   })
 })

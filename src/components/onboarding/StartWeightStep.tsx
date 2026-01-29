@@ -26,14 +26,15 @@ export function StartWeightStep({
   const isValid =
     !isNaN(weightNum) && weightNum >= minWeight && weightNum <= maxWeight
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
     if (isValid) {
       onNext({ startWeight: weightNum, weightUnit: unit })
     }
   }
 
   return (
-    <div className="flex flex-col px-4 space-y-8">
+    <form onSubmit={handleSubmit} className="flex flex-col px-4 space-y-8">
       {/* Heading */}
       <div className="text-center space-y-2">
         <h1 className="text-2xl font-semibold text-white">
@@ -99,12 +100,12 @@ export function StartWeightStep({
 
       {/* CTA */}
       <Button
-        onClick={handleSubmit}
+        type="submit"
         disabled={!isValid}
         className="bg-lime text-black hover:bg-lime-muted font-medium w-full h-12 text-base disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Continue
       </Button>
-    </div>
+    </form>
   )
 }

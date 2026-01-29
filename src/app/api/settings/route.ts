@@ -1,22 +1,12 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { validateSession } from '@/lib/auth'
-import { getSessionToken } from '@/lib/cookies'
+import { authenticateRequest } from '@/lib/api-auth'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const token = await getSessionToken()
+    const auth = await authenticateRequest(request)
 
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Not authenticated' },
-        { status: 401 }
-      )
-    }
-
-    const user = await validateSession(token)
-
-    if (!user) {
+    if (!auth) {
       return NextResponse.json(
         { error: 'Not authenticated' },
         { status: 401 }
@@ -25,7 +15,7 @@ export async function GET() {
 
     // Fetch user with full profile data
     const fullUser = await prisma.user.findUnique({
-      where: { id: user.id },
+      where: { id: auth.user.id },
       select: {
         id: true,
         name: true,

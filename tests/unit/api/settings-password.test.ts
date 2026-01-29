@@ -11,22 +11,20 @@ vi.mock('@/lib/prisma', () => ({
   },
 }))
 
-vi.mock('@/lib/cookies', () => ({
-  getSessionToken: vi.fn(),
+vi.mock('@/lib/api-auth', () => ({
+  authenticateRequest: vi.fn(),
 }))
 
 vi.mock('@/lib/auth', () => ({
-  validateSession: vi.fn(),
   verifyPassword: vi.fn(),
   hashPassword: vi.fn(),
 }))
 
 import { prisma } from '@/lib/prisma'
-import { getSessionToken } from '@/lib/cookies'
-import { validateSession, verifyPassword, hashPassword } from '@/lib/auth'
+import { authenticateRequest } from '@/lib/api-auth'
+import { verifyPassword, hashPassword } from '@/lib/auth'
 
-const mockGetSessionToken = vi.mocked(getSessionToken)
-const mockValidateSession = vi.mocked(validateSession)
+const mockAuthenticateRequest = vi.mocked(authenticateRequest)
 const mockVerifyPassword = vi.mocked(verifyPassword)
 const mockHashPassword = vi.mocked(hashPassword)
 const mockUserUpdate = vi.mocked(prisma.user.update)
@@ -65,7 +63,7 @@ describe('PUT /api/settings/password', () => {
   })
 
   it('should return 401 without auth token', async () => {
-    mockGetSessionToken.mockResolvedValue(null)
+    mockAuthenticateRequest.mockResolvedValue(null)
 
     const request = createPutRequest(validInput)
     const response = await PUT(request)
@@ -76,8 +74,7 @@ describe('PUT /api/settings/password', () => {
   })
 
   it('should return 401 for invalid session', async () => {
-    mockGetSessionToken.mockResolvedValue('invalid-token')
-    mockValidateSession.mockResolvedValue(null)
+    mockAuthenticateRequest.mockResolvedValue(null)
 
     const request = createPutRequest(validInput)
     const response = await PUT(request)
@@ -88,8 +85,11 @@ describe('PUT /api/settings/password', () => {
   })
 
   it('should update password successfully', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockVerifyPassword.mockResolvedValue(true)
     mockHashPassword.mockResolvedValue('newhash')
     mockUserUpdate.mockResolvedValue(mockUser as never)
@@ -108,8 +108,11 @@ describe('PUT /api/settings/password', () => {
   })
 
   it('should return 400 if current password is incorrect', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockVerifyPassword.mockResolvedValue(false)
 
     const request = createPutRequest(validInput)
@@ -122,8 +125,11 @@ describe('PUT /api/settings/password', () => {
   })
 
   it('should return 400 if user has no password set', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue({ ...mockUser, passwordHash: null } as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: { ...mockUser, passwordHash: null },
+      token: 'valid-token',
+      source: 'cookie',
+    })
 
     const request = createPutRequest(validInput)
     const response = await PUT(request)
@@ -134,8 +140,11 @@ describe('PUT /api/settings/password', () => {
   })
 
   it('should return 400 for new password less than 8 characters', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
 
     const invalidInput = {
       currentPassword: 'oldpassword123',
@@ -153,8 +162,11 @@ describe('PUT /api/settings/password', () => {
   })
 
   it('should return 400 if passwords do not match', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
 
     const invalidInput = {
       currentPassword: 'oldpassword123',
@@ -171,8 +183,11 @@ describe('PUT /api/settings/password', () => {
   })
 
   it('should return 400 for missing current password', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
 
     const invalidInput = {
       newPassword: 'newpassword123',
@@ -188,8 +203,11 @@ describe('PUT /api/settings/password', () => {
   })
 
   it('should NOT return any sensitive data on success', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockVerifyPassword.mockResolvedValue(true)
     mockHashPassword.mockResolvedValue('newhash')
     mockUserUpdate.mockResolvedValue(mockUser as never)
@@ -205,8 +223,11 @@ describe('PUT /api/settings/password', () => {
   })
 
   it('should return 500 on database error', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockVerifyPassword.mockResolvedValue(true)
     mockHashPassword.mockResolvedValue('newhash')
     mockUserUpdate.mockRejectedValue(new Error('Database error'))
@@ -217,5 +238,30 @@ describe('PUT /api/settings/password', () => {
 
     expect(response.status).toBe(500)
     expect(data.error).toBe('Internal server error')
+  })
+
+  it('should work with Bearer token authentication', async () => {
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'bearer-token',
+      source: 'bearer',
+    })
+    mockVerifyPassword.mockResolvedValue(true)
+    mockHashPassword.mockResolvedValue('newhash')
+    mockUserUpdate.mockResolvedValue(mockUser as never)
+
+    const request = new NextRequest('http://localhost:3000/api/settings/password', {
+      method: 'PUT',
+      body: JSON.stringify(validInput),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer bearer-token',
+      },
+    })
+    const response = await PUT(request)
+    const data = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(data.message).toBe('Password updated successfully')
   })
 })

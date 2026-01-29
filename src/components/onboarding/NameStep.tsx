@@ -15,14 +15,15 @@ export function NameStep({ onNext, defaultValue = '' }: NameStepProps) {
 
   const isValid = name.trim().length >= 2
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
     if (isValid) {
       onNext({ name: name.trim() })
     }
   }
 
   return (
-    <div className="flex flex-col px-4 space-y-8">
+    <form onSubmit={handleSubmit} className="flex flex-col px-4 space-y-8">
       {/* Heading */}
       <div className="text-center space-y-2">
         <h1 className="text-2xl font-semibold text-white">
@@ -52,12 +53,12 @@ export function NameStep({ onNext, defaultValue = '' }: NameStepProps) {
 
       {/* CTA */}
       <Button
-        onClick={handleSubmit}
+        type="submit"
         disabled={!isValid}
         className="bg-lime text-black hover:bg-lime-muted font-medium w-full h-12 text-base disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Continue
       </Button>
-    </div>
+    </form>
   )
 }

@@ -8,8 +8,13 @@ interface WelcomeStepProps {
 }
 
 export function WelcomeStep({ onNext }: WelcomeStepProps) {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    onNext()
+  }
+
   return (
-    <div className="flex flex-col items-center justify-center text-center px-4 space-y-8">
+    <form onSubmit={handleSubmit} className="flex flex-col items-center justify-center text-center px-4 space-y-8">
       {/* Icon */}
       <div className="w-20 h-20 rounded-full bg-lime/10 flex items-center justify-center">
         <Syringe className="h-10 w-10 text-lime" />
@@ -28,11 +33,11 @@ export function WelcomeStep({ onNext }: WelcomeStepProps) {
 
       {/* CTA */}
       <Button
-        onClick={onNext}
+        type="submit"
         className="bg-lime text-black hover:bg-lime-muted font-medium w-full max-w-xs h-12 text-base"
       >
         Get Started
       </Button>
-    </div>
+    </form>
   )
 }

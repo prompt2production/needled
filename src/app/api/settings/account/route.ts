@@ -1,24 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { validateSession, verifyPassword } from '@/lib/auth'
-import { getSessionToken, clearSessionCookie } from '@/lib/cookies'
+import { verifyPassword } from '@/lib/auth'
+import { clearSessionCookie } from '@/lib/cookies'
+import { authenticateRequest, getAuthToken } from '@/lib/api-auth'
 import { accountDeleteSchema } from '@/lib/validations/settings'
 import { z } from 'zod'
 
 export async function DELETE(request: NextRequest) {
   try {
-    const token = await getSessionToken()
+    const auth = await authenticateRequest(request)
 
-    if (!token) {
-      return NextResponse.json(
-        { error: 'Not authenticated' },
-        { status: 401 }
-      )
-    }
-
-    const user = await validateSession(token)
-
-    if (!user) {
+    if (!auth) {
       return NextResponse.json(
         { error: 'Not authenticated' },
         { status: 401 }
@@ -29,7 +21,7 @@ export async function DELETE(request: NextRequest) {
     const validated = accountDeleteSchema.parse(body)
 
     // Verify password before deletion
-    if (!user.passwordHash) {
+    if (!auth.user.passwordHash) {
       return NextResponse.json(
         { error: 'Password not set for this account' },
         { status: 400 }
@@ -38,7 +30,7 @@ export async function DELETE(request: NextRequest) {
 
     const isPasswordValid = await verifyPassword(
       validated.password,
-      user.passwordHash
+      auth.user.passwordHash
     )
 
     if (!isPasswordValid) {
@@ -50,11 +42,14 @@ export async function DELETE(request: NextRequest) {
 
     // Delete user (cascades to all related data due to onDelete: Cascade in schema)
     await prisma.user.delete({
-      where: { id: user.id },
+      where: { id: auth.user.id },
     })
 
-    // Clear session cookie
-    await clearSessionCookie()
+    // Only clear cookie if using cookie auth
+    const authToken = await getAuthToken(request)
+    if (!authToken || authToken.source === 'cookie') {
+      await clearSessionCookie()
+    }
 
     return NextResponse.json(
       { message: 'Account deleted successfully' },

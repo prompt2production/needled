@@ -11,23 +11,27 @@ vi.mock('@/lib/prisma', () => ({
   },
 }))
 
-vi.mock('@/lib/cookies', () => ({
-  getSessionToken: vi.fn(),
-  clearSessionCookie: vi.fn(),
+vi.mock('@/lib/api-auth', () => ({
+  authenticateRequest: vi.fn(),
+  getAuthToken: vi.fn(),
 }))
 
 vi.mock('@/lib/auth', () => ({
-  validateSession: vi.fn(),
   verifyPassword: vi.fn(),
 }))
 
-import { prisma } from '@/lib/prisma'
-import { getSessionToken, clearSessionCookie } from '@/lib/cookies'
-import { validateSession, verifyPassword } from '@/lib/auth'
+vi.mock('@/lib/cookies', () => ({
+  clearSessionCookie: vi.fn(),
+}))
 
-const mockGetSessionToken = vi.mocked(getSessionToken)
+import { prisma } from '@/lib/prisma'
+import { authenticateRequest, getAuthToken } from '@/lib/api-auth'
+import { verifyPassword } from '@/lib/auth'
+import { clearSessionCookie } from '@/lib/cookies'
+
+const mockAuthenticateRequest = vi.mocked(authenticateRequest)
+const mockGetAuthToken = vi.mocked(getAuthToken)
 const mockClearSessionCookie = vi.mocked(clearSessionCookie)
-const mockValidateSession = vi.mocked(validateSession)
 const mockVerifyPassword = vi.mocked(verifyPassword)
 const mockUserDelete = vi.mocked(prisma.user.delete)
 
@@ -59,7 +63,7 @@ describe('DELETE /api/settings/account', () => {
   })
 
   it('should return 401 without auth token', async () => {
-    mockGetSessionToken.mockResolvedValue(null)
+    mockAuthenticateRequest.mockResolvedValue(null)
 
     const request = createDeleteRequest({ password: 'mypassword' })
     const response = await DELETE(request)
@@ -70,8 +74,7 @@ describe('DELETE /api/settings/account', () => {
   })
 
   it('should return 401 for invalid session', async () => {
-    mockGetSessionToken.mockResolvedValue('invalid-token')
-    mockValidateSession.mockResolvedValue(null)
+    mockAuthenticateRequest.mockResolvedValue(null)
 
     const request = createDeleteRequest({ password: 'mypassword' })
     const response = await DELETE(request)
@@ -82,8 +85,15 @@ describe('DELETE /api/settings/account', () => {
   })
 
   it('should delete account successfully with correct password', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
+    mockGetAuthToken.mockResolvedValue({
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockVerifyPassword.mockResolvedValue(true)
     mockUserDelete.mockResolvedValue(mockUser as never)
     mockClearSessionCookie.mockResolvedValue(undefined)
@@ -101,8 +111,11 @@ describe('DELETE /api/settings/account', () => {
   })
 
   it('should return 400 if password is incorrect', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockVerifyPassword.mockResolvedValue(false)
 
     const request = createDeleteRequest({ password: 'wrongpassword' })
@@ -115,8 +128,11 @@ describe('DELETE /api/settings/account', () => {
   })
 
   it('should return 400 if user has no password set', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue({ ...mockUser, passwordHash: null } as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: { ...mockUser, passwordHash: null },
+      token: 'valid-token',
+      source: 'cookie',
+    })
 
     const request = createDeleteRequest({ password: 'anypassword' })
     const response = await DELETE(request)
@@ -128,8 +144,11 @@ describe('DELETE /api/settings/account', () => {
   })
 
   it('should return 400 for missing password field', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
 
     const request = createDeleteRequest({})
     const response = await DELETE(request)
@@ -141,8 +160,11 @@ describe('DELETE /api/settings/account', () => {
   })
 
   it('should return 400 for empty password', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
 
     const request = createDeleteRequest({ password: '' })
     const response = await DELETE(request)
@@ -152,9 +174,16 @@ describe('DELETE /api/settings/account', () => {
     expect(data.error).toBeDefined()
   })
 
-  it('should clear session cookie on successful deletion', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+  it('should clear session cookie on successful deletion with cookie auth', async () => {
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
+    mockGetAuthToken.mockResolvedValue({
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockVerifyPassword.mockResolvedValue(true)
     mockUserDelete.mockResolvedValue(mockUser as never)
     mockClearSessionCookie.mockResolvedValue(undefined)
@@ -165,9 +194,41 @@ describe('DELETE /api/settings/account', () => {
     expect(mockClearSessionCookie).toHaveBeenCalledTimes(1)
   })
 
+  it('should NOT clear session cookie when using Bearer token auth', async () => {
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'bearer-token',
+      source: 'bearer',
+    })
+    mockGetAuthToken.mockResolvedValue({
+      token: 'bearer-token',
+      source: 'bearer',
+    })
+    mockVerifyPassword.mockResolvedValue(true)
+    mockUserDelete.mockResolvedValue(mockUser as never)
+
+    const request = new NextRequest('http://localhost:3000/api/settings/account', {
+      method: 'DELETE',
+      body: JSON.stringify({ password: 'correctpassword' }),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer bearer-token',
+      },
+    })
+    const response = await DELETE(request)
+    const data = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(data.message).toBe('Account deleted successfully')
+    expect(mockClearSessionCookie).not.toHaveBeenCalled()
+  })
+
   it('should return 500 on database error', async () => {
-    mockGetSessionToken.mockResolvedValue('valid-token')
-    mockValidateSession.mockResolvedValue(mockUser as never)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'cookie',
+    })
     mockVerifyPassword.mockResolvedValue(true)
     mockUserDelete.mockRejectedValue(new Error('Database error'))
 

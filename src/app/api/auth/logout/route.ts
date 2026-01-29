@@ -1,19 +1,22 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { deleteSession } from '@/lib/auth'
-import { getSessionToken, clearSessionCookie } from '@/lib/cookies'
+import { clearSessionCookie } from '@/lib/cookies'
+import { getAuthToken } from '@/lib/api-auth'
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
-    // Get the current session token
-    const token = await getSessionToken()
+    // Get the current session token from Bearer header or cookie
+    const authToken = await getAuthToken(request)
 
     // Delete session from database if it exists
-    if (token) {
-      await deleteSession(token)
+    if (authToken) {
+      await deleteSession(authToken.token)
     }
 
-    // Clear the session cookie
-    await clearSessionCookie()
+    // Only clear cookie if using cookie auth (Bearer users have no cookie to clear)
+    if (!authToken || authToken.source === 'cookie') {
+      await clearSessionCookie()
+    }
 
     return NextResponse.json({ success: true }, { status: 200 })
   } catch (error) {

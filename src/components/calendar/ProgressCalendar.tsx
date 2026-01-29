@@ -6,24 +6,28 @@ import { CalendarHeader } from './CalendarHeader'
 import { CalendarGrid } from './CalendarGrid'
 import { CalendarDayCell } from './CalendarDayCell'
 import { DayDetailDialog } from './DayDetailDialog'
+import { StreakSummary } from './StreakSummary'
 import { useCalendarMonth } from '@/hooks/useCalendarMonth'
+import { calculateStreaks } from '@/lib/streak-utils'
 
 interface ProgressCalendarProps {
   userId: string
 }
 
 export function ProgressCalendar({ userId }: ProgressCalendarProps) {
+  // Current date - memoized to avoid recreating on every render
+  const today = useMemo(() => new Date(), [])
+
   // Current month state
-  const now = new Date()
-  const [year, setYear] = useState(now.getFullYear())
-  const [month, setMonth] = useState(now.getMonth() + 1)
+  const [year, setYear] = useState(today.getFullYear())
+  const [month, setMonth] = useState(today.getMonth() + 1)
 
   // Selected day for dialog
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
 
   // Check if viewing current month
-  const isCurrentMonth = year === now.getFullYear() && month === now.getMonth() + 1
+  const isCurrentMonth = year === today.getFullYear() && month === today.getMonth() + 1
 
   // Fetch calendar data
   const { data, loading, error } = useCalendarMonth(year, month, userId)
@@ -66,6 +70,11 @@ export function ProgressCalendar({ userId }: ProgressCalendarProps) {
     return map
   }, [data?.injections])
 
+  // Calculate streak information
+  const streakInfo = useMemo(() => {
+    return calculateStreaks(habitMap, today)
+  }, [habitMap, today])
+
   const handleNavigate = (newYear: number, newMonth: number) => {
     setYear(newYear)
     setMonth(newMonth)
@@ -82,6 +91,7 @@ export function ProgressCalendar({ userId }: ProgressCalendarProps) {
     const habit = habitMap.get(dateString)
     const hasWeighIn = weighInMap.get(dateString) ?? false
     const hasInjection = injectionMap.get(dateString) ?? false
+    const streakDayNumber = streakInfo.streakDayNumbers.get(dateString)
 
     return (
       <CalendarDayCell
@@ -89,6 +99,7 @@ export function ProgressCalendar({ userId }: ProgressCalendarProps) {
         habit={habit}
         hasWeighIn={hasWeighIn}
         hasInjection={hasInjection}
+        streakDayNumber={streakDayNumber}
         onClick={() => handleDayClick(date)}
       />
     )
@@ -102,6 +113,13 @@ export function ProgressCalendar({ userId }: ProgressCalendarProps) {
         onNavigate={handleNavigate}
         isCurrentMonth={isCurrentMonth}
       />
+
+      {!loading && !error && (
+        <StreakSummary
+          currentStreak={streakInfo.currentStreak}
+          bestStreak={streakInfo.bestStreak}
+        />
+      )}
 
       {loading && (
         <div className="space-y-1">

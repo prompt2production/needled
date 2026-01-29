@@ -33,20 +33,15 @@ export function AccountStep({
 
   const isValid = isEmailValid && isPasswordValid && doPasswordsMatch
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
     if (isValid) {
       onNext({ email, password })
     }
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && isValid) {
-      handleSubmit()
-    }
-  }
-
   return (
-    <div className="flex flex-col px-4 space-y-8">
+    <form onSubmit={handleSubmit} className="flex flex-col px-4 space-y-8">
       {/* Heading */}
       <div className="text-center space-y-2">
         <h1 className="text-2xl font-semibold text-white">
@@ -71,7 +66,6 @@ export function AccountStep({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             onBlur={() => setTouched((prev) => ({ ...prev, email: true }))}
-            onKeyDown={handleKeyDown}
             className="bg-input border-border text-white h-12"
             autoComplete="email"
             autoFocus
@@ -93,7 +87,6 @@ export function AccountStep({
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             onBlur={() => setTouched((prev) => ({ ...prev, password: true }))}
-            onKeyDown={handleKeyDown}
             className="bg-input border-border text-white h-12"
             autoComplete="new-password"
           />
@@ -117,7 +110,6 @@ export function AccountStep({
             value={passwordConfirm}
             onChange={(e) => setPasswordConfirm(e.target.value)}
             onBlur={() => setTouched((prev) => ({ ...prev, passwordConfirm: true }))}
-            onKeyDown={handleKeyDown}
             className="bg-input border-border text-white h-12"
             autoComplete="new-password"
           />
@@ -129,12 +121,12 @@ export function AccountStep({
 
       {/* CTA */}
       <Button
-        onClick={handleSubmit}
+        type="submit"
         disabled={!isValid}
         className="bg-lime text-black hover:bg-lime-muted font-medium w-full h-12 text-base disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Continue
       </Button>
-    </div>
+    </form>
   )
 }

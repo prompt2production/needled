@@ -1,0 +1,29 @@
+{
+  "name": "needled-utility",
+  "version": "1.0.0",
+  "description": "Database maintenance and seeding utility for Needled",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "chalk": "^5.3.0",
+    "dotenv": "^16.4.5",
+    "inquirer": "^9.2.15",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
+    "@types/inquirer": "^9.0.7",
+    "@types/node": "^20.11.0",
+    "@types/pg": "^8.11.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}
