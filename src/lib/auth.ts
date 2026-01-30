@@ -3,7 +3,7 @@ import crypto from 'crypto'
 import { prisma } from './prisma'
 
 const BCRYPT_COST_FACTOR = 12
-const SESSION_EXPIRY_DAYS = 30
+const SESSION_EXPIRY_DAYS = 3650 // ~10 years - mobile apps stay logged in until explicit logout
 
 /**
  * Hash a password using bcrypt with cost factor 12

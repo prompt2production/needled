@@ -347,7 +347,7 @@ WHEN ALL STORIES COMPLETE:
 
 If stuck after 3 attempts, document blockers and move to next story." --max-iterations 50 --completion-promise "COMPLETE"
 
-Monitor progress at: http://localhost:2810/dev/progress
+Monitor progress at: http://localhost:2812/dev/progress
 ```
 
 **Critical requirements:**

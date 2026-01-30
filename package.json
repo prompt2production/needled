@@ -4,9 +4,9 @@
   "description": "A production-ready Next.js boilerplate for AI-driven development using the Ralph Wiggum workflow",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 2810",
+    "dev": "next dev -p 2812",
     "build": "next build",
-    "start": "next start -p 2810",
+    "start": "next start -p 2812",
     "lint": "eslint \"./src/**/*.{ts,tsx}\" --max-warnings 0",
     "test": "vitest run",
     "test:watch": "vitest",

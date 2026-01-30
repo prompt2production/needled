@@ -75,7 +75,7 @@ Use the trigger phrase **"Design system:"** followed by your style preferences. 
 
 ```bash
 npm run dev
-# Open http://localhost:2810/design
+# Open http://localhost:2812/design
 ```
 
 ### Iterate if Needed
@@ -229,7 +229,7 @@ If stuck after 3 attempts, document blockers and move to next story." --max-iter
 
 ### Monitor Progress
 
-- **Web dashboard:** http://localhost:2810/dev/progress
+- **Web dashboard:** http://localhost:2812/dev/progress
 - **Terminal:** `npm run progress`
 - Use `/cancel-ralph` to stop
 
@@ -360,7 +360,7 @@ git add -A && git commit -m "design: add centered container layout"
 ### Phase 1: Design (One-Time)
 ```
 > Design system: [style preferences or attach image]
-# Review http://localhost:2810/design
+# Review http://localhost:2812/design
 > Design looks good
 ```
 
