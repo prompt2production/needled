@@ -1,6 +1,11 @@
 # Needled
 
-A desktop-first weight loss journey companion web app for people using GLP-1 medications (Ozempic, Wegovy, Mounjaro). The app combines injection tracking, weekly weigh-ins, and daily habit check-ins into a single, focused experience. Native mobile apps are being developed separately.
+A weight loss journey companion for people using GLP-1 medications (Ozempic, Wegovy, Mounjaro). The app combines injection tracking, weekly weigh-ins, and daily habit check-ins into a single, focused experience.
+
+**This Repository Contains:**
+- **Marketing Landing Page** — Simple static page with app store download links
+- **API Backend** — Full REST API consumed by native iOS/Android apps
+- **Notification System** — Email reminders for injections, weigh-ins, and habits via SendGrid
 
 **Target Audience:** People on weight loss injection journeys who want structure without complexity—those who find comprehensive health apps overwhelming but need more than a simple weight tracker.
 
@@ -11,8 +16,8 @@ A desktop-first weight loss journey companion web app for people using GLP-1 med
 - Provide visual progress feedback that motivates rather than overwhelms
 
 **Platform Strategy:**
-- Web app: Desktop-first experience with responsive mobile support
-- Native apps: Separate iOS/Android development (not this codebase)
+- Web: Marketing landing page only (no interactive web app)
+- Native apps: iOS and Android apps (separate codebases) consume the API from this repository
 
 ## Prompt2Production Workflow
 
@@ -584,24 +589,30 @@ A feature is complete when:
 
 ## Current Status
 
-**Project:** Needled - Weight Loss Journey Companion
-**Design:** Complete (desktop-first)
-**Features:** Complete
-**Current Feature:** None
+**Project:** Needled - Marketing Landing Page + API Backend
+**Web Pages:** Landing page (/) and Unsubscribe page (/unsubscribe)
+**API:** Complete (26 endpoints for native app consumption)
 
-### Completed Features
-- **user-onboarding** (14 stories) — User profile creation with name, weight, goal, medication, injection day
-- **weekly-weigh-in** (15 stories) — Log weight once per week with enforced timing, view weight trend over time
-- **desktop-layout** (14 stories) — Convert from mobile-first to desktop-first layout with top navigation
-- **injection-tracking** (20 stories) — Weekly injection logging with site rotation, status tracking, and history
-- **daily-habits** (16 stories) — Daily yes/no check-in for water, nutrition, and exercise habits
-- **dashboard** (14 stories) — Home screen with weight progress ring, journey stats, integrated with dashboard API
-- **progress-calendar** (14 stories) — Calendar view showing habit completion patterns, weigh-in history, and injection data
-- **login-session** (23 stories) — Email/password authentication with session management and route protection
-- **notifications** (23 stories) — Email notifications for injection, weigh-in, and habit reminders via SendGrid
-- **settings** (17 stories) — Profile editing, email/password changes, data export, account deletion with E2E tests
-- **flexible-logging** (21 stories) — Date selection for weigh-ins/injections, edit/delete entries, multiple entries per week
-- **dose-tracking** (18 stories) — Track which dose (1-4) of current pen, show doses remaining, auto-calculate next dose
+### Architecture
 
-### Next Step
-All planned features complete!
+**Web Routes:**
+- `/` — Marketing landing page with app store download links
+- `/unsubscribe` — Email notification unsubscribe page
+
+**API Endpoints:**
+- Auth: `/api/auth/login`, `/api/auth/logout`, `/api/auth/session`
+- Users: `/api/users`, `/api/users/[id]`
+- Weigh-ins: `/api/weigh-ins`, `/api/weigh-ins/[id]`, `/api/weigh-ins/latest`
+- Injections: `/api/injections`, `/api/injections/[id]`, `/api/injections/status`
+- Habits: `/api/habits`, `/api/habits/today`
+- Dashboard: `/api/dashboard`
+- Calendar: `/api/calendar/[year]/[month]`, `/api/calendar/day/[date]`
+- Settings: `/api/settings`, `/api/settings/profile`, `/api/settings/email`, `/api/settings/password`, `/api/settings/account`, `/api/settings/export`
+- Notifications: `/api/notifications/preferences`, `/api/notifications/test`, `/api/notifications/unsubscribe`
+- Cron: `/api/cron/notifications`
+
+### App Store Links
+
+The landing page uses placeholder links (`#ios` and `#android`). Update these once the native apps are published:
+- iOS App Store URL: Update in `src/app/page.tsx`
+- Google Play URL: Update in `src/app/page.tsx`

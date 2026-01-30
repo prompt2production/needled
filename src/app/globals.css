@@ -35,10 +35,11 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 
-  /* Needled brand colours */
-  --color-lime: #BFFF00;
-  --color-lime-muted: #9FD600;
-  --color-lime-dim: rgba(191, 255, 0, 0.15);
+  /* Needled brand colours - Teal from native app */
+  --color-teal: #14B8A6;
+  --color-teal-dark: #0D9488;
+  --color-teal-light: #5EEAD4;
+  --color-teal-dim: rgba(20, 184, 166, 0.1);
 
   /* Chart colours */
   --color-chart-1: var(--chart-1);
@@ -59,83 +60,59 @@
 }
 
 /*
- * Needled is dark-mode first.
- * The :root defines dark mode as default.
- * Light mode is available via .light class but not primary.
+ * Needled is light-mode first (matching native app design).
+ * Uses teal as the primary brand colour.
  */
 :root {
-  /* Core dark palette */
-  --background: #050505;
-  --foreground: #FFFFFF;
-  --card: #0F0F0F;
-  --card-foreground: #FFFFFF;
-  --card-elevated: #1A1A1A;
-  --popover: #1A1A1A;
-  --popover-foreground: #FFFFFF;
+  /* Core light palette - matching native app */
+  --background: #14B8A6;
+  --foreground: #1F2937;
+  --card: #FFFFFF;
+  --card-foreground: #1F2937;
+  --card-elevated: #FFFFFF;
+  --popover: #FFFFFF;
+  --popover-foreground: #1F2937;
 
-  /* Primary = Lime accent */
-  --primary: #BFFF00;
-  --primary-foreground: #000000;
+  /* Primary = Teal */
+  --primary: #14B8A6;
+  --primary-foreground: #FFFFFF;
 
-  /* Secondary = Subtle white */
-  --secondary: rgba(255, 255, 255, 0.1);
-  --secondary-foreground: #FFFFFF;
+  /* Secondary = White/outline style */
+  --secondary: #FFFFFF;
+  --secondary-foreground: #14B8A6;
 
   /* Muted elements */
-  --muted: rgba(255, 255, 255, 0.05);
-  --muted-foreground: #737373;
+  --muted: #F3F4F6;
+  --muted-foreground: #6B7280;
 
-  /* Accent = Lime (same as primary) */
-  --accent: #BFFF00;
-  --accent-foreground: #000000;
+  /* Accent = Teal */
+  --accent: #14B8A6;
+  --accent-foreground: #FFFFFF;
 
   /* Destructive = Red */
   --destructive: #EF4444;
 
   /* Borders and inputs */
-  --border: rgba(255, 255, 255, 0.08);
-  --input: rgba(255, 255, 255, 0.06);
-  --ring: #BFFF00;
+  --border: #E5E7EB;
+  --input: #F3F4F6;
+  --ring: #14B8A6;
 
-  /* Chart colours - lime-based palette */
-  --chart-1: #BFFF00;
-  --chart-2: #9FD600;
-  --chart-3: #7FB300;
-  --chart-4: #5F9000;
-  --chart-5: #3F6D00;
+  /* Chart colours - teal-based palette */
+  --chart-1: #14B8A6;
+  --chart-2: #0D9488;
+  --chart-3: #5EEAD4;
+  --chart-4: #2DD4BF;
+  --chart-5: #99F6E4;
 
-  /* Sidebar (matches card) */
-  --sidebar: #0F0F0F;
-  --sidebar-foreground: #FFFFFF;
-  --sidebar-primary: #BFFF00;
-  --sidebar-primary-foreground: #000000;
-  --sidebar-accent: rgba(255, 255, 255, 0.05);
-  --sidebar-accent-foreground: #FFFFFF;
-  --sidebar-border: rgba(255, 255, 255, 0.08);
-  --sidebar-ring: #BFFF00;
-}
-
-/* Light mode override (rarely used, but available) */
-.light {
-  --background: #FFFFFF;
-  --foreground: #0F0F0F;
-  --card: #F5F5F5;
-  --card-foreground: #0F0F0F;
-  --card-elevated: #FFFFFF;
-  --popover: #FFFFFF;
-  --popover-foreground: #0F0F0F;
-  --primary: #7FB300;
-  --primary-foreground: #FFFFFF;
-  --secondary: rgba(0, 0, 0, 0.05);
-  --secondary-foreground: #0F0F0F;
-  --muted: rgba(0, 0, 0, 0.03);
-  --muted-foreground: #737373;
-  --accent: #7FB300;
-  --accent-foreground: #FFFFFF;
-  --destructive: #DC2626;
-  --border: rgba(0, 0, 0, 0.1);
-  --input: rgba(0, 0, 0, 0.05);
-  --ring: #7FB300;
+  /* Sidebar */
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #1F2937;
+  --sidebar-primary: #14B8A6;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F3F4F6;
+  --sidebar-accent-foreground: #1F2937;
+  --sidebar-border: #E5E7EB;
+  --sidebar-ring: #14B8A6;
 }
 
 @layer base {
@@ -147,58 +124,62 @@
     @apply bg-background text-foreground antialiased;
   }
 
-  /* Ensure dark background on html for safe areas */
+  /* Teal background on html for safe areas */
   html {
-    background-color: #050505;
+    background-color: #14B8A6;
   }
 }
 
 @layer utilities {
-  /* Lime accent utilities */
-  .text-lime {
-    color: #BFFF00;
+  /* Teal accent utilities */
+  .text-teal {
+    color: #14B8A6;
   }
 
-  .bg-lime {
-    background-color: #BFFF00;
+  .bg-teal {
+    background-color: #14B8A6;
   }
 
-  .bg-lime-muted {
-    background-color: #9FD600;
+  .bg-teal-dark {
+    background-color: #0D9488;
   }
 
-  .bg-lime-dim {
-    background-color: rgba(191, 255, 0, 0.15);
+  .bg-teal-light {
+    background-color: #5EEAD4;
   }
 
-  .border-lime {
-    border-color: #BFFF00;
+  .bg-teal-dim {
+    background-color: rgba(20, 184, 166, 0.1);
   }
 
-  .ring-lime {
-    --tw-ring-color: #BFFF00;
+  .border-teal {
+    border-color: #14B8A6;
+  }
+
+  .ring-teal {
+    --tw-ring-color: #14B8A6;
   }
 
   /* Card elevated background */
   .bg-card-elevated {
-    background-color: #1A1A1A;
+    background-color: #FFFFFF;
   }
 
-  /* Shadow utilities */
+  /* Shadow utilities - light mode */
   .shadow-card {
     box-shadow:
-      0 0 0 1px rgba(255, 255, 255, 0.05),
-      0 2px 8px rgba(0, 0, 0, 0.4);
+      0 1px 3px rgba(0, 0, 0, 0.1),
+      0 1px 2px rgba(0, 0, 0, 0.06);
   }
 
   .shadow-elevated {
     box-shadow:
-      0 0 0 1px rgba(255, 255, 255, 0.08),
-      0 8px 24px rgba(0, 0, 0, 0.6);
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
 
-  .shadow-lime {
-    box-shadow: 0 0 20px rgba(191, 255, 0, 0.3);
+  .shadow-teal {
+    box-shadow: 0 0 20px rgba(20, 184, 166, 0.3);
   }
 
   /* Safe area padding for mobile */
@@ -219,7 +200,21 @@
   }
 
   /* Stroke utilities for SVG */
-  .stroke-lime {
-    stroke: #BFFF00;
+  .stroke-teal {
+    stroke: #14B8A6;
+  }
+
+  /* Pip floating animation - gentle bob with slight rotation for liveliness */
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-12px) rotate(2deg);
   }
 }

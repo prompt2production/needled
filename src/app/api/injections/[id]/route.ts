@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { updateInjectionSchema } from '@/lib/validations/injection'
 import { z } from 'zod'
+import { InjectionSite, Prisma } from '@prisma/client'
 
 interface RouteParams {
   params: Promise<{ id: string }>
@@ -26,9 +27,9 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     // Build update data
-    const updateData: { site?: string; doseNumber?: number; notes?: string; date?: Date } = {}
+    const updateData: Prisma.InjectionUpdateInput = {}
     if (validated.site !== undefined) {
-      updateData.site = validated.site
+      updateData.site = validated.site as InjectionSite
     }
     if (validated.doseNumber !== undefined) {
       updateData.doseNumber = validated.doseNumber

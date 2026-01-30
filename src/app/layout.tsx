@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
-import { Toaster } from '@/components/ui/sonner'
-import { AppShell } from '@/components/navigation/AppShell'
 import './globals.css'
 
 const geistSans = Geist({
@@ -17,10 +15,14 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: 'Needled',
   description: 'Your weight loss journey companion for GLP-1 medications',
+  icons: {
+    icon: '/favicon.png',
+    apple: '/favicon.png',
+  },
 }
 
 export const viewport: Viewport = {
-  themeColor: '#050505',
+  themeColor: '#14B8A6',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -35,10 +37,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <div className="min-h-screen flex flex-col">
-          <AppShell>{children}</AppShell>
-        </div>
-        <Toaster position="top-center" richColors />
+        {children}
       </body>
     </html>
   )
