@@ -3,8 +3,24 @@ import { prisma } from '@/lib/prisma'
 import { createUserSchema } from '@/lib/validations/user'
 import { hashPassword, createSession } from '@/lib/auth'
 import { setSessionCookie } from '@/lib/cookies'
+import { sendEmail } from '@/lib/email'
+import { renderWelcomeEmail, getWelcomeEmailSubject } from '@/lib/email-templates/welcome'
+import { generateUnsubscribeToken } from '@/lib/unsubscribe-token'
 import { z } from 'zod'
 import { Prisma } from '@prisma/client'
+
+const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+function getMedicationDisplayName(medication: string): string {
+  const names: Record<string, string> = {
+    OZEMPIC: 'Ozempic',
+    WEGOVY: 'Wegovy',
+    MOUNJARO: 'Mounjaro',
+    ZEPBOUND: 'Zepbound',
+    OTHER: 'your medication',
+  }
+  return names[medication] || 'your medication'
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,6 +49,30 @@ export async function POST(request: NextRequest) {
     // Create session and set cookie
     const token = await createSession(user.id)
     await setSessionCookie(token)
+
+    // Send welcome email (non-blocking, don't fail registration if email fails)
+    if (user.email) {
+      try {
+        const unsubscribeToken = generateUnsubscribeToken(user.id)
+        const unsubscribeUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://needled.app'}/unsubscribe?token=${unsubscribeToken}`
+
+        const html = renderWelcomeEmail({
+          userName: user.name,
+          medication: getMedicationDisplayName(user.medication),
+          injectionDay: DAYS_OF_WEEK[user.injectionDay],
+          unsubscribeUrl,
+        })
+
+        await sendEmail({
+          to: user.email,
+          subject: getWelcomeEmailSubject(user.name),
+          html,
+        })
+      } catch (emailError) {
+        // Log but don't fail registration if email sending fails
+        console.error('Failed to send welcome email:', emailError)
+      }
+    }
 
     // Return user data without passwordHash
     const { passwordHash: _, ...userWithoutPassword } = user

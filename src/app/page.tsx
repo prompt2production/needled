@@ -357,15 +357,35 @@ function AndroidDownloadStep({ email, onBack }: { email: string; onBack: () => v
           You&apos;re registered as <strong className="text-gray-800">{email}</strong>. Download the app below to get started.
         </p>
 
-        <Button
-          asChild
-          className="w-full h-14 rounded-full bg-[#14B8A6] hover:bg-[#0d9488] text-white font-semibold text-lg shadow-lg mb-3"
-        >
-          <a href={testerConfig.apkDownloadUrl} className="flex items-center justify-center gap-3">
-            <Download className="h-5 w-5" />
-            Download APK
-          </a>
-        </Button>
+        <div className="flex flex-col md:flex-row gap-6 items-center mb-4">
+          {/* QR Code */}
+          <div className="flex-shrink-0 bg-white p-3 rounded-xl shadow-sm border border-gray-100">
+            <Image
+              src={testerConfig.qrCodePath}
+              alt="Scan to download Needled APK"
+              width={160}
+              height={160}
+              className="w-40 h-40"
+            />
+            <p className="text-xs text-gray-500 text-center mt-2">Scan with your phone</p>
+          </div>
+
+          {/* Download Button */}
+          <div className="flex-1 w-full">
+            <p className="text-sm text-gray-600 mb-3 text-center md:text-left">
+              Scan the QR code with your Android phone, or tap the button below if you&apos;re already on mobile:
+            </p>
+            <Button
+              asChild
+              className="w-full h-14 rounded-full bg-[#14B8A6] hover:bg-[#0d9488] text-white font-semibold text-lg shadow-lg"
+            >
+              <a href={testerConfig.apkDownloadUrl} className="flex items-center justify-center gap-3">
+                <Download className="h-5 w-5" />
+                Download APK
+              </a>
+            </Button>
+          </div>
+        </div>
 
         <div className="flex justify-center">
           <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
