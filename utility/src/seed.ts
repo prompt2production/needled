@@ -16,9 +16,42 @@ const INJECTION_SITES = [
   'UPPER_ARM_RIGHT',
 ];
 
-// Weight readings showing gradual loss with realistic fluctuation
-// ~0.5-0.8kg per week average, occasional plateau or slight uptick
-const WEEKLY_WEIGHTS = [95.0, 94.2, 93.8, 93.1, 93.3, 92.5, 91.8];
+// Mounjaro dosage progression over 3 months
+// Month 1: 1mg, Month 2: 2.5mg, Month 3: 5mg
+const DOSAGE_BY_WEEK: Record<number, number> = {
+  0: 1.0,
+  1: 1.0,
+  2: 1.0,
+  3: 1.0,
+  4: 2.5,
+  5: 2.5,
+  6: 2.5,
+  7: 2.5,
+  8: 5.0,
+  9: 5.0,
+  10: 5.0,
+  11: 5.0,
+  12: 5.0,
+};
+
+// Weight readings for 13 weeks (3 months) showing gradual loss with realistic fluctuation
+// Mounjaro typically shows ~1-1.5kg per week loss in first 3 months
+// Pattern: good loss, plateau, more loss, slight uptick, continued loss
+const WEEKLY_WEIGHTS = [
+  95.0, // Week 0 - Starting weight
+  94.2, // Week 1 - Initial water weight loss
+  93.5, // Week 2
+  93.1, // Week 3
+  92.8, // Week 4 - End of 1mg phase
+  91.9, // Week 5 - Increased dosage to 2.5mg
+  91.2, // Week 6
+  90.8, // Week 7 - Small plateau
+  90.1, // Week 8 - End of 2.5mg phase
+  89.3, // Week 9 - Increased dosage to 5mg
+  88.5, // Week 10
+  88.0, // Week 11
+  87.3, // Week 12 - Current week
+];
 
 interface SeedResult {
   weighInsCreated: number;
@@ -74,15 +107,16 @@ export async function seedDemoData(): Promise<SeedResult> {
   const rng = createRng(42);
 
   const now = new Date();
-  // Start the journey 6 weeks ago from the Monday of the current week
+  // Start the journey 13 weeks ago (3 months) from the Monday of the current week
   const thisMonday = getMondayOfWeek(now);
-  const journeyStart = addDays(thisMonday, -42); // 6 weeks back
+  const journeyStart = addDays(thisMonday, -91); // 13 weeks back
 
   // --- Create User ---
+  // Using Mounjaro with current dosage at 5mg (after 3 months of titration)
   await executeQuery(
-    `INSERT INTO "User" (id, name, email, "passwordHash", "startWeight", "goalWeight", "weightUnit", medication, "injectionDay", "createdAt", "updatedAt")
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
-    [userId, 'Sarah Mitchell', DEMO_EMAIL, passwordHash, 95.0, 75.0, 'kg', 'OZEMPIC', 1, journeyStart, now]
+    `INSERT INTO "User" (id, name, email, "passwordHash", "startWeight", "goalWeight", "weightUnit", medication, "injectionDay", "currentDosage", height, "createdAt", "updatedAt")
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
+    [userId, 'Sarah Mitchell', DEMO_EMAIL, passwordHash, 95.0, 75.0, 'kg', 'MOUNJARO', 1, 5.0, 170, journeyStart, now]
   );
 
   // --- Create Notification Preferences ---
@@ -121,21 +155,33 @@ export async function seedDemoData(): Promise<SeedResult> {
 
   // --- Create Weekly Injections ---
   // Injections on Tuesdays (injectionDay = 1, so Monday + 1 = Tuesday)
+  // Mounjaro dosage progression: 1mg (month 1) → 2.5mg (month 2) → 5mg (month 3)
   let injectionsCreated = 0;
 
-  for (let week = 0; week < 6; week++) {
+  for (let week = 0; week < 13; week++) {
     const injectionDate = addDays(journeyStart, week * 7 + 1); // +1 = Tuesday
     injectionDate.setHours(18, 0, 0, 0); // Evening injection
 
     if (injectionDate > now) break;
 
     const site = INJECTION_SITES[week % INJECTION_SITES.length];
-    const doseNumber = (week % 4) + 1; // Cycle through doses 1-4
+    const doseNumber = (week % 4) + 1; // Cycle through doses 1-4 (pen doses)
+    const dosageMg = DOSAGE_BY_WEEK[week] ?? 5.0; // Get dosage for this week
 
     await executeQuery(
-      `INSERT INTO "Injection" (id, "userId", date, site, "doseNumber", "createdAt", "updatedAt")
-       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-      [randomUUID(), userId, injectionDate, site, doseNumber, injectionDate, injectionDate]
+      `INSERT INTO "Injection" (id, "userId", date, site, "doseNumber", "dosageMg", notes, "createdAt", "updatedAt")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+      [
+        randomUUID(),
+        userId,
+        injectionDate,
+        site,
+        doseNumber,
+        dosageMg,
+        week === 4 ? 'Increased to 2.5mg - feeling good!' : week === 8 ? 'Starting 5mg dose today' : null,
+        injectionDate,
+        injectionDate,
+      ]
     );
     injectionsCreated++;
   }

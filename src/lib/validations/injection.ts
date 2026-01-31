@@ -14,10 +14,15 @@ export type InjectionSite = z.infer<typeof injectionSiteEnum>
 
 export const doseNumberSchema = z.number().int().min(1).max(4)
 
+export const dosageMgSchema = z
+  .number()
+  .min(0.25, 'Dosage must be at least 0.25mg')
+  .max(15, 'Dosage must be at most 15mg')
+
 export const createInjectionSchema = z.object({
-  userId: z.string().min(1, 'User ID is required'),
   site: injectionSiteEnum,
   doseNumber: doseNumberSchema.optional(),
+  dosageMg: dosageMgSchema.optional(),
   notes: z.string().max(500, 'Notes must be at most 500 characters').optional(),
   date: logDateSchema.optional(),
 })
@@ -25,9 +30,9 @@ export const createInjectionSchema = z.object({
 export type CreateInjectionInput = z.infer<typeof createInjectionSchema>
 
 export const updateInjectionSchema = z.object({
-  userId: z.string().min(1, 'User ID is required'),
   site: injectionSiteEnum.optional(),
   doseNumber: doseNumberSchema.optional(),
+  dosageMg: dosageMgSchema.optional().nullable(),
   notes: z.string().max(500, 'Notes must be at most 500 characters').optional(),
   date: logDateSchema.optional(),
 })

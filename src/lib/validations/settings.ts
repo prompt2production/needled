@@ -3,7 +3,7 @@ import { MEDICATIONS } from './user'
 
 /**
  * Schema for updating user profile settings
- * Allows updating name, goalWeight, medication, and injectionDay
+ * Allows updating name, goalWeight, medication, injectionDay, currentDosage, and height
  */
 export const profileUpdateSchema = z.object({
   name: z
@@ -24,6 +24,19 @@ export const profileUpdateSchema = z.object({
     .int()
     .min(0, 'Injection day must be 0-6')
     .max(6, 'Injection day must be 0-6'),
+  currentDosage: z
+    .number()
+    .min(0.25, 'Dosage must be at least 0.25mg')
+    .max(15, 'Dosage must be at most 15mg')
+    .optional()
+    .nullable(),
+  height: z
+    .number()
+    .int()
+    .min(100, 'Height must be at least 100cm')
+    .max(250, 'Height must be at most 250cm')
+    .optional()
+    .nullable(),
 })
 
 export type ProfileUpdateInput = z.infer<typeof profileUpdateSchema>

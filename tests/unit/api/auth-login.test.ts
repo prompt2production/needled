@@ -49,9 +49,11 @@ describe('POST /api/auth/login', () => {
     passwordHash: 'hashedpassword123',
     startWeight: 85,
     goalWeight: 75,
-    weightUnit: 'kg',
-    medication: 'OZEMPIC',
+    weightUnit: 'kg' as const,
+    medication: 'OZEMPIC' as const,
     injectionDay: 0,
+    currentDosage: null,
+    height: null,
     createdAt: new Date(),
     updatedAt: new Date(),
   }

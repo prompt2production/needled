@@ -11,10 +11,32 @@ vi.mock('@/lib/prisma', () => ({
   },
 }))
 
+vi.mock('@/lib/api-auth', () => ({
+  authenticateRequest: vi.fn(),
+}))
+
 import { prisma } from '@/lib/prisma'
+import { authenticateRequest } from '@/lib/api-auth'
 
 const mockCreate = vi.mocked(prisma.weighIn.create)
 const mockFindMany = vi.mocked(prisma.weighIn.findMany)
+const mockAuthenticateRequest = vi.mocked(authenticateRequest)
+
+const mockUser = {
+  id: 'user123',
+  name: 'Test User',
+  email: 'test@example.com',
+  passwordHash: 'hashedpassword',
+  startWeight: 85,
+  goalWeight: 75,
+  weightUnit: 'kg' as const,
+  medication: 'OZEMPIC' as const,
+  injectionDay: 0,
+  currentDosage: null,
+  height: null,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+}
 
 function createRequest(body: unknown): NextRequest {
   return new NextRequest('http://localhost:3000/api/weigh-ins', {
@@ -25,8 +47,8 @@ function createRequest(body: unknown): NextRequest {
 }
 
 describe('POST /api/weigh-ins', () => {
+  // Note: userId is no longer in request body - derived from authenticated session
   const validData = {
-    userId: 'user123',
     weight: 85,
   }
 
@@ -43,10 +65,27 @@ describe('POST /api/weigh-ins', () => {
     vi.clearAllMocks()
     vi.useFakeTimers()
     vi.setSystemTime(new Date('2026-01-24T12:00:00Z'))
+    // Default to authenticated
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'bearer',
+    })
   })
 
   afterEach(() => {
     vi.useRealTimers()
+  })
+
+  it('should return 401 without authentication', async () => {
+    mockAuthenticateRequest.mockResolvedValue(null)
+
+    const request = createRequest(validData)
+    const response = await POST(request)
+    const data = await response.json()
+
+    expect(response.status).toBe(401)
+    expect(data.error).toBe('Not authenticated')
   })
 
   it('should return 201 with created weigh-in on success', async () => {
@@ -125,18 +164,8 @@ describe('POST /api/weigh-ins', () => {
     expect(response.status).toBe(400)
   })
 
-  it('should return 400 with validation errors for missing userId', async () => {
-    const request = createRequest({ weight: 85 })
-    const response = await POST(request)
-    const data = await response.json()
-
-    expect(response.status).toBe(400)
-    expect(data.error).toBeDefined()
-    expect(Array.isArray(data.error)).toBe(true)
-  })
-
-  it('should return 400 with validation errors for empty userId', async () => {
-    const request = createRequest({ userId: '', weight: 85 })
+  it('should return 400 for missing weight', async () => {
+    const request = createRequest({})
     const response = await POST(request)
 
     expect(response.status).toBe(400)
@@ -183,6 +212,7 @@ describe('GET /api/weigh-ins', () => {
       weight: 85,
       date: new Date('2025-01-20'),
       createdAt: new Date('2025-01-20'),
+      updatedAt: new Date('2025-01-20'),
     },
     {
       id: 'weighin2',
@@ -190,24 +220,43 @@ describe('GET /api/weigh-ins', () => {
       weight: 84,
       date: new Date('2025-01-13'),
       createdAt: new Date('2025-01-13'),
+      updatedAt: new Date('2025-01-13'),
     },
   ]
 
   beforeEach(() => {
     vi.clearAllMocks()
     mockFindMany.mockResolvedValue(mockWeighIns)
+    mockAuthenticateRequest.mockResolvedValue({
+      user: mockUser,
+      token: 'valid-token',
+      source: 'bearer',
+    })
   })
 
-  function createGetRequest(params: Record<string, string>): NextRequest {
+  function createGetRequest(params?: Record<string, string>): NextRequest {
     const url = new URL('http://localhost:3000/api/weigh-ins')
-    Object.entries(params).forEach(([key, value]) => {
-      url.searchParams.set(key, value)
-    })
+    if (params) {
+      Object.entries(params).forEach(([key, value]) => {
+        url.searchParams.set(key, value)
+      })
+    }
     return new NextRequest(url, { method: 'GET' })
   }
 
+  it('should return 401 without authentication', async () => {
+    mockAuthenticateRequest.mockResolvedValue(null)
+
+    const request = createGetRequest()
+    const response = await GET(request)
+    const data = await response.json()
+
+    expect(response.status).toBe(401)
+    expect(data.error).toBe('Not authenticated')
+  })
+
   it('should return 200 with array of weigh-ins', async () => {
-    const request = createGetRequest({ userId: 'user123' })
+    const request = createGetRequest()
     const response = await GET(request)
     const data = await response.json()
 
@@ -222,17 +271,8 @@ describe('GET /api/weigh-ins', () => {
     })
   })
 
-  it('should return 400 if userId is missing', async () => {
-    const request = createGetRequest({})
-    const response = await GET(request)
-    const data = await response.json()
-
-    expect(response.status).toBe(400)
-    expect(data.error).toBe('userId is required')
-  })
-
   it('should support limit parameter', async () => {
-    const request = createGetRequest({ userId: 'user123', limit: '5' })
+    const request = createGetRequest({ limit: '5' })
     await GET(request)
 
     expect(mockFindMany).toHaveBeenCalledWith(
@@ -241,7 +281,7 @@ describe('GET /api/weigh-ins', () => {
   })
 
   it('should support offset parameter', async () => {
-    const request = createGetRequest({ userId: 'user123', offset: '10' })
+    const request = createGetRequest({ offset: '10' })
     await GET(request)
 
     expect(mockFindMany).toHaveBeenCalledWith(
@@ -250,7 +290,7 @@ describe('GET /api/weigh-ins', () => {
   })
 
   it('should cap limit at 100', async () => {
-    const request = createGetRequest({ userId: 'user123', limit: '200' })
+    const request = createGetRequest({ limit: '200' })
     await GET(request)
 
     expect(mockFindMany).toHaveBeenCalledWith(
@@ -261,7 +301,7 @@ describe('GET /api/weigh-ins', () => {
   it('should return empty array when no weigh-ins exist', async () => {
     mockFindMany.mockResolvedValue([])
 
-    const request = createGetRequest({ userId: 'user123' })
+    const request = createGetRequest()
     const response = await GET(request)
     const data = await response.json()
 
@@ -272,7 +312,7 @@ describe('GET /api/weigh-ins', () => {
   it('should return 500 on database error', async () => {
     mockFindMany.mockRejectedValue(new Error('Database error'))
 
-    const request = createGetRequest({ userId: 'user123' })
+    const request = createGetRequest()
     const response = await GET(request)
     const data = await response.json()
 

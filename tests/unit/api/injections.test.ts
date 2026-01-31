@@ -44,6 +44,8 @@ describe('POST /api/injections', () => {
     weightUnit: 'kg',
     medication: 'OZEMPIC',
     injectionDay: 2, // Wednesday
+    currentDosage: null,
+    height: null,
     createdAt: new Date(),
     updatedAt: new Date(),
   }
@@ -53,6 +55,7 @@ describe('POST /api/injections', () => {
     userId: 'user123',
     site: 'ABDOMEN_LEFT',
     doseNumber: 1,
+    dosageMg: null,
     notes: null,
     date: new Date(),
     createdAt: new Date(),
@@ -328,6 +331,7 @@ describe('GET /api/injections', () => {
       userId: 'user123',
       site: 'ABDOMEN_LEFT',
       doseNumber: 2,
+      dosageMg: null,
       notes: null,
       date: new Date('2025-01-20'),
       createdAt: new Date('2025-01-20'),
@@ -337,6 +341,7 @@ describe('GET /api/injections', () => {
       userId: 'user123',
       site: 'ABDOMEN_RIGHT',
       doseNumber: 1,
+      dosageMg: null,
       notes: 'Second injection',
       date: new Date('2025-01-13'),
       createdAt: new Date('2025-01-13'),

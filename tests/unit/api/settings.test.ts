@@ -31,6 +31,8 @@ const mockUser = {
   weightUnit: 'kg' as const,
   medication: 'OZEMPIC' as const,
   injectionDay: 0,
+  currentDosage: null,
+  height: null,
   createdAt: new Date(),
   updatedAt: new Date(),
 }

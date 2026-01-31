@@ -4,15 +4,16 @@ const { Pool } = pg;
 
 let pool: pg.Pool | null = null;
 
-// Tables in order for deletion (respecting foreign key constraints)
-// Child tables first, then parent tables
-const TABLES_IN_DELETE_ORDER = [
+// Known tables with dependencies - child tables first, then parent tables
+// This ordering is used as a fallback and for verification
+const KNOWN_TABLES_IN_DELETE_ORDER = [
   'NotificationPreference',
   'DailyHabit',
   'Injection',
   'WeighIn',
   'Session',
   'User',
+  'BetaTester',
   'Item', // Example model from template
 ];
 
@@ -44,29 +45,40 @@ export async function clearAllTables(): Promise<{ tablesCleared: number }> {
   let tablesCleared = 0;
 
   try {
+    // Get all tables from the database schema (excluding Prisma migration tables)
+    const tablesResult = await client.query(`
+      SELECT table_name
+      FROM information_schema.tables
+      WHERE table_schema = 'public'
+        AND table_type = 'BASE TABLE'
+        AND table_name NOT LIKE '_prisma%'
+      ORDER BY table_name
+    `);
+
+    const allTables = tablesResult.rows.map((row) => row.table_name as string);
+
+    // Check for any tables not in our known list (warn about potential missing tables)
+    const unknownTables = allTables.filter(
+      (t) => !KNOWN_TABLES_IN_DELETE_ORDER.includes(t)
+    );
+    if (unknownTables.length > 0) {
+      console.log(
+        `  Note: Found additional tables not in known list: ${unknownTables.join(', ')}`
+      );
+    }
+
     // Disable foreign key checks temporarily
     await client.query('SET session_replication_role = replica;');
 
-    for (const table of TABLES_IN_DELETE_ORDER) {
+    // Clear all tables found in the database
+    for (const table of allTables) {
       try {
-        // Check if table exists
-        const tableExists = await client.query(
-          `SELECT EXISTS (
-            SELECT FROM information_schema.tables
-            WHERE table_schema = 'public'
-            AND table_name = $1
-          )`,
-          [table]
-        );
-
-        if (tableExists.rows[0].exists) {
-          await client.query(`DELETE FROM "${table}"`);
-          tablesCleared++;
-          console.log(`  Cleared table: ${table}`);
-        }
+        await client.query(`DELETE FROM "${table}"`);
+        tablesCleared++;
+        console.log(`  Cleared table: ${table}`);
       } catch (error) {
-        // Table might not exist, skip it
-        console.log(`  Skipped table: ${table} (may not exist)`);
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        console.log(`  Failed to clear table: ${table} - ${message}`);
       }
     }
 

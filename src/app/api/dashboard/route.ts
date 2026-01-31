@@ -1,21 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { dashboardQuerySchema, type DashboardResponse } from '@/lib/validations/dashboard'
+import { type DashboardResponse } from '@/lib/validations/dashboard'
 import { getWeekStart, getWeekEnd } from '@/lib/week'
 import { differenceInWeeks, startOfWeek, eachDayOfInterval, isToday, isBefore, startOfDay } from 'date-fns'
-import { z } from 'zod'
+import { authenticateRequest } from '@/lib/api-auth'
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const userId = searchParams.get('userId')
+    const auth = await authenticateRequest(request)
+    if (!auth) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    }
 
-    // Validate query params
-    const validated = dashboardQuerySchema.parse({ userId })
+    const userId = auth.user.id
 
     // Fetch user with related data
     const user = await prisma.user.findUnique({
-      where: { id: validated.userId },
+      where: { id: userId },
       include: {
         weighIns: {
           orderBy: { date: 'desc' },
@@ -38,7 +39,7 @@ export async function GET(request: NextRequest) {
 
     // Get all weigh-ins count
     const weighInCount = await prisma.weighIn.count({
-      where: { userId: validated.userId },
+      where: { userId },
     })
 
     // Calculate weight data
@@ -140,9 +141,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(response)
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.errors }, { status: 400 })
-    }
     console.error('Failed to fetch dashboard:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }

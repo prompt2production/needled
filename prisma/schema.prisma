@@ -43,6 +43,8 @@ model User {
   weightUnit             WeightUnit
   medication             Medication
   injectionDay           Int                     // 0 = Monday, 6 = Sunday
+  currentDosage          Decimal?                @db.Decimal(4, 2) // Current medication dosage in mg
+  height                 Int?                    // Height in centimeters (for BMI calculation)
   createdAt              DateTime                @default(now())
   updatedAt              DateTime                @updatedAt
   weighIns               WeighIn[]
@@ -104,6 +106,7 @@ model Injection {
   date       DateTime      @default(now())
   site       InjectionSite
   doseNumber Int           @default(1)
+  dosageMg   Decimal?      @db.Decimal(4, 2) // Medication dosage at time of injection
   notes      String?
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
@@ -153,4 +156,14 @@ model BetaTester {
   createdAt DateTime     @default(now())
 
   @@index([platform])
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
 }

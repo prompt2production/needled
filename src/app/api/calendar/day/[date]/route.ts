@@ -4,6 +4,7 @@ import {
   calendarDayParamsSchema,
   type CalendarDayResponse,
 } from '@/lib/validations/calendar'
+import { authenticateRequest } from '@/lib/api-auth'
 import { z } from 'zod'
 import { startOfDay, endOfDay } from 'date-fns'
 
@@ -15,13 +16,12 @@ interface RouteParams {
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    const { searchParams } = new URL(request.url)
-    const userId = searchParams.get('userId')
-
-    if (!userId) {
-      return NextResponse.json({ error: 'userId is required' }, { status: 400 })
+    const auth = await authenticateRequest(request)
+    if (!auth) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
 
+    const userId = auth.user.id
     const { date: dateParam } = await params
 
     // Validate date parameter

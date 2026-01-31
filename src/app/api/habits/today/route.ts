@@ -2,20 +2,17 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { toggleHabitSchema } from '@/lib/validations/habit'
 import { getDateString } from '@/lib/habit-dates'
+import { authenticateRequest } from '@/lib/api-auth'
 import { z } from 'zod'
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const userId = searchParams.get('userId')
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'userId is required' },
-        { status: 400 }
-      )
+    const auth = await authenticateRequest(request)
+    if (!auth) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
 
+    const userId = auth.user.id
     const today = new Date()
     const todayString = getDateString(today)
 
@@ -51,6 +48,12 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
+    const auth = await authenticateRequest(request)
+    if (!auth) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    }
+
+    const userId = auth.user.id
     const body = await request.json()
     const validated = toggleHabitSchema.parse(body)
 
@@ -80,12 +83,12 @@ export async function PATCH(request: NextRequest) {
     const habit = await prisma.dailyHabit.upsert({
       where: {
         userId_date: {
-          userId: validated.userId,
+          userId,
           date: new Date(targetDate),
         },
       },
       create: {
-        userId: validated.userId,
+        userId,
         date: new Date(targetDate),
         water: validated.habit === 'water' ? validated.value : false,
         nutrition: validated.habit === 'nutrition' ? validated.value : false,

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { createWeighInSchema } from '@/lib/validations/weigh-in'
+import { authenticateRequest } from '@/lib/api-auth'
 import { z } from 'zod'
 
 const DEFAULT_LIMIT = 10
@@ -8,23 +9,20 @@ const MAX_LIMIT = 100
 
 export async function GET(request: NextRequest) {
   try {
+    const auth = await authenticateRequest(request)
+    if (!auth) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    }
+
     const { searchParams } = new URL(request.url)
-    const userId = searchParams.get('userId')
     const limit = Math.min(
       parseInt(searchParams.get('limit') || String(DEFAULT_LIMIT), 10),
       MAX_LIMIT
     )
     const offset = parseInt(searchParams.get('offset') || '0', 10)
 
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'userId is required' },
-        { status: 400 }
-      )
-    }
-
     const weighIns = await prisma.weighIn.findMany({
-      where: { userId },
+      where: { userId: auth.user.id },
       orderBy: { date: 'desc' },
       take: limit,
       skip: offset,
@@ -39,6 +37,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const auth = await authenticateRequest(request)
+    if (!auth) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
+    }
+
     const body = await request.json()
     const validated = createWeighInSchema.parse(body)
 
@@ -49,7 +52,7 @@ export async function POST(request: NextRequest) {
 
     const weighIn = await prisma.weighIn.create({
       data: {
-        userId: validated.userId,
+        userId: auth.user.id,
         weight: validated.weight,
         date: weighInDate,
       },

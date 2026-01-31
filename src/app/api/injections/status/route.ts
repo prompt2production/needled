@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { getInjectionWeekStart, getInjectionWeekEnd, isInjectionDay, getDaysUntilInjection, getDaysOverdue } from '@/lib/injection-week'
 import { getNextSite } from '@/lib/injection-site'
 import { getNextDoseNumber } from '@/lib/dose-tracking'
+import { authenticateRequest } from '@/lib/api-auth'
 import type { InjectionSite } from '@/lib/validations/injection'
 
 export type InjectionStatus = 'due' | 'done' | 'overdue' | 'upcoming'
@@ -15,6 +16,7 @@ export interface InjectionStatusResponse {
     id: string
     site: string
     doseNumber: number
+    dosageMg: number | null
     date: string
     notes: string | null
   } | null
@@ -22,19 +24,17 @@ export interface InjectionStatusResponse {
   currentDose: number | null
   nextDose: number
   dosesRemaining: number
+  currentDosageMg: number | null
 }
 
 export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url)
-    const userId = searchParams.get('userId')
-
-    if (!userId) {
-      return NextResponse.json(
-        { error: 'userId is required' },
-        { status: 400 }
-      )
+    const auth = await authenticateRequest(request)
+    if (!auth) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
+
+    const userId = auth.user.id
 
     // Get user to find their injection day
     const user = await prisma.user.findUnique({
@@ -115,6 +115,7 @@ export async function GET(request: NextRequest) {
         id: lastInjection.id,
         site: lastInjection.site,
         doseNumber: lastInjection.doseNumber,
+        dosageMg: lastInjection.dosageMg ? Number(lastInjection.dosageMg) : null,
         date: lastInjection.date.toISOString(),
         notes: lastInjection.notes,
       } : null,
@@ -122,6 +123,7 @@ export async function GET(request: NextRequest) {
       currentDose,
       nextDose,
       dosesRemaining,
+      currentDosageMg: user.currentDosage ? Number(user.currentDosage) : null,
     }
 
     return NextResponse.json(response)

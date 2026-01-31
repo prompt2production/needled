@@ -1,25 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { authenticateRequest } from '@/lib/api-auth'
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest) {
   try {
-    const { id } = await params
-
-    const user = await prisma.user.findUnique({
-      where: { id },
-    })
-
-    if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      )
+    const auth = await authenticateRequest(request)
+    if (!auth) {
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 })
     }
 
-    return NextResponse.json(user)
+    // Only return the authenticated user's data (ignore the [id] param for security)
+    // This prevents enumeration attacks and ensures users can only access their own profile
+    const { passwordHash: _, ...userWithoutPassword } = auth.user
+
+    return NextResponse.json(userWithoutPassword)
   } catch (error) {
     console.error('Failed to fetch user:', error)
     return NextResponse.json(

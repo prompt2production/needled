@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import Link from 'next/link'
 import Image from 'next/image'
 import { testerConfig } from '@/config/tester'
 import {
@@ -17,6 +16,7 @@ import {
   Mail,
   ArrowLeft,
 } from 'lucide-react'
+import { Footer } from '@/components/Footer'
 
 type Step = 'intro' | 'ios-signup' | 'ios-complete' | 'android-signup' | 'android-download'
 
@@ -160,27 +160,7 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Footer */}
-        <footer className="py-6">
-          <div className="max-w-4xl mx-auto w-full">
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-white/80">
-              <Link href="#privacy" className="hover:text-white transition-colors">
-                Privacy Policy
-              </Link>
-              <span className="hidden sm:inline text-white/50">|</span>
-              <Link href="#terms" className="hover:text-white transition-colors">
-                Terms of Service
-              </Link>
-              <span className="hidden sm:inline text-white/50">|</span>
-              <Link href="mailto:support@needled.app" className="hover:text-white transition-colors">
-                Contact
-              </Link>
-            </div>
-            <p className="text-center text-xs text-white/60 mt-4">
-              &copy; {new Date().getFullYear()} Needled. All rights reserved.
-            </p>
-          </div>
-        </footer>
+        <Footer />
       </div>
     </main>
   )

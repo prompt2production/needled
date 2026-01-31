@@ -32,8 +32,9 @@ describe('PATCH /api/injections/[id]', () => {
   const mockInjection = {
     id: 'injection123',
     userId: 'user123',
-    site: 'ABDOMEN_LEFT',
+    site: 'ABDOMEN_LEFT' as const,
     doseNumber: 1,
+    dosageMg: null,
     notes: 'Original notes',
     date: new Date('2026-01-20'),
     createdAt: new Date(),
@@ -52,7 +53,7 @@ describe('PATCH /api/injections/[id]', () => {
   })
 
   it('should return 200 with updated injection on success', async () => {
-    const updatedInjection = { ...mockInjection, site: 'ABDOMEN_RIGHT' }
+    const updatedInjection = { ...mockInjection, site: 'ABDOMEN_RIGHT' as const }
     mockUpdate.mockResolvedValue(updatedInjection)
 
     const request = createPatchRequest({ userId: 'user123', site: 'ABDOMEN_RIGHT' })
@@ -201,7 +202,7 @@ describe('PATCH /api/injections/[id]', () => {
     })
 
     it('should allow updating both doseNumber and site together', async () => {
-      const updatedInjection = { ...mockInjection, site: 'THIGH_LEFT', doseNumber: 4 }
+      const updatedInjection = { ...mockInjection, site: 'THIGH_LEFT' as const, doseNumber: 4 }
       mockUpdate.mockResolvedValue(updatedInjection)
 
       const request = createPatchRequest({ userId: 'user123', site: 'THIGH_LEFT', doseNumber: 4 })
@@ -230,7 +231,9 @@ describe('DELETE /api/injections/[id]', () => {
   const mockInjection = {
     id: 'injection123',
     userId: 'user123',
-    site: 'ABDOMEN_LEFT',
+    site: 'ABDOMEN_LEFT' as const,
+    doseNumber: 1,
+    dosageMg: null,
     notes: null,
     date: new Date('2026-01-20'),
     createdAt: new Date(),

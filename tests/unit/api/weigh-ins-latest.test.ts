@@ -38,6 +38,7 @@ describe('GET /api/weigh-ins/latest', () => {
       weight: 85,
       date: new Date('2025-01-20'),
       createdAt: new Date('2025-01-20'),
+      updatedAt: new Date('2025-01-20'),
     },
     {
       id: 'weighin2',
@@ -45,6 +46,7 @@ describe('GET /api/weigh-ins/latest', () => {
       weight: 87,
       date: new Date('2025-01-13'),
       createdAt: new Date('2025-01-13'),
+      updatedAt: new Date('2025-01-13'),
     },
   ]
 

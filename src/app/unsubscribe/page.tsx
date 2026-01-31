@@ -6,6 +6,7 @@ import { Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import Image from 'next/image'
+import { Footer } from '@/components/Footer'
 
 type UnsubscribeStatus = 'loading' | 'success' | 'error'
 
@@ -150,8 +151,8 @@ function LoadingCard() {
 
 export default function UnsubscribePage() {
   return (
-    <main className="min-h-screen bg-[#14B8A6]">
-      <div className="min-h-screen flex flex-col items-center justify-center px-6">
+    <main className="min-h-screen bg-[#14B8A6] flex flex-col">
+      <div className="flex-1 flex flex-col items-center justify-center px-6">
         <div className="w-full max-w-md">
           {/* Brand header */}
           <div className="text-center mb-8">
@@ -163,6 +164,8 @@ export default function UnsubscribePage() {
           </Suspense>
         </div>
       </div>
+
+      <Footer />
     </main>
   )
 }

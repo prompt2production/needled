@@ -2,8 +2,8 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { createWeighInSchema } from '@/lib/validations/weigh-in'
 
 describe('createWeighInSchema', () => {
+  // Note: userId is no longer part of the schema - it comes from authenticated session
   const validData = {
-    userId: 'user123',
     weight: 85,
   }
 
@@ -15,24 +15,6 @@ describe('createWeighInSchema', () => {
 
   afterEach(() => {
     vi.useRealTimers()
-  })
-
-  describe('userId validation', () => {
-    it('should accept valid userId', () => {
-      const result = createWeighInSchema.safeParse(validData)
-      expect(result.success).toBe(true)
-    })
-
-    it('should reject empty userId', () => {
-      const result = createWeighInSchema.safeParse({ ...validData, userId: '' })
-      expect(result.success).toBe(false)
-    })
-
-    it('should reject missing userId', () => {
-      const { userId, ...dataWithoutUserId } = validData
-      const result = createWeighInSchema.safeParse(dataWithoutUserId)
-      expect(result.success).toBe(false)
-    })
   })
 
   describe('weight validation', () => {
@@ -77,8 +59,7 @@ describe('createWeighInSchema', () => {
     })
 
     it('should reject missing weight', () => {
-      const { weight, ...dataWithoutWeight } = validData
-      const result = createWeighInSchema.safeParse(dataWithoutWeight)
+      const result = createWeighInSchema.safeParse({})
       expect(result.success).toBe(false)
     })
   })

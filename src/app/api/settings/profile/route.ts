@@ -26,6 +26,8 @@ export async function PUT(request: NextRequest) {
         goalWeight: validated.goalWeight,
         medication: validated.medication,
         injectionDay: validated.injectionDay,
+        currentDosage: validated.currentDosage,
+        height: validated.height,
       },
       select: {
         id: true,
@@ -35,6 +37,8 @@ export async function PUT(request: NextRequest) {
         weightUnit: true,
         medication: true,
         injectionDay: true,
+        currentDosage: true,
+        height: true,
         // Explicitly NOT selecting passwordHash
       },
     })

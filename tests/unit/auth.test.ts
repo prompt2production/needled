@@ -123,11 +123,12 @@ describe('createSession', () => {
     })
   })
 
-  it('should set expiry to 30 days from now', async () => {
+  it('should set expiry to ~10 years from now (mobile app persistent login)', async () => {
     const userId = 'user123'
     let capturedExpiresAt: Date | null = null
 
-    mockSessionCreate.mockImplementation(async ({ data }) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    mockSessionCreate.mockImplementation(async ({ data }: any) => {
       capturedExpiresAt = data.expiresAt as Date
       return {
         id: 'session123',
@@ -142,9 +143,9 @@ describe('createSession', () => {
 
     expect(capturedExpiresAt).not.toBeNull()
     const now = new Date()
-    const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
+    const tenYearsFromNow = new Date(now.getTime() + 3650 * 24 * 60 * 60 * 1000)
     // Allow 1 minute tolerance
-    const diff = Math.abs(capturedExpiresAt!.getTime() - thirtyDaysFromNow.getTime())
+    const diff = Math.abs(capturedExpiresAt!.getTime() - tenYearsFromNow.getTime())
     expect(diff).toBeLessThan(60 * 1000)
   })
 })
@@ -165,6 +166,8 @@ describe('validateSession', () => {
       weightUnit: 'kg',
       medication: 'OZEMPIC',
       injectionDay: 0,
+      currentDosage: null,
+      height: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     }

@@ -31,6 +31,8 @@ const mockUser = {
   weightUnit: 'kg' as const,
   medication: 'OZEMPIC' as const,
   injectionDay: 0,
+  currentDosage: null,
+  height: null,
   createdAt: new Date(),
   updatedAt: new Date(),
 }
@@ -140,6 +142,8 @@ describe('PUT /api/settings/profile', () => {
         goalWeight: 70,
         medication: 'WEGOVY',
         injectionDay: 2,
+        currentDosage: undefined,
+        height: undefined,
       },
       select: {
         id: true,
@@ -149,6 +153,8 @@ describe('PUT /api/settings/profile', () => {
         weightUnit: true,
         medication: true,
         injectionDay: true,
+        currentDosage: true,
+        height: true,
       },
     })
   })

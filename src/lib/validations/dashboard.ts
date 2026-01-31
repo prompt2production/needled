@@ -1,8 +1,7 @@
 import { z } from 'zod'
 
-export const dashboardQuerySchema = z.object({
-  userId: z.string().min(1, 'userId is required'),
-})
+// Dashboard no longer requires userId in query params - it's derived from authenticated session
+export const dashboardQuerySchema = z.object({})
 
 export type DashboardQuery = z.infer<typeof dashboardQuerySchema>
 

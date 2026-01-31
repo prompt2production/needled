@@ -25,6 +25,8 @@ export async function POST(request: NextRequest) {
         weightUnit: validated.weightUnit,
         medication: validated.medication,
         injectionDay: validated.injectionDay,
+        currentDosage: validated.startingDosage ?? null,
+        height: validated.height ?? null,
       },
     })
 

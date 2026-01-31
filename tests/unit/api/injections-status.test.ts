@@ -38,6 +38,8 @@ describe('GET /api/injections/status', () => {
     weightUnit: 'kg',
     medication: 'OZEMPIC',
     injectionDay: WEDNESDAY,
+    currentDosage: null,
+    height: null,
     createdAt: new Date(),
     updatedAt: new Date(),
   }
@@ -47,6 +49,7 @@ describe('GET /api/injections/status', () => {
     userId: 'user123',
     site: 'ABDOMEN_LEFT',
     doseNumber: 1,
+    dosageMg: null,
     notes: null,
     date: new Date(),
     createdAt: new Date(),
