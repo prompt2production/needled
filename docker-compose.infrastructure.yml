@@ -15,7 +15,7 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=needled
     ports:
-      - "5467:5432"
+      - "5468:5432"
     networks:
       - needled-network
     healthcheck:
