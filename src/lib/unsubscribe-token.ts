@@ -1,13 +1,14 @@
 import crypto from 'crypto'
 
-const UNSUBSCRIBE_SECRET: string = (() => {
+const TOKEN_EXPIRY_DAYS = 30
+
+function getUnsubscribeSecret(): string {
   const secret = process.env.UNSUBSCRIBE_SECRET
   if (!secret) {
     throw new Error('UNSUBSCRIBE_SECRET environment variable is required')
   }
   return secret
-})()
-const TOKEN_EXPIRY_DAYS = 30
+}
 
 interface TokenPayload {
   userId: string
@@ -24,7 +25,7 @@ export function generateUnsubscribeToken(userId: string): string {
   const payloadStr = Buffer.from(JSON.stringify(payload)).toString('base64url')
 
   const signature = crypto
-    .createHmac('sha256', UNSUBSCRIBE_SECRET)
+    .createHmac('sha256', getUnsubscribeSecret())
     .update(payloadStr)
     .digest('base64url')
 
@@ -45,7 +46,7 @@ export function verifyUnsubscribeToken(token: string): string | null {
 
     // Verify signature
     const expectedSignature = crypto
-      .createHmac('sha256', UNSUBSCRIBE_SECRET)
+      .createHmac('sha256', getUnsubscribeSecret())
       .update(payloadStr)
       .digest('base64url')
 
