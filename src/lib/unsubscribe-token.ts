@@ -1,9 +1,12 @@
 import crypto from 'crypto'
 
-const UNSUBSCRIBE_SECRET = process.env.UNSUBSCRIBE_SECRET
-if (!UNSUBSCRIBE_SECRET) {
-  throw new Error('UNSUBSCRIBE_SECRET environment variable is required')
-}
+const UNSUBSCRIBE_SECRET: string = (() => {
+  const secret = process.env.UNSUBSCRIBE_SECRET
+  if (!secret) {
+    throw new Error('UNSUBSCRIBE_SECRET environment variable is required')
+  }
+  return secret
+})()
 const TOKEN_EXPIRY_DAYS = 30
 
 interface TokenPayload {
