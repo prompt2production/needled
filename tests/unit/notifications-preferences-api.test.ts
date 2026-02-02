@@ -37,6 +37,9 @@ const mockUser = {
   injectionDay: 0,
   currentDosage: null,
   height: null,
+  expoPushToken: null,
+  pushTokenPlatform: null,
+  pushTokenUpdatedAt: null,
   createdAt: new Date(),
   updatedAt: new Date(),
 }

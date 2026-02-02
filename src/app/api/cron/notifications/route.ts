@@ -30,9 +30,9 @@ export async function GET(request: NextRequest) {
 
     // Send all notifications
     const results = {
-      injectionReminders: 0,
-      weighInReminders: 0,
-      habitReminders: 0,
+      injectionReminders: { emailsSent: 0, pushSent: 0 },
+      weighInReminders: { emailsSent: 0, pushSent: 0 },
+      habitReminders: { emailsSent: 0, pushSent: 0 },
       errors: [] as string[],
     }
 
@@ -60,14 +60,20 @@ export async function GET(request: NextRequest) {
       console.error('Failed to send habit reminders:', error)
     }
 
-    const totalSent =
-      results.injectionReminders +
-      results.weighInReminders +
-      results.habitReminders
+    const totalEmailsSent =
+      results.injectionReminders.emailsSent +
+      results.weighInReminders.emailsSent +
+      results.habitReminders.emailsSent
+
+    const totalPushSent =
+      results.injectionReminders.pushSent +
+      results.weighInReminders.pushSent +
+      results.habitReminders.pushSent
 
     return NextResponse.json({
       success: true,
-      totalEmailsSent: totalSent,
+      totalEmailsSent,
+      totalPushSent,
       breakdown: {
         injectionReminders: results.injectionReminders,
         weighInReminders: results.weighInReminders,

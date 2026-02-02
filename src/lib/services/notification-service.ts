@@ -7,10 +7,19 @@ import {
   getEmailSubject,
 } from '@/lib/email-templates'
 import { generateUnsubscribeToken } from '@/lib/unsubscribe-token'
+import {
+  sendPushNotification,
+  pushNotificationTemplates,
+} from '@/lib/services/push-notification-service'
 import { startOfDay } from 'date-fns'
 import { toZonedTime } from 'date-fns-tz'
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+
+interface NotificationResult {
+  emailsSent: number
+  pushSent: number
+}
 
 /**
  * Get current hour in user's timezone
@@ -46,16 +55,17 @@ function getTodayDayOfWeek(timezone: string): number {
  * Check and send injection reminders to users whose injection day is today
  * and haven't logged an injection today
  */
-export async function checkAndSendInjectionReminders(): Promise<number> {
-  let sentCount = 0
+export async function checkAndSendInjectionReminders(): Promise<NotificationResult> {
+  let emailsSent = 0
+  let pushSent = 0
 
-  // Find users with injection reminder enabled
+  // Find users with injection reminder enabled (either email or push token)
   const users = await prisma.user.findMany({
     where: {
-      email: { not: null },
       notificationPreference: {
         injectionReminder: true,
       },
+      OR: [{ email: { not: null } }, { expoPushToken: { not: null } }],
     },
     include: {
       notificationPreference: true,
@@ -69,7 +79,7 @@ export async function checkAndSendInjectionReminders(): Promise<number> {
   for (const user of users) {
     try {
       const prefs = user.notificationPreference
-      if (!prefs || !user.email) continue
+      if (!prefs) continue
 
       // Check if it's the right time
       if (!isReminderTime(prefs.reminderTime, prefs.timezone)) continue
@@ -88,42 +98,53 @@ export async function checkAndSendInjectionReminders(): Promise<number> {
         if (todayStart.getTime() === injectionStart.getTime()) continue
       }
 
-      // Generate unsubscribe URL
-      const unsubscribeToken = generateUnsubscribeToken(user.id)
-      const unsubscribeUrl = `${APP_URL}/unsubscribe?token=${unsubscribeToken}`
+      // Send push notification if token exists
+      if (user.expoPushToken) {
+        const pushResult = await sendPushNotification(
+          user.expoPushToken,
+          pushNotificationTemplates.injection
+        )
+        if (pushResult.success) pushSent++
+      }
 
-      // Send email
-      const html = renderInjectionReminder({
-        userName: user.name,
-        medication: user.medication,
-        unsubscribeUrl,
-      })
-      const subject = getEmailSubject('injection-reminder', user.medication)
+      // Send email if email exists
+      if (user.email) {
+        const unsubscribeToken = generateUnsubscribeToken(user.id)
+        const unsubscribeUrl = `${APP_URL}/unsubscribe?token=${unsubscribeToken}`
 
-      const success = await sendEmail({ to: user.email, subject, html })
-      if (success) sentCount++
+        const html = renderInjectionReminder({
+          userName: user.name,
+          medication: user.medication,
+          unsubscribeUrl,
+        })
+        const subject = getEmailSubject('injection-reminder', user.medication)
+
+        const success = await sendEmail({ to: user.email, subject, html })
+        if (success) emailsSent++
+      }
     } catch (error) {
       console.error(`Failed to send injection reminder to user ${user.id}:`, error)
     }
   }
 
-  return sentCount
+  return { emailsSent, pushSent }
 }
 
 /**
  * Check and send weigh-in reminders to users who haven't weighed in this week
  * Sends on Monday only (first day of the week)
  */
-export async function checkAndSendWeighInReminders(): Promise<number> {
-  let sentCount = 0
+export async function checkAndSendWeighInReminders(): Promise<NotificationResult> {
+  let emailsSent = 0
+  let pushSent = 0
 
-  // Find users with weigh-in reminder enabled
+  // Find users with weigh-in reminder enabled (either email or push token)
   const users = await prisma.user.findMany({
     where: {
-      email: { not: null },
       notificationPreference: {
         weighInReminder: true,
       },
+      OR: [{ email: { not: null } }, { expoPushToken: { not: null } }],
     },
     include: {
       notificationPreference: true,
@@ -137,7 +158,7 @@ export async function checkAndSendWeighInReminders(): Promise<number> {
   for (const user of users) {
     try {
       const prefs = user.notificationPreference
-      if (!prefs || !user.email) continue
+      if (!prefs) continue
 
       // Check if it's the right time
       if (!isReminderTime(prefs.reminderTime, prefs.timezone)) continue
@@ -149,51 +170,60 @@ export async function checkAndSendWeighInReminders(): Promise<number> {
       // Check if already weighed in this week
       const lastWeighIn = user.weighIns[0]
       if (lastWeighIn) {
-        // Get the start of this week (Monday) in user's timezone
         const zonedNow = toZonedTime(new Date(), prefs.timezone)
         const zonedWeighIn = toZonedTime(lastWeighIn.date, prefs.timezone)
 
-        // Check if weigh-in was within the last 7 days
         const daysSinceWeighIn = Math.floor(
           (zonedNow.getTime() - zonedWeighIn.getTime()) / (1000 * 60 * 60 * 24)
         )
         if (daysSinceWeighIn < 7) continue
       }
 
-      // Generate unsubscribe URL
-      const unsubscribeToken = generateUnsubscribeToken(user.id)
-      const unsubscribeUrl = `${APP_URL}/unsubscribe?token=${unsubscribeToken}`
+      // Send push notification if token exists
+      if (user.expoPushToken) {
+        const pushResult = await sendPushNotification(
+          user.expoPushToken,
+          pushNotificationTemplates.weighIn
+        )
+        if (pushResult.success) pushSent++
+      }
 
-      // Send email
-      const html = renderWeighInReminder({
-        userName: user.name,
-        unsubscribeUrl,
-      })
-      const subject = getEmailSubject('weigh-in-reminder')
+      // Send email if email exists
+      if (user.email) {
+        const unsubscribeToken = generateUnsubscribeToken(user.id)
+        const unsubscribeUrl = `${APP_URL}/unsubscribe?token=${unsubscribeToken}`
 
-      const success = await sendEmail({ to: user.email, subject, html })
-      if (success) sentCount++
+        const html = renderWeighInReminder({
+          userName: user.name,
+          unsubscribeUrl,
+        })
+        const subject = getEmailSubject('weigh-in-reminder')
+
+        const success = await sendEmail({ to: user.email, subject, html })
+        if (success) emailsSent++
+      }
     } catch (error) {
       console.error(`Failed to send weigh-in reminder to user ${user.id}:`, error)
     }
   }
 
-  return sentCount
+  return { emailsSent, pushSent }
 }
 
 /**
  * Check and send habit reminders to users who haven't logged habits today
  */
-export async function checkAndSendHabitReminders(): Promise<number> {
-  let sentCount = 0
+export async function checkAndSendHabitReminders(): Promise<NotificationResult> {
+  let emailsSent = 0
+  let pushSent = 0
 
-  // Find users with habit reminder enabled
+  // Find users with habit reminder enabled (either email or push token)
   const users = await prisma.user.findMany({
     where: {
-      email: { not: null },
       notificationPreference: {
         habitReminder: true,
       },
+      OR: [{ email: { not: null } }, { expoPushToken: { not: null } }],
     },
     include: {
       notificationPreference: true,
@@ -207,7 +237,7 @@ export async function checkAndSendHabitReminders(): Promise<number> {
   for (const user of users) {
     try {
       const prefs = user.notificationPreference
-      if (!prefs || !user.email) continue
+      if (!prefs) continue
 
       // Check if it's the right time (use habitReminderTime)
       if (!isReminderTime(prefs.habitReminderTime, prefs.timezone)) continue
@@ -228,23 +258,33 @@ export async function checkAndSendHabitReminders(): Promise<number> {
         }
       }
 
-      // Generate unsubscribe URL
-      const unsubscribeToken = generateUnsubscribeToken(user.id)
-      const unsubscribeUrl = `${APP_URL}/unsubscribe?token=${unsubscribeToken}`
+      // Send push notification if token exists
+      if (user.expoPushToken) {
+        const pushResult = await sendPushNotification(
+          user.expoPushToken,
+          pushNotificationTemplates.habit
+        )
+        if (pushResult.success) pushSent++
+      }
 
-      // Send email
-      const html = renderHabitReminder({
-        userName: user.name,
-        unsubscribeUrl,
-      })
-      const subject = getEmailSubject('habit-reminder')
+      // Send email if email exists
+      if (user.email) {
+        const unsubscribeToken = generateUnsubscribeToken(user.id)
+        const unsubscribeUrl = `${APP_URL}/unsubscribe?token=${unsubscribeToken}`
 
-      const success = await sendEmail({ to: user.email, subject, html })
-      if (success) sentCount++
+        const html = renderHabitReminder({
+          userName: user.name,
+          unsubscribeUrl,
+        })
+        const subject = getEmailSubject('habit-reminder')
+
+        const success = await sendEmail({ to: user.email, subject, html })
+        if (success) emailsSent++
+      }
     } catch (error) {
       console.error(`Failed to send habit reminder to user ${user.id}:`, error)
     }
   }
 
-  return sentCount
+  return { emailsSent, pushSent }
 }

@@ -1,6 +1,6 @@
 # Needled API Documentation
 
-Version: 1.0
+Version: 1.2
 Base URL: `https://your-domain.com/api`
 
 ---
@@ -10,12 +10,14 @@ Base URL: `https://your-domain.com/api`
 Needled is a weight loss journey companion app for people using GLP-1 medications (Ozempic, Wegovy, Mounjaro, Zepbound). The API provides endpoints for:
 
 - **User management** - Registration, authentication, profile settings
-- **Weight tracking** - Weekly weigh-ins with history and progress
-- **Injection tracking** - Weekly injection logging with site rotation and dose tracking
+- **Weight tracking** - Weekly weigh-ins with history, progress charts, and BMI
+- **Injection tracking** - Weekly injection logging with site rotation, dose tracking, and dosage titration
 - **Daily habits** - Water, nutrition, and exercise check-ins
 - **Dashboard** - Aggregated progress data
 - **Calendar** - Monthly and daily activity views
-- **Notifications** - Reminder preferences
+- **Notifications** - Reminder preferences, test emails, push notifications, and unsubscribe
+- **Beta testing** - Beta tester signup
+- **Contact** - Contact form submission
 
 ---
 
@@ -159,6 +161,17 @@ type InjectionDay = 0 | 1 | 2 | 3 | 4 | 5 | 6
 type DoseNumber = 1 | 2 | 3 | 4
 ```
 
+### BetaPlatform
+```typescript
+type BetaPlatform = "IOS" | "ANDROID"
+```
+
+### ProgressRange
+```typescript
+// Time range for progress chart data
+type ProgressRange = "1M" | "3M" | "6M" | "ALL"
+```
+
 ---
 
 ## Endpoints
@@ -178,7 +191,9 @@ Register a new user account.
   "goalWeight": "number (40-300, optional, must be < startWeight)",
   "weightUnit": "kg | lbs (required)",
   "medication": "OZEMPIC | WEGOVY | MOUNJARO | ZEPBOUND | OTHER (required)",
-  "injectionDay": "number (0-6, required, 0=Monday)"
+  "injectionDay": "number (0-6, required, 0=Monday)",
+  "height": "number (cm, 100-250, optional, for BMI calculation)",
+  "currentDosage": "number (mg, optional, current medication dosage)"
 }
 ```
 
@@ -193,6 +208,8 @@ Register a new user account.
   "weightUnit": "kg",
   "medication": "OZEMPIC",
   "injectionDay": 2,
+  "height": 175,
+  "currentDosage": 0.5,
   "createdAt": "2024-01-15T10:30:00.000Z",
   "updatedAt": "2024-01-15T10:30:00.000Z"
 }
@@ -226,6 +243,8 @@ Authenticate an existing user.
   "weightUnit": "kg",
   "medication": "OZEMPIC",
   "injectionDay": 2,
+  "height": 175,
+  "currentDosage": 0.5,
   "createdAt": "2024-01-15T10:30:00.000Z",
   "updatedAt": "2024-01-15T10:30:00.000Z",
   "token": "64-character-hex-session-token"
@@ -261,6 +280,8 @@ Authorization: Bearer <session_token>
   "weightUnit": "kg",
   "medication": "OZEMPIC",
   "injectionDay": 2,
+  "height": 175,
+  "currentDosage": 0.5,
   "createdAt": "2024-01-15T10:30:00.000Z",
   "updatedAt": "2024-01-15T10:30:00.000Z"
 }
@@ -304,6 +325,8 @@ Get a user by ID.
   "weightUnit": "kg",
   "medication": "OZEMPIC",
   "injectionDay": 2,
+  "height": 175,
+  "currentDosage": 0.5,
   "createdAt": "2024-01-15T10:30:00.000Z",
   "updatedAt": "2024-01-15T10:30:00.000Z"
 }
@@ -330,7 +353,9 @@ Get current user's profile settings.
   "goalWeight": 80,
   "weightUnit": "kg",
   "medication": "OZEMPIC",
-  "injectionDay": 2
+  "injectionDay": 2,
+  "height": 175,
+  "currentDosage": 0.5
 }
 ```
 
@@ -345,7 +370,9 @@ Update profile settings.
   "name": "string (2-30 chars, required)",
   "goalWeight": "number (40-300, optional, nullable)",
   "medication": "OZEMPIC | WEGOVY | MOUNJARO | ZEPBOUND | OTHER (required)",
-  "injectionDay": "number (0-6, required)"
+  "injectionDay": "number (0-6, required)",
+  "height": "number (cm, 100-250, optional, nullable)",
+  "currentDosage": "number (mg, optional, nullable)"
 }
 ```
 
@@ -358,7 +385,9 @@ Update profile settings.
   "goalWeight": 75,
   "weightUnit": "kg",
   "medication": "WEGOVY",
-  "injectionDay": 3
+  "injectionDay": 3,
+  "height": 175,
+  "currentDosage": 1.0
 }
 ```
 
@@ -561,6 +590,69 @@ If no weigh-ins exist:
 
 ---
 
+#### GET /api/weigh-ins/progress
+Get weight progress data for charts, including dosage correlation. Requires authentication.
+
+**Query Parameters:**
+| Param | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| range | string | No | ALL | Time range: 1M, 3M, 6M, or ALL |
+
+**Response (200 OK):**
+```json
+{
+  "weighIns": [
+    {
+      "date": "2024-01-15",
+      "weight": 98.5,
+      "dosageMg": 0.5
+    },
+    {
+      "date": "2024-01-22",
+      "weight": 97.8,
+      "dosageMg": 0.5
+    }
+  ],
+  "dosageChanges": [
+    {
+      "date": "2024-01-01",
+      "fromDosage": null,
+      "toDosage": 0.25
+    },
+    {
+      "date": "2024-01-15",
+      "fromDosage": 0.25,
+      "toDosage": 0.5
+    }
+  ],
+  "stats": {
+    "totalChange": -2.5,
+    "percentChange": -2.5,
+    "currentBmi": 24.5,
+    "goalProgress": 12.5,
+    "toGoal": 17.8,
+    "weeklyAverage": -0.35
+  }
+}
+```
+
+**Fields:**
+- `weighIns` - Array of weigh-ins with the medication dosage active at that time
+- `dosageChanges` - Array of dosage changes showing when medication was titrated
+- `stats.totalChange` - Weight change over the period (negative = loss)
+- `stats.percentChange` - Percentage body weight change
+- `stats.currentBmi` - Current BMI (null if height not set)
+- `stats.goalProgress` - Percentage progress toward goal (null if no goal)
+- `stats.toGoal` - Weight remaining to reach goal (null if no goal)
+- `stats.weeklyAverage` - Average weekly weight change (null if < 7 days of data)
+
+**Errors:**
+- `400` - Invalid range parameter
+- `401` - Not authenticated
+- `404` - User not found
+
+---
+
 #### PATCH /api/weigh-ins/{id}
 Update a weigh-in.
 
@@ -620,6 +712,7 @@ Get injection history.
     "date": "2024-01-15T12:00:00.000Z",
     "site": "ABDOMEN_LEFT",
     "doseNumber": 2,
+    "dosageMg": 0.5,
     "notes": "Slight bruising",
     "createdAt": "2024-01-15T10:30:00.000Z",
     "updatedAt": "2024-01-15T10:30:00.000Z"
@@ -638,6 +731,7 @@ Log a new injection.
   "userId": "string (required)",
   "site": "ABDOMEN_LEFT | ABDOMEN_RIGHT | THIGH_LEFT | THIGH_RIGHT | UPPER_ARM_LEFT | UPPER_ARM_RIGHT (required)",
   "doseNumber": "number (1-4, optional, auto-calculated if omitted)",
+  "dosageMg": "number (mg, optional, medication dosage for this injection)",
   "notes": "string (max 500 chars, optional)",
   "date": "string (YYYY-MM-DD, optional, defaults to today)"
 }
@@ -651,6 +745,7 @@ Log a new injection.
   "date": "2024-01-15T12:00:00.000Z",
   "site": "ABDOMEN_LEFT",
   "doseNumber": 2,
+  "dosageMg": 0.5,
   "notes": null,
   "createdAt": "2024-01-15T10:30:00.000Z",
   "updatedAt": "2024-01-15T10:30:00.000Z"
@@ -677,6 +772,7 @@ Get current injection status with recommendations.
     "id": "cuid",
     "site": "ABDOMEN_LEFT",
     "doseNumber": 2,
+    "dosageMg": 0.5,
     "date": "2024-01-08T12:00:00.000Z",
     "notes": null
   },
@@ -709,6 +805,7 @@ Update an injection.
   "userId": "string (required for authorization)",
   "site": "InjectionSite (optional)",
   "doseNumber": "number (1-4, optional)",
+  "dosageMg": "number (mg, optional)",
   "notes": "string (max 500 chars, optional)",
   "date": "string (YYYY-MM-DD, optional)"
 }
@@ -838,6 +935,8 @@ Get aggregated dashboard data.
     "weightUnit": "kg",
     "medication": "OZEMPIC",
     "injectionDay": 2,
+    "height": 175,
+    "currentDosage": 0.5,
     "createdAt": "2024-01-01T10:30:00.000Z"
   },
   "weight": {
@@ -998,6 +1097,186 @@ Update notification preferences.
 
 ---
 
+#### POST /api/notifications/test
+Send a test notification email to the authenticated user. Requires authentication.
+
+**Request Body:**
+```json
+{
+  "type": "injection | weigh-in | habit (required)"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Test injection email sent to john@example.com"
+}
+```
+
+**Errors:**
+- `400` - Invalid type / Email address required
+- `401` - Not authenticated
+- `500` - Failed to send test email
+
+---
+
+#### POST /api/notifications/test-push
+Send a test push notification to the authenticated user's registered device. Requires authentication and a registered push token.
+
+**Request Body:**
+```json
+{
+  "type": "injection | weighIn | habit | test (optional, defaults to test)"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Test push notification sent to your ios"
+}
+```
+
+**Errors:**
+- `400` - No push token registered
+- `401` - Not authenticated
+- `500` - Failed to send test push notification
+
+---
+
+### Push Token Management (Authenticated)
+
+#### POST /api/users/push-token
+Register or update the user's Expo push token. Called when the mobile app obtains a push token.
+
+**Request Body:**
+```json
+{
+  "token": "ExponentPushToken[xxxxxxxxxxxxxxxxxxxxxx] (required)",
+  "platform": "ios | android (required)"
+}
+```
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Push token registered successfully"
+}
+```
+
+**Errors:**
+- `400` - Invalid push token format / Invalid platform
+- `401` - Not authenticated
+
+---
+
+#### DELETE /api/users/push-token
+Remove the user's push token. Should be called on logout to stop sending push notifications to the logged-out device.
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "message": "Push token removed successfully"
+}
+```
+
+**Errors:**
+- `401` - Not authenticated
+
+---
+
+#### GET /api/notifications/unsubscribe
+Unsubscribe from all email notifications using a signed token. This endpoint is used via email links.
+
+**Query Parameters:**
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| token | string | Yes | Signed unsubscribe token |
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "message": "You have been unsubscribed from all Needled email notifications."
+}
+```
+
+**Errors:**
+- `400` - Token is required / Invalid or expired token
+
+---
+
+### Beta Testers (Public)
+
+#### POST /api/beta-testers
+Sign up for the beta testing program.
+
+**Request Body:**
+```json
+{
+  "email": "string (valid email, required)",
+  "platform": "IOS | ANDROID (required)"
+}
+```
+
+**Response (201 Created):**
+```json
+{
+  "id": "cuid",
+  "email": "john@example.com",
+  "platform": "IOS",
+  "createdAt": "2024-01-15T10:30:00.000Z"
+}
+```
+
+**Response (200 OK) - Already signed up:**
+```json
+{
+  "message": "You are already signed up for the beta program!"
+}
+```
+
+**Notes:**
+- If the email already exists with a different platform, the platform is updated
+- Emails are stored lowercase
+
+**Errors:**
+- `400` - Validation error
+
+---
+
+### Contact (Public)
+
+#### POST /api/contact
+Submit a contact form message.
+
+**Request Body:**
+```json
+{
+  "name": "string (1-100 chars, required)",
+  "email": "string (valid email, required)",
+  "message": "string (10-2000 chars, required)"
+}
+```
+
+**Response (201 Created):**
+```json
+{
+  "id": "cuid",
+  "message": "Message sent successfully"
+}
+```
+
+**Errors:**
+- `400` - Validation error
+
+---
+
 ## Implementation Notes for Native Apps
 
 ### 1. Authentication
@@ -1049,10 +1328,20 @@ Consider implementing:
 
 ### 7. Push Notifications
 
-The web app uses email notifications via SendGrid. For native push notifications:
-- Implement device token registration endpoint
-- Add push notification service (FCM/APNs)
-- Map existing notification preferences to push categories
+Push notifications are implemented via **Expo Push Notifications** which provides a unified interface to APNs (iOS) and FCM (Android):
+
+1. **Register token**: Call `POST /api/users/push-token` with the Expo push token obtained from the mobile app
+2. **Notifications sent**: The cron job sends push notifications alongside emails for injection, weigh-in, and habit reminders
+3. **Test push**: Call `POST /api/notifications/test-push` to verify push notifications work
+4. **Logout**: Call `DELETE /api/users/push-token` on logout to stop notifications to the device
+
+**Android Notification Channels:**
+| Channel ID | Name | Importance |
+|------------|------|------------|
+| `default` | Default | HIGH |
+| `injection-reminders` | Injection Reminders | HIGH |
+| `weighin-reminders` | Weigh-in Reminders | DEFAULT |
+| `habit-reminders` | Daily Habit Reminders | DEFAULT |
 
 ---
 
@@ -1065,6 +1354,24 @@ Currently no rate limiting is implemented. Consider implementing on your infrast
 ---
 
 ## Changelog
+
+### v1.2
+- Added `POST /api/users/push-token` - Register Expo push notification token
+- Added `DELETE /api/users/push-token` - Remove push token on logout
+- Added `POST /api/notifications/test-push` - Send test push notification
+- Added push notification support to cron job (sends both email and push)
+- Added `expoPushToken`, `pushTokenPlatform`, `pushTokenUpdatedAt` fields to User
+
+### v1.1
+- Added `GET /api/weigh-ins/progress` - Weight progress chart data with BMI and dosage correlation
+- Added `POST /api/notifications/test` - Send test notification emails
+- Added `GET /api/notifications/unsubscribe` - Token-based email unsubscription
+- Added `POST /api/beta-testers` - Beta tester signup
+- Added `POST /api/contact` - Contact form submission
+- Added `height` field to User (for BMI calculation)
+- Added `currentDosage` field to User (current medication dosage)
+- Added `dosageMg` field to Injection (dosage at time of injection)
+- Added `BetaPlatform` and `ProgressRange` enums
 
 ### v1.0 (Initial Release)
 - User registration and authentication
