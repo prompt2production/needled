@@ -8,10 +8,7 @@ Lessons learned during development that should inform future work. Ralph reads t
 
 ## Database / Prisma
 
-<!-- Example:
-- Always run `npx prisma generate` after schema changes
-- Use `@default(now())` for createdAt timestamps
--->
+- Do NOT add `prisma.config.ts` to the project - Prisma 6.x auto-generates it during builds and the TypeScript types are unstable across versions. The datasource in `schema.prisma` is sufficient.
 
 ## API Routes
 
