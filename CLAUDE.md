@@ -526,9 +526,11 @@ export function MyForm({ onSubmit, defaultValues }: Props) {
 
 ### Database Commands
 
+**CRITICAL: Always create migrations when modifying the schema.** Never modify `prisma/schema.prisma` without creating a corresponding migration. Failing to do so will cause production deployments to fail with "table does not exist" errors.
+
 ```bash
-# Run migrations
-npx prisma migrate dev
+# After ANY schema change, ALWAYS run:
+npx prisma migrate dev --name descriptive_name
 
 # Generate client after schema changes
 npx prisma generate
@@ -561,11 +563,12 @@ npm run lint
 
 ## Common Gotchas
 
-1. **Prisma Client in Next.js:** Always import from `@/lib/prisma`, not directly from `@prisma/client`
-2. **Server vs Client Components:** API calls and database access only in Server Components or API routes
-3. **Form State:** Use `'use client'` directive for any component using react-hook-form
-4. **Toast Notifications:** Import `toast` from `sonner`, ensure `<Toaster />` is in layout
-5. **Styling:** Use Tailwind classes, follow `DESIGN_SYSTEM.md` spacing and colours
+1. **Prisma Migrations Required:** ALWAYS run `npx prisma migrate dev --name descriptive_name` after modifying `schema.prisma`. Never commit schema changes without a migration file — production will fail with "table does not exist" errors.
+2. **Prisma Client in Next.js:** Always import from `@/lib/prisma`, not directly from `@prisma/client`
+3. **Server vs Client Components:** API calls and database access only in Server Components or API routes
+4. **Form State:** Use `'use client'` directive for any component using react-hook-form
+5. **Toast Notifications:** Import `toast` from `sonner`, ensure `<Toaster />` is in layout
+6. **Styling:** Use Tailwind classes, follow `DESIGN_SYSTEM.md` spacing and colours
 
 ## Environment Variables
 
@@ -584,6 +587,7 @@ A feature is complete when:
 5. ✅ E2E tests pass
 6. ✅ No console errors in browser
 7. ✅ Works on desktop viewport (1280px+) and degrades gracefully to mobile (375px+)
+8. ✅ Database migrations created for any schema changes (run `npx prisma migrate dev`)
 
 ---
 

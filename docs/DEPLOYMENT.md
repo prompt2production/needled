@@ -74,8 +74,18 @@ docker-compose -f docker-compose.app.yml up -d --build
 
 ### 7. Run Database Migrations
 
+Prisma 7 requires a `prisma.config.ts` file. Run migrations using a one-off container:
+
 ```bash
-docker-compose -f docker-compose.app.yml exec app npx prisma migrate deploy
+DB_PASS=$(grep "^DB_PASSWORD=" .env | cut -d'=' -f2)
+
+docker run --rm \
+  --network needled-network \
+  -e DATABASE_URL="postgresql://needled:${DB_PASS}@needled-db:5432/needled" \
+  -v /opt/docker/needled:/app \
+  -w /app \
+  node:20-alpine \
+  sh -c 'npm install prisma && echo "import { defineConfig } from \"prisma/config\"; export default defineConfig({ datasource: { url: process.env.DATABASE_URL } });" > prisma.config.ts && npx prisma migrate deploy --schema=prisma/schema.prisma'
 ```
 
 ### 8. Verify Deployment
@@ -123,8 +133,16 @@ git pull origin main
 # Rebuild the app
 docker-compose -f docker-compose.app.yml up -d --build --force-recreate
 
-# Run migrations
-docker-compose -f docker-compose.app.yml exec app npx prisma migrate deploy
+# Run migrations (Prisma 7 requires prisma.config.ts)
+DB_PASS=$(grep "^DB_PASSWORD=" .env | cut -d'=' -f2)
+
+docker run --rm \
+  --network needled-network \
+  -e DATABASE_URL="postgresql://needled:${DB_PASS}@needled-db:5432/needled" \
+  -v /opt/docker/needled:/app \
+  -w /app \
+  node:20-alpine \
+  sh -c 'npm install prisma && echo "import { defineConfig } from \"prisma/config\"; export default defineConfig({ datasource: { url: process.env.DATABASE_URL } });" > prisma.config.ts && npx prisma migrate deploy --schema=prisma/schema.prisma'
 
 # Verify
 docker logs -f needled-app
@@ -150,8 +168,8 @@ docker logs -f needled-db
 # Via Docker
 docker exec -it needled-db psql -U needled -d needled
 
-# Via external client (port 5467)
-psql -h localhost -p 5467 -U needled -d needled
+# Via external client (port 5468)
+psql -h localhost -p 5468 -U needled -d needled
 ```
 
 ### Restart Services
@@ -252,11 +270,16 @@ dig needled.app
 ### Migration Failed
 
 ```bash
-# Check migration status
-docker-compose -f docker-compose.app.yml exec app npx prisma migrate status
+# Check migration status (Prisma 7 requires prisma.config.ts)
+DB_PASS=$(grep "^DB_PASSWORD=" .env | cut -d'=' -f2)
 
-# View migration history
-docker-compose -f docker-compose.app.yml exec app npx prisma migrate diff --help
+docker run --rm \
+  --network needled-network \
+  -e DATABASE_URL="postgresql://needled:${DB_PASS}@needled-db:5432/needled" \
+  -v /opt/docker/needled:/app \
+  -w /app \
+  node:20-alpine \
+  sh -c 'npm install prisma && echo "import { defineConfig } from \"prisma/config\"; export default defineConfig({ datasource: { url: process.env.DATABASE_URL } });" > prisma.config.ts && npx prisma migrate status --schema=prisma/schema.prisma'
 ```
 
 ## Environment Variables Reference
