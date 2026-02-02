@@ -1,7 +1,6 @@
-import { defineConfig } from "prisma/config"
+import type { PrismaConfig } from "prisma"
 
-export default defineConfig({
-  datasource: {
-    url: process.env.DATABASE_URL ?? "",
-  },
-})
+export default {
+  earlyAccess: true,
+  schema: "./prisma/schema.prisma",
+} satisfies PrismaConfig
