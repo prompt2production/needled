@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import Image from 'next/image'
@@ -20,11 +20,47 @@ import { Footer } from '@/components/Footer'
 
 type Step = 'intro' | 'ios-signup' | 'ios-complete' | 'android-signup' | 'android-download'
 
+const BETA_COOKIE_NAME = 'needled_beta_android'
+
+function setCookie(name: string, value: string, days: number) {
+  const expires = new Date()
+  expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000)
+  document.cookie = `${name}=${encodeURIComponent(value)};expires=${expires.toUTCString()};path=/;SameSite=Lax`
+}
+
+function getCookie(name: string): string | null {
+  const nameEQ = `${name}=`
+  const cookies = document.cookie.split(';')
+  for (let cookie of cookies) {
+    cookie = cookie.trim()
+    if (cookie.indexOf(nameEQ) === 0) {
+      return decodeURIComponent(cookie.substring(nameEQ.length))
+    }
+  }
+  return null
+}
+
 export default function LandingPage() {
   const [step, setStep] = useState<Step>('intro')
   const [email, setEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [isReturningUser, setIsReturningUser] = useState(false)
+  const [hasNewVersion, setHasNewVersion] = useState(false)
+
+  // Check for returning user on mount
+  useEffect(() => {
+    const savedVersion = getCookie(BETA_COOKIE_NAME)
+    if (savedVersion) {
+      // User has previously registered - show download directly
+      setIsReturningUser(true)
+      // Check if version has changed
+      if (savedVersion !== testerConfig.version) {
+        setHasNewVersion(true)
+      }
+      setStep('android-download')
+    }
+  }, [])
 
   const handlePlatformSelect = (platform: 'ios' | 'android') => {
     setEmail('')
@@ -58,6 +94,13 @@ export default function LandingPage() {
         return
       }
 
+      if (platform === 'ANDROID') {
+        // Store cookie for 365 days with current version
+        setCookie(BETA_COOKIE_NAME, testerConfig.version, 365)
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+      }
+
       setStep(platform === 'IOS' ? 'ios-complete' : 'android-download')
     } catch {
       setError('Network error. Please try again.')
@@ -70,6 +113,7 @@ export default function LandingPage() {
     setStep('intro')
     setEmail('')
     setError('')
+    setIsReturningUser(false)
   }
 
   return (
@@ -131,7 +175,7 @@ export default function LandingPage() {
           )}
 
           {step === 'android-download' && (
-            <AndroidDownloadStep email={email} onBack={handleBack} />
+            <AndroidDownloadStep email={email} onBack={handleBack} isReturningUser={isReturningUser} hasNewVersion={hasNewVersion} />
           )}
 
           {/* Feature highlights */}
@@ -335,7 +379,28 @@ function IOSCompleteStep({ email, onBack }: { email: string; onBack: () => void 
   )
 }
 
-function AndroidDownloadStep({ email, onBack }: { email: string; onBack: () => void }) {
+function AndroidDownloadStep({ email, onBack, isReturningUser, hasNewVersion }: { email: string; onBack: () => void; isReturningUser: boolean; hasNewVersion: boolean }) {
+  // Update cookie with current version when showing download
+  useEffect(() => {
+    setCookie(BETA_COOKIE_NAME, testerConfig.version, 365)
+  }, [])
+
+  const getHeading = () => {
+    if (!isReturningUser) return 'Welcome to the Beta!'
+    if (hasNewVersion) return 'New Version Available!'
+    return 'Welcome Back!'
+  }
+
+  const getMessage = () => {
+    if (!isReturningUser) {
+      return <>You&apos;re registered as <strong className="text-gray-800">{email}</strong>. Download the app below to get started.</>
+    }
+    if (hasNewVersion) {
+      return <>A new version of Needled is available! Download the update below to get the latest features and improvements.</>
+    }
+    return <>You&apos;re already registered for the beta. Download the app below if you need to reinstall.</>
+  }
+
   return (
     <div className="w-full max-w-2xl space-y-4">
       <Button
@@ -350,11 +415,17 @@ function AndroidDownloadStep({ email, onBack }: { email: string; onBack: () => v
       {/* Success + Download Card */}
       <div className="bg-white/95 rounded-2xl p-6 shadow-lg">
         <div className="flex items-center gap-2 mb-4">
-          <CheckCircle className="h-5 w-5 text-[#14B8A6]" />
-          <h2 className="text-xl font-semibold text-gray-800">Welcome to the Beta!</h2>
+          {hasNewVersion && isReturningUser ? (
+            <Sparkles className="h-5 w-5 text-[#14B8A6]" />
+          ) : (
+            <CheckCircle className="h-5 w-5 text-[#14B8A6]" />
+          )}
+          <h2 className="text-xl font-semibold text-gray-800">
+            {getHeading()}
+          </h2>
         </div>
         <p className="text-gray-600 mb-6">
-          You&apos;re registered as <strong className="text-gray-800">{email}</strong>. Download the app below to get started.
+          {getMessage()}
         </p>
 
         <div className="flex flex-col md:flex-row gap-6 items-center mb-4">
