@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { createInjectionSchema } from '@/lib/validations/injection'
-import { getNextDoseNumber } from '@/lib/dose-tracking'
+import { getNextDoseNumber, isGoldenDoseAvailable, type DoseTrackingConfig } from '@/lib/dose-tracking'
 import { authenticateRequest } from '@/lib/api-auth'
 import { z } from 'zod'
 
@@ -64,15 +64,52 @@ export async function POST(request: NextRequest) {
       ? new Date(validated.date + 'T12:00:00Z') // Noon UTC to avoid timezone issues
       : new Date()
 
+    // Build dose tracking config from user settings
+    const doseConfig: DoseTrackingConfig = {
+      dosesPerPen: user.dosesPerPen,
+      tracksGoldenDose: user.tracksGoldenDose,
+    }
+
+    // Get last injection to calculate next dose
+    const lastInjection = await prisma.injection.findFirst({
+      where: { userId },
+      orderBy: { date: 'desc' },
+      select: { doseNumber: true, isGoldenDose: true },
+    })
+
+    // Determine if this is a golden dose
+    const isGoldenDose = validated.isGoldenDose ?? false
+
+    // Validate golden dose eligibility
+    if (isGoldenDose) {
+      if (!user.tracksGoldenDose) {
+        return NextResponse.json(
+          { error: 'Golden dose tracking is not enabled for this user' },
+          { status: 400 }
+        )
+      }
+      const goldenAvailable = isGoldenDoseAvailable(lastInjection?.doseNumber ?? null, doseConfig)
+      if (!goldenAvailable) {
+        return NextResponse.json(
+          { error: 'Golden dose is not available - all standard doses must be taken first' },
+          { status: 400 }
+        )
+      }
+    }
+
     // Calculate dose number if not provided
     let doseNumber = validated.doseNumber
     if (doseNumber == null) {
-      const lastInjection = await prisma.injection.findFirst({
-        where: { userId },
-        orderBy: { date: 'desc' },
-        select: { doseNumber: true },
-      })
-      doseNumber = getNextDoseNumber(lastInjection?.doseNumber ?? null)
+      // If marking as golden dose, set dose number to dosesPerPen + 1
+      if (isGoldenDose) {
+        doseNumber = user.dosesPerPen + 1
+      } else {
+        const configWithGoldenState: DoseTrackingConfig = {
+          ...doseConfig,
+          wasGoldenDose: lastInjection?.isGoldenDose ?? false,
+        }
+        doseNumber = getNextDoseNumber(lastInjection?.doseNumber ?? null, configWithGoldenState)
+      }
     }
 
     // Create the injection record
@@ -82,21 +119,42 @@ export async function POST(request: NextRequest) {
         site: validated.site,
         doseNumber,
         dosageMg: validated.dosageMg ?? null,
+        isGoldenDose,
         notes: validated.notes,
         date: injectionDate,
       },
     })
 
+    // Calculate the new currentDoseInPen and update user
+    let newCurrentDoseInPen: number
+    if (isGoldenDose) {
+      // After golden dose, reset to 1 (new pen)
+      newCurrentDoseInPen = 1
+    } else if (doseNumber >= user.dosesPerPen && !user.tracksGoldenDose) {
+      // Last standard dose without golden tracking, reset to 1 (new pen)
+      newCurrentDoseInPen = 1
+    } else {
+      // Normal progression within pen
+      newCurrentDoseInPen = doseNumber
+    }
+
+    // Build user update data
+    const userUpdateData: { currentDosage?: number; currentDoseInPen: number } = {
+      currentDoseInPen: newCurrentDoseInPen,
+    }
+
     // If dosageMg is provided and differs from user's currentDosage, update it (titration)
     if (validated.dosageMg != null) {
       const currentDosageNum = user.currentDosage ? Number(user.currentDosage) : null
       if (currentDosageNum !== validated.dosageMg) {
-        await prisma.user.update({
-          where: { id: userId },
-          data: { currentDosage: validated.dosageMg },
-        })
+        userUpdateData.currentDosage = validated.dosageMg
       }
     }
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: userUpdateData,
+    })
 
     return NextResponse.json(injection, { status: 201 })
   } catch (error) {

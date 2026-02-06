@@ -12,7 +12,8 @@ export const injectionSiteEnum = z.enum([
 
 export type InjectionSite = z.infer<typeof injectionSiteEnum>
 
-export const doseNumberSchema = z.number().int().min(1).max(4)
+// Max 51 = 50 standard doses + 1 golden dose
+export const doseNumberSchema = z.number().int().min(1).max(51)
 
 export const dosageMgSchema = z
   .number()
@@ -23,6 +24,7 @@ export const createInjectionSchema = z.object({
   site: injectionSiteEnum,
   doseNumber: doseNumberSchema.optional(),
   dosageMg: dosageMgSchema.optional(),
+  isGoldenDose: z.boolean().optional().default(false),
   notes: z.string().max(500, 'Notes must be at most 500 characters').optional(),
   date: logDateSchema.optional(),
 })
@@ -33,6 +35,7 @@ export const updateInjectionSchema = z.object({
   site: injectionSiteEnum.optional(),
   doseNumber: doseNumberSchema.optional(),
   dosageMg: dosageMgSchema.optional().nullable(),
+  isGoldenDose: z.boolean().optional(),
   notes: z.string().max(500, 'Notes must be at most 500 characters').optional(),
   date: logDateSchema.optional(),
 })

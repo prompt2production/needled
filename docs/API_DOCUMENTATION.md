@@ -1,6 +1,6 @@
 # Needled API Documentation
 
-Version: 1.2
+Version: 1.7
 Base URL: `https://your-domain.com/api`
 
 ---
@@ -155,10 +155,16 @@ type InjectionStatus = "due" | "done" | "overdue" | "upcoming"
 type InjectionDay = 0 | 1 | 2 | 3 | 4 | 5 | 6
 ```
 
+### DosingMode
+```typescript
+type DosingMode = "STANDARD" | "MICRODOSE"
+```
+
 ### DoseNumber
 ```typescript
-// GLP-1 pens contain 4 doses
-type DoseNumber = 1 | 2 | 3 | 4
+// Standard pens contain 4 doses, but microdosing allows up to 50 doses per pen
+// Golden dose (leftover medication) is dosesPerPen + 1
+type DoseNumber = number // 1 to dosesPerPen (+ 1 if golden dose)
 ```
 
 ### BetaPlatform
@@ -193,7 +199,13 @@ Register a new user account.
   "medication": "OZEMPIC | WEGOVY | MOUNJARO | ZEPBOUND | OTHER (required)",
   "injectionDay": "number (0-6, required, 0=Monday)",
   "height": "number (cm, 100-250, optional, for BMI calculation)",
-  "currentDosage": "number (mg, optional, current medication dosage)"
+  "startingDosage": "number (mg, 0.25-15, optional, starting medication dosage)",
+  "dosingMode": "STANDARD | MICRODOSE (optional, defaults to STANDARD)",
+  "penStrengthMg": "number (0.5-100, optional, required for MICRODOSE mode)",
+  "doseAmountMg": "number (0.1-50, optional, required for MICRODOSE mode)",
+  "dosesPerPen": "number (1-50, optional, auto-calculated for microdosers)",
+  "tracksGoldenDose": "boolean (optional, defaults to false)",
+  "currentDoseInPen": "number (optional, defaults to 1)"
 }
 ```
 
@@ -306,6 +318,100 @@ Authorization: Bearer <session_token>
   "success": true
 }
 ```
+
+---
+
+### Medications (Authenticated)
+
+#### GET /api/medications
+Get medication configuration data. This endpoint provides dosage information and pen strengths for all supported medications, enabling the mobile app to dynamically load this data.
+
+**Data Source:** This configuration is stored in database tables (`MedicationConfig`, `MedicationDosage`, `MedicationPenStrength`, `MicrodoseAmount`, `SystemConfig`) and can be updated without code deployments. Use the utility app's "Seed medication configuration" option to populate initial data.
+
+**Headers:**
+```
+Authorization: Bearer <session_token>
+```
+
+**Response (200 OK):**
+```json
+{
+  "medications": [
+    {
+      "code": "OZEMPIC",
+      "name": "Ozempic",
+      "manufacturer": "Novo Nordisk",
+      "dosages": [0.25, 0.5, 1, 2],
+      "penStrengths": [2, 4, 8],
+      "supportsMicrodosing": true
+    },
+    {
+      "code": "WEGOVY",
+      "name": "Wegovy",
+      "manufacturer": "Novo Nordisk",
+      "dosages": [0.25, 0.5, 1, 1.7, 2.4],
+      "penStrengths": [2.4, 4, 6.8, 10, 17],
+      "supportsMicrodosing": true
+    },
+    {
+      "code": "MOUNJARO",
+      "name": "Mounjaro",
+      "manufacturer": "Eli Lilly",
+      "dosages": [2.5, 5, 7.5, 10, 12.5, 15],
+      "penStrengths": [5, 10, 15, 20, 25, 30],
+      "supportsMicrodosing": true
+    },
+    {
+      "code": "ZEPBOUND",
+      "name": "Zepbound",
+      "manufacturer": "Eli Lilly",
+      "dosages": [2.5, 5, 7.5, 10, 12.5, 15],
+      "penStrengths": [5, 10, 15, 20, 25, 30],
+      "supportsMicrodosing": true
+    },
+    {
+      "code": "OTHER",
+      "name": "Other",
+      "manufacturer": null,
+      "dosages": [],
+      "penStrengths": [],
+      "supportsMicrodosing": false
+    }
+  ],
+  "microdoseAmounts": [0.25, 0.5, 1, 1.25, 1.5, 2, 2.5, 3, 3.75, 5, 6.25, 7.5],
+  "defaultDosesPerPen": 4
+}
+```
+
+**Response Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `medications` | `MedicationConfig[]` | Array of medication configurations |
+| `microdoseAmounts` | `number[]` | Common microdose amounts in mg (shared across all medications) |
+| `defaultDosesPerPen` | `number` | Default number of doses per pen for standard dosing mode |
+
+**MedicationConfig Object:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `code` | `string` | Unique medication identifier (e.g., "OZEMPIC", "WEGOVY") |
+| `name` | `string` | Display name for the medication |
+| `manufacturer` | `string \| null` | Manufacturer name, null for "Other" |
+| `dosages` | `number[]` | Available standard dosage levels in mg |
+| `penStrengths` | `number[]` | Available pen strengths (total mg per pen) |
+| `supportsMicrodosing` | `boolean` | Whether this medication supports microdosing mode |
+
+**Caching:**
+
+The response includes cache headers allowing clients to cache for 24 hours:
+```
+Cache-Control: max-age=86400
+```
+
+**Errors:**
+- `401` - Unauthorized
+- `500` - Failed to fetch medication configuration
 
 ---
 
@@ -439,6 +545,55 @@ Change password.
 
 ---
 
+#### GET /api/settings/pen-dosing
+Get pen dosing settings for microdosing and golden dose tracking.
+
+**Response (200 OK):**
+```json
+{
+  "dosingMode": "standard | microdose",
+  "penStrengthMg": 15,
+  "doseAmountMg": 2.5,
+  "dosesPerPen": 6,
+  "tracksGoldenDose": true,
+  "currentDoseInPen": 3
+}
+```
+
+**Fields:**
+- `dosingMode` - Standard (fixed 4 doses) or microdose (custom dose amounts)
+- `penStrengthMg` - Total medication in pen (mg), null for standard mode
+- `doseAmountMg` - Amount per dose (mg), null for standard mode
+- `dosesPerPen` - Number of doses per pen (4 for standard, calculated for microdose)
+- `tracksGoldenDose` - Whether user tracks golden dose (leftover medication)
+- `currentDoseInPen` - Current position in the pen (1 to dosesPerPen)
+
+---
+
+#### PUT /api/settings/pen-dosing
+Update pen dosing settings.
+
+**Request Body:**
+```json
+{
+  "dosingMode": "STANDARD | MICRODOSE (optional)",
+  "penStrengthMg": "number (0.5-100, optional, required for MICRODOSE)",
+  "doseAmountMg": "number (0.1-50, optional, required for MICRODOSE)",
+  "dosesPerPen": "number (1-50, optional, auto-calculated for microdose)",
+  "tracksGoldenDose": "boolean (optional)",
+  "currentDoseInPen": "number (optional, min 1)"
+}
+```
+
+**Response (200 OK):** Updated pen dosing settings object
+
+**Notes:**
+- When switching to MICRODOSE mode, `penStrengthMg` and `doseAmountMg` are required
+- `dosesPerPen` is automatically calculated as `floor(penStrengthMg / doseAmountMg)` for microdosers
+- If `currentDoseInPen` exceeds the new configuration, it resets to 1
+
+---
+
 #### GET /api/settings/export
 Export all user data as JSON file.
 
@@ -500,7 +655,9 @@ Delete user account and all associated data.
 
 ---
 
-### Weigh-ins
+### Weigh-ins (Authenticated)
+
+All weigh-in endpoints require authentication.
 
 #### GET /api/weigh-ins
 Get weigh-in history.
@@ -508,7 +665,6 @@ Get weigh-in history.
 **Query Parameters:**
 | Param | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
-| userId | string | Yes | - | User ID |
 | limit | number | No | 10 | Max 100 |
 | offset | number | No | 0 | Pagination offset |
 
@@ -534,7 +690,6 @@ Create a new weigh-in.
 **Request Body:**
 ```json
 {
-  "userId": "string (required)",
   "weight": "number (40-300, required)",
   "date": "string (YYYY-MM-DD, optional, defaults to today)"
 }
@@ -556,11 +711,6 @@ Create a new weigh-in.
 
 #### GET /api/weigh-ins/latest
 Get latest weigh-in with calculated stats.
-
-**Query Parameters:**
-| Param | Type | Required | Description |
-|-------|------|----------|-------------|
-| userId | string | Yes | User ID |
 
 **Response (200 OK):**
 ```json
@@ -659,7 +809,6 @@ Update a weigh-in.
 **Request Body:**
 ```json
 {
-  "userId": "string (required for authorization)",
   "weight": "number (40-300, optional)",
   "date": "string (YYYY-MM-DD, optional)"
 }
@@ -682,16 +831,13 @@ Update a weigh-in.
 #### DELETE /api/weigh-ins/{id}
 Delete a weigh-in.
 
-**Query Parameters:**
-| Param | Type | Required | Description |
-|-------|------|----------|-------------|
-| userId | string | Yes | User ID (for authorization) |
-
 **Response (204 No Content)**
 
 ---
 
-### Injections
+### Injections (Authenticated)
+
+All injection endpoints require authentication.
 
 #### GET /api/injections
 Get injection history.
@@ -699,7 +845,6 @@ Get injection history.
 **Query Parameters:**
 | Param | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
-| userId | string | Yes | - | User ID |
 | limit | number | No | 10 | Max 100 |
 | offset | number | No | 0 | Pagination offset |
 
@@ -728,14 +873,20 @@ Log a new injection.
 **Request Body:**
 ```json
 {
-  "userId": "string (required)",
   "site": "ABDOMEN_LEFT | ABDOMEN_RIGHT | THIGH_LEFT | THIGH_RIGHT | UPPER_ARM_LEFT | UPPER_ARM_RIGHT (required)",
-  "doseNumber": "number (1-4, optional, auto-calculated if omitted)",
-  "dosageMg": "number (mg, optional, medication dosage for this injection)",
+  "doseNumber": "number (optional, auto-calculated if omitted)",
+  "dosageMg": "number (mg, 0.25-15, optional, medication dosage for this injection)",
+  "isGoldenDose": "boolean (optional, defaults to false)",
   "notes": "string (max 500 chars, optional)",
   "date": "string (YYYY-MM-DD, optional, defaults to today)"
 }
 ```
+
+**Golden Dose Notes:**
+- Set `isGoldenDose: true` to log a golden dose (leftover medication extraction)
+- User must have `tracksGoldenDose` enabled
+- All standard doses must be taken first (golden dose is only available after last standard dose)
+- After a golden dose, the next injection starts a new pen (dose 1)
 
 **Response (201 Created):**
 ```json
@@ -746,27 +897,27 @@ Log a new injection.
   "site": "ABDOMEN_LEFT",
   "doseNumber": 2,
   "dosageMg": 0.5,
+  "isGoldenDose": false,
   "notes": null,
   "createdAt": "2024-01-15T10:30:00.000Z",
   "updatedAt": "2024-01-15T10:30:00.000Z"
 }
 ```
 
+**Errors:**
+- `400` - Golden dose tracking not enabled for user
+- `400` - Golden dose not available (standard doses not completed)
+
 ---
 
 #### GET /api/injections/status
 Get current injection status with recommendations.
 
-**Query Parameters:**
-| Param | Type | Required | Description |
-|-------|------|----------|-------------|
-| userId | string | Yes | User ID |
-
 **Response (200 OK):**
 ```json
 {
   "status": "due | done | overdue | upcoming",
-  "daysUntil": 0,
+  "daysUntil": 6,
   "daysOverdue": 0,
   "lastInjection": {
     "id": "cuid",
@@ -774,25 +925,51 @@ Get current injection status with recommendations.
     "doseNumber": 2,
     "dosageMg": 0.5,
     "date": "2024-01-08T12:00:00.000Z",
-    "notes": null
+    "notes": null,
+    "isGoldenDose": false
   },
   "suggestedSite": "ABDOMEN_RIGHT",
   "currentDose": 2,
   "nextDose": 3,
-  "dosesRemaining": 2
+  "dosesRemaining": 2,
+  "currentDosageMg": 0.5,
+  "dosesPerPen": 4,
+  "tracksGoldenDose": false,
+  "isGoldenDoseAvailable": false,
+  "isOnGoldenDose": false
 }
 ```
 
 **Status Logic:**
 - `due` - Today is injection day and not yet logged
 - `done` - Injection logged for current injection week
-- `overdue` - Past injection day, not yet logged
-- `upcoming` - Before injection day in current week
+- `overdue` - Past injection day with existing injection history, not yet logged this week. **Note:** New users without any injection history cannot be overdue.
+- `upcoming` - Before injection day in current week, or new user (no injection history) regardless of day
+
+**Days Until/Overdue:**
+- `daysUntil` - Days until next injection:
+  - Positive when `status` is `upcoming` (e.g., 6 = 6 days until injection day)
+  - Zero when `status` is `due` or `done`
+  - **Negative when `status` is `overdue`** (e.g., -1 = 1 day past injection day)
+- `daysOverdue` - Days past injection day when overdue (0 otherwise)
 
 **Dose Tracking:**
 - `currentDose` - Last injection's dose number (null if no history)
-- `nextDose` - Calculated next dose (1-4, wraps around)
-- `dosesRemaining` - Doses left in current pen (4 - currentDose, or 4 if starting new pen)
+- `nextDose` - Next dose to take:
+  - For new users: uses `currentDoseInPen` from registration
+  - For existing users: calculated from last injection (wraps around after last dose)
+- `dosesRemaining` - **Standard doses remaining in current pen** (does NOT include golden dose). Formula: `dosesPerPen - nextDose + 1`
+- `dosesPerPen` - User's configured standard doses per pen
+- `tracksGoldenDose` - Whether user tracks golden dose (leftover medication)
+- `isGoldenDoseAvailable` - True when all standard doses taken and golden dose can be logged
+- `isOnGoldenDose` - True if at golden dose position (either last injection was golden, or new user registered at golden dose position)
+
+**New User Behavior:**
+When a user has no injection history (just registered):
+- Status will be `due` (if today is their injection day) or `upcoming` (otherwise)
+- `currentDose` will be `null`
+- `nextDose` will be their `currentDoseInPen` value from registration
+- `dosesRemaining` is calculated from their `currentDoseInPen`
 
 ---
 
@@ -802,10 +979,10 @@ Update an injection.
 **Request Body:**
 ```json
 {
-  "userId": "string (required for authorization)",
   "site": "InjectionSite (optional)",
-  "doseNumber": "number (1-4, optional)",
-  "dosageMg": "number (mg, optional)",
+  "doseNumber": "number (1-51, optional)",
+  "dosageMg": "number (mg, 0.25-15, optional, nullable)",
+  "isGoldenDose": "boolean (optional)",
   "notes": "string (max 500 chars, optional)",
   "date": "string (YYYY-MM-DD, optional)"
 }
@@ -818,16 +995,13 @@ Update an injection.
 #### DELETE /api/injections/{id}
 Delete an injection.
 
-**Query Parameters:**
-| Param | Type | Required | Description |
-|-------|------|----------|-------------|
-| userId | string | Yes | User ID (for authorization) |
-
 **Response (204 No Content)**
 
 ---
 
-### Daily Habits
+### Daily Habits (Authenticated)
+
+All habit endpoints require authentication.
 
 #### GET /api/habits
 Get habit history.
@@ -835,7 +1009,6 @@ Get habit history.
 **Query Parameters:**
 | Param | Type | Required | Description |
 |-------|------|----------|-------------|
-| userId | string | Yes | User ID |
 | startDate | string | No | YYYY-MM-DD format |
 | endDate | string | No | YYYY-MM-DD format |
 
@@ -860,11 +1033,6 @@ Get habit history.
 #### GET /api/habits/today
 Get or create today's habit record.
 
-**Query Parameters:**
-| Param | Type | Required | Description |
-|-------|------|----------|-------------|
-| userId | string | Yes | User ID |
-
 **Response (200 OK):**
 ```json
 {
@@ -887,7 +1055,6 @@ Toggle a habit for today (or a specific date).
 **Request Body:**
 ```json
 {
-  "userId": "string (required)",
   "habit": "water | nutrition | exercise (required)",
   "value": "boolean (required)",
   "date": "string (YYYY-MM-DD, optional, defaults to today)"
@@ -914,15 +1081,10 @@ Toggle a habit for today (or a specific date).
 
 ---
 
-### Dashboard
+### Dashboard (Authenticated)
 
 #### GET /api/dashboard
 Get aggregated dashboard data.
-
-**Query Parameters:**
-| Param | Type | Required | Description |
-|-------|------|----------|-------------|
-| userId | string | Yes | User ID |
 
 **Response (200 OK):**
 ```json
@@ -967,7 +1129,9 @@ Get aggregated dashboard data.
 
 ---
 
-### Calendar
+### Calendar (Authenticated)
+
+All calendar endpoints require authentication.
 
 #### GET /api/calendar/{year}/{month}
 Get all activity data for a month.
@@ -977,11 +1141,6 @@ Get all activity data for a month.
 |-------|------|-------------|
 | year | number | 4-digit year (e.g., 2024) |
 | month | number | Month 1-12 |
-
-**Query Parameters:**
-| Param | Type | Required | Description |
-|-------|------|----------|-------------|
-| userId | string | Yes | User ID |
 
 **Response (200 OK):**
 ```json
@@ -1018,11 +1177,6 @@ Get detailed activity data for a specific day.
 | Param | Type | Description |
 |-------|------|-------------|
 | date | string | YYYY-MM-DD format |
-
-**Query Parameters:**
-| Param | Type | Required | Description |
-|-------|------|----------|-------------|
-| userId | string | Yes | User ID |
 
 **Response (200 OK):**
 ```json
@@ -1306,6 +1460,8 @@ Authorization: Bearer <session_token>
 Content-Type: application/json
 ```
 
+**Note:** All authenticated endpoints derive the user from the session token. Do not include `userId` in query parameters or request bodies - it will be ignored.
+
 ### 4. Date Handling
 
 - All dates in responses are ISO 8601 format (UTC)
@@ -1316,7 +1472,7 @@ Content-Type: application/json
 
 For list endpoints, use `limit` and `offset` query parameters:
 ```
-GET /api/weigh-ins?userId=xxx&limit=20&offset=0
+GET /api/weigh-ins?limit=20&offset=0
 ```
 
 ### 6. Offline Support
@@ -1345,6 +1501,68 @@ Push notifications are implemented via **Expo Push Notifications** which provide
 
 ---
 
+### Cron Jobs (Internal)
+
+These endpoints are for infrastructure automation and require a server-side secret.
+
+#### GET /api/cron/notifications
+Trigger all scheduled notification reminders (injection, weigh-in, and habit). This endpoint is designed to be called by a cron scheduler (e.g., Vercel Cron, AWS EventBridge).
+
+**Authentication:**
+```
+Authorization: Bearer <CRON_SECRET>
+```
+
+The `CRON_SECRET` is a server-side environment variable, not a user session token.
+
+**Response (200 OK):**
+```json
+{
+  "success": true,
+  "totalEmailsSent": 5,
+  "totalPushSent": 3,
+  "breakdown": {
+    "injectionReminders": { "emailsSent": 2, "pushSent": 1 },
+    "weighInReminders": { "emailsSent": 2, "pushSent": 1 },
+    "habitReminders": { "emailsSent": 1, "pushSent": 1 }
+  }
+}
+```
+
+**Response with partial failures:**
+```json
+{
+  "success": true,
+  "totalEmailsSent": 3,
+  "totalPushSent": 2,
+  "breakdown": {
+    "injectionReminders": { "emailsSent": 2, "pushSent": 1 },
+    "weighInReminders": { "emailsSent": 1, "pushSent": 1 },
+    "habitReminders": { "emailsSent": 0, "pushSent": 0 }
+  },
+  "errors": ["Habit reminders failed: SendGrid API error"]
+}
+```
+
+**Errors:**
+- `401` - Unauthorized (missing or invalid CRON_SECRET)
+- `500` - Server configuration error (CRON_SECRET not set)
+
+**Cron Schedule Recommendation:**
+Run this endpoint every hour. The notification service internally checks each user's preferred reminder time and timezone to determine who should receive notifications.
+
+```yaml
+# Example Vercel cron configuration (vercel.json)
+{
+  "crons": [{
+    "path": "/api/cron/notifications",
+    "schedule": "0 * * * *"
+  }]
+}
+```
+
+---
+
 ## Rate Limiting
 
 Currently no rate limiting is implemented. Consider implementing on your infrastructure:
@@ -1354,6 +1572,46 @@ Currently no rate limiting is implemented. Consider implementing on your infrast
 ---
 
 ## Changelog
+
+### v1.7
+- Added `GET /api/medications` - Medication configuration endpoint for mobile apps
+  - Returns dosages, pen strengths, and microdosing support for all medications
+  - Includes common microdose amounts and default doses per pen
+  - Response cacheable for 24 hours (Cache-Control: max-age=86400)
+
+### v1.6
+- **BUGFIX:** Fixed `GET /api/injections/status` for new users (no injection history)
+  - New users now correctly show `status: "upcoming"` instead of `"overdue"` when past their injection day
+  - `daysUntil` now shows correct days until next injection day for new users
+  - `nextDose` now uses `currentDoseInPen` from registration for new users
+  - `dosesRemaining` now correctly calculates only standard doses (excludes golden dose): `dosesPerPen - nextDose + 1`
+  - `daysUntil` is now negative when `status` is `"overdue"` (e.g., -1 means 1 day overdue)
+  - `isGoldenDoseAvailable` and `isOnGoldenDose` now correctly detect new users at golden dose position
+
+### v1.5
+- **BREAKING:** All authenticated endpoints now use Bearer token authentication exclusively
+- Removed `userId` from all query parameters and request bodies for authenticated endpoints
+- User ID is now derived from the authenticated session for all operations
+- Renamed `currentDosage` to `startingDosage` in `POST /api/users` request body
+- Added `isGoldenDose` optional field to `PATCH /api/injections/{id}`
+- Updated `doseNumber` range from 1-4 to 1-51 to support microdosing
+
+### v1.4
+- Added microdosing support with flexible pen sizes
+- Added golden dose tracking (leftover medication extraction)
+- Added `DosingMode` enum (STANDARD | MICRODOSE)
+- Added `GET /api/settings/pen-dosing` - Get pen dosing settings
+- Added `PUT /api/settings/pen-dosing` - Update pen dosing settings
+- Added User fields: `dosingMode`, `penStrengthMg`, `doseAmountMg`, `dosesPerPen`, `tracksGoldenDose`, `currentDoseInPen`
+- Added `isGoldenDose` field to Injection model
+- Updated `POST /api/users` - Accept pen dosing fields during registration
+- Updated `POST /api/injections` - Accept `isGoldenDose` parameter for golden dose logging
+- Updated `GET /api/injections/status` - Added `dosesPerPen`, `tracksGoldenDose`, `isGoldenDoseAvailable`, `isOnGoldenDose`, `lastInjection.isGoldenDose`
+- Updated `DoseNumber` type - No longer fixed 1-4, now dynamic based on pen configuration
+
+### v1.3
+- Added documentation for `GET /api/cron/notifications` - Cron job endpoint for scheduled reminders
+- Added Cron Jobs (Internal) section for infrastructure endpoints
 
 ### v1.2
 - Added `POST /api/users/push-token` - Register Expo push notification token

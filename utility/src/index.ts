@@ -1,8 +1,9 @@
 import 'dotenv/config';
 import inquirer from 'inquirer';
 import chalk from 'chalk';
-import { connectToDatabase, disconnectFromDatabase, clearAllTables } from './database.js';
+import { connectToDatabase, disconnectFromDatabase, clearAllTables, getAllUsers } from './database.js';
 import { seedDemoData, checkDemoUserExists, DEMO_EMAIL, DEMO_PASSWORD } from './seed.js';
+import { seedMedicationConfig, checkMedicationConfigExists, clearMedicationConfigTables } from './seed-medication-config.js';
 
 type Environment = 'local' | 'testing' | 'production';
 
@@ -23,8 +24,10 @@ const databases: DatabaseChoice[] = [
 ];
 
 const mainMenuOptions: MainMenuChoice[] = [
+  { name: 'List all registered users', value: 'list-users' },
   { name: 'Clear all data in all tables', value: 'clear-all' },
   { name: 'Seed demo data', value: 'seed-demo' },
+  { name: 'Seed medication configuration', value: 'seed-medication-config' },
   { name: 'Exit', value: 'exit' },
 ];
 
@@ -119,6 +122,100 @@ async function handleClearAll(env: Environment): Promise<void> {
   }
 }
 
+async function handleListUsers(): Promise<void> {
+  console.log(chalk.cyan('\nFetching all registered users...\n'));
+
+  try {
+    const users = await getAllUsers();
+
+    if (users.length === 0) {
+      console.log(chalk.yellow('No users found in the database.'));
+      return;
+    }
+
+    console.log(chalk.green(`Found ${users.length} registered user(s):\n`));
+    console.log(chalk.gray('─'.repeat(100)));
+    console.log(
+      chalk.bold.white(
+        'ID'.padEnd(28) +
+        'Name'.padEnd(20) +
+        'Email'.padEnd(30) +
+        'Medication'.padEnd(12) +
+        'Created'
+      )
+    );
+    console.log(chalk.gray('─'.repeat(100)));
+
+    for (const user of users) {
+      const createdAt = new Date(user.createdAt).toLocaleDateString();
+      console.log(
+        chalk.white(
+          user.id.padEnd(28) +
+          (user.name || '').substring(0, 18).padEnd(20) +
+          (user.email || 'N/A').substring(0, 28).padEnd(30) +
+          (user.medication || '').padEnd(12) +
+          createdAt
+        )
+      );
+    }
+
+    console.log(chalk.gray('─'.repeat(100)));
+    console.log(chalk.gray(`\nTotal: ${users.length} user(s)`));
+  } catch (error) {
+    console.error(chalk.red('\n✗ Failed to fetch users:'), error);
+  }
+}
+
+async function handleSeedMedicationConfig(env: Environment): Promise<void> {
+  // Check if medication config already exists
+  const exists = await checkMedicationConfigExists();
+  if (exists) {
+    console.log(chalk.yellow('\nMedication configuration already exists in the database.'));
+
+    const { overwrite } = await inquirer.prompt<{ overwrite: boolean }>([
+      {
+        type: 'confirm',
+        name: 'overwrite',
+        message: 'Clear existing medication config and re-seed?',
+        default: false,
+      },
+    ]);
+
+    if (!overwrite) {
+      console.log(chalk.yellow('Operation cancelled.'));
+      return;
+    }
+
+    console.log(chalk.yellow('\nClearing existing medication config...'));
+    await clearMedicationConfigTables();
+    console.log(chalk.green('✓ Existing medication config cleared.'));
+  }
+
+  if (env === 'production') {
+    const confirmed = await confirmDestructiveAction(
+      '⚠️  You are about to seed medication config into PRODUCTION. Are you sure?'
+    );
+    if (!confirmed) {
+      console.log(chalk.yellow('\nOperation cancelled.'));
+      return;
+    }
+  }
+
+  console.log(chalk.cyan('\nSeeding medication configuration...'));
+
+  try {
+    const result = await seedMedicationConfig();
+    console.log(chalk.green('\n✓ Medication configuration seeded successfully:'));
+    console.log(chalk.white(`  • ${result.medicationsCreated} medications created`));
+    console.log(chalk.white(`  • ${result.dosagesCreated} dosages created`));
+    console.log(chalk.white(`  • ${result.penStrengthsCreated} pen strengths created`));
+    console.log(chalk.white(`  • ${result.microdoseAmountsCreated} microdose amounts created`));
+    console.log(chalk.white(`  • ${result.systemConfigCreated} system config entries created`));
+  } catch (error) {
+    console.error(chalk.red('\n✗ Failed to seed medication config:'), error);
+  }
+}
+
 async function handleSeedDemo(env: Environment): Promise<void> {
   // Check if demo user already exists
   const exists = await checkDemoUserExists();
@@ -194,11 +291,17 @@ async function main(): Promise<void> {
       const action = await showMainMenu();
 
       switch (action) {
+        case 'list-users':
+          await handleListUsers();
+          break;
         case 'clear-all':
           await handleClearAll(env);
           break;
         case 'seed-demo':
           await handleSeedDemo(env);
+          break;
+        case 'seed-medication-config':
+          await handleSeedMedicationConfig(env);
           break;
         case 'exit':
           running = false;

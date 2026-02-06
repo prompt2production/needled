@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { getInjectionWeekStart, getInjectionWeekEnd, isInjectionDay, getDaysUntilInjection, getDaysOverdue } from '@/lib/injection-week'
 import { getNextSite } from '@/lib/injection-site'
-import { getNextDoseNumber } from '@/lib/dose-tracking'
+import { getNextDoseNumber, getStandardDosesRemaining, isGoldenDoseAvailable, isOnGoldenDose, type DoseTrackingConfig } from '@/lib/dose-tracking'
 import { authenticateRequest } from '@/lib/api-auth'
 import type { InjectionSite } from '@/lib/validations/injection'
 
@@ -19,12 +19,18 @@ export interface InjectionStatusResponse {
     dosageMg: number | null
     date: string
     notes: string | null
+    isGoldenDose: boolean
   } | null
   suggestedSite: InjectionSite
   currentDose: number | null
   nextDose: number
   dosesRemaining: number
   currentDosageMg: number | null
+  // Pen tracking fields
+  dosesPerPen: number
+  tracksGoldenDose: boolean
+  isGoldenDoseAvailable: boolean
+  isOnGoldenDose: boolean
 }
 
 export async function GET(request: NextRequest) {
@@ -75,41 +81,75 @@ export async function GET(request: NextRequest) {
     const suggestedSite = getNextSite(lastSite ?? null)
 
     // Calculate days until/overdue
-    const daysUntil = getDaysUntilInjection(now, user.injectionDay)
+    const daysUntilValue = getDaysUntilInjection(now, user.injectionDay)
     const daysOverdueValue = getDaysOverdue(now, user.injectionDay)
 
-    // Determine status based on calendar position relative to injection day
-    // Use daysOverdue to check if we're past injection day in the calendar week
-    // daysOverdue = 0 means we're on injection day
-    // daysOverdue > 0 means we're past injection day (1 = Thursday if injection is Wednesday)
-    // daysUntil > 0 && daysOverdue > 0 is impossible - one is always 0
-    // When before injection day: daysUntil > 0, daysOverdue > 0 (days since LAST injection day)
-    // The key insight: daysUntil + daysOverdue = 7 when not on injection day
-    // If daysUntil < daysOverdue, we're closer to next injection (upcoming)
-    // If daysOverdue <= daysUntil, we're closer to last injection (overdue)
+    // Determine status based on calendar position and injection history
     let status: InjectionStatus
     if (thisWeekInjection) {
       status = 'done'
     } else if (isInjectionDay(now, user.injectionDay)) {
       status = 'due'
-    } else if (daysUntil <= daysOverdueValue) {
-      // We're closer to or equidistant from next injection day - upcoming
+    } else if (!lastInjection) {
+      // New user with no injection history - can't be overdue
+      // They're always "upcoming" until their injection day
+      status = 'upcoming'
+    } else if (daysUntilValue <= daysOverdueValue) {
+      // User with history - closer to or equidistant from next injection day
       status = 'upcoming'
     } else {
-      // We're closer to the last injection day - overdue
+      // User with history - past injection day without logging
       status = 'overdue'
     }
 
-    // Calculate dose tracking fields
+    // Build dose tracking config from user settings
+    const doseConfig: DoseTrackingConfig = {
+      dosesPerPen: user.dosesPerPen,
+      tracksGoldenDose: user.tracksGoldenDose,
+      wasGoldenDose: lastInjection?.isGoldenDose ?? false,
+    }
+
+    // Calculate dose tracking fields using user's pen configuration
     const currentDose = lastInjection?.doseNumber ?? null
-    const nextDose = getNextDoseNumber(currentDose)
-    // Doses remaining: if on dose 4, still show 4 remaining (new pen) since dose 4 was used
-    // Otherwise show 4 - currentDose
-    const dosesRemaining = currentDose === null ? 4 : (currentDose === 4 ? 4 : 4 - currentDose)
+
+    // For new users (no injection history), use their registered currentDoseInPen
+    // For existing users, calculate from last injection
+    let nextDose: number
+    if (!lastInjection) {
+      // New user - use their registration value
+      nextDose = user.currentDoseInPen
+    } else {
+      // Existing user - calculate from last injection
+      nextDose = getNextDoseNumber(currentDose, doseConfig)
+    }
+
+    // Calculate remaining standard doses based on nextDose
+    const dosesRemainingValue = getStandardDosesRemaining(nextDose, user.dosesPerPen)
+
+    // For golden dose checks, consider both last injection and new user position
+    // A new user at golden dose position (currentDoseInPen > dosesPerPen) is on golden dose
+    const isNewUserOnGoldenDose = !lastInjection && user.currentDoseInPen > user.dosesPerPen
+    const goldenDoseAvailable = user.tracksGoldenDose && (
+      isGoldenDoseAvailable(currentDose, doseConfig) || isNewUserOnGoldenDose
+    )
+    const onGoldenDose = isOnGoldenDose(currentDose, doseConfig) || isNewUserOnGoldenDose
+
+    // Calculate daysUntil based on status
+    // - 'upcoming': positive days until injection day
+    // - 'due' or 'done': 0
+    // - 'overdue': negative days (e.g., -1 means 1 day past due)
+    let daysUntil: number
+    if (status === 'overdue') {
+      daysUntil = -daysOverdueValue
+    } else if (status === 'upcoming') {
+      daysUntil = daysUntilValue
+    } else {
+      daysUntil = 0
+    }
 
     const response: InjectionStatusResponse = {
       status,
-      daysUntil: status === 'done' || status === 'due' || status === 'overdue' ? 0 : daysUntil,
+      daysUntil,
       daysOverdue: status === 'overdue' ? daysOverdueValue : 0,
       lastInjection: lastInjection ? {
         id: lastInjection.id,
@@ -118,12 +158,18 @@ export async function GET(request: NextRequest) {
         dosageMg: lastInjection.dosageMg ? Number(lastInjection.dosageMg) : null,
         date: lastInjection.date.toISOString(),
         notes: lastInjection.notes,
+        isGoldenDose: lastInjection.isGoldenDose,
       } : null,
       suggestedSite,
       currentDose,
       nextDose,
-      dosesRemaining,
+      dosesRemaining: dosesRemainingValue,
       currentDosageMg: user.currentDosage ? Number(user.currentDosage) : null,
+      // Pen tracking fields
+      dosesPerPen: user.dosesPerPen,
+      tracksGoldenDose: user.tracksGoldenDose,
+      isGoldenDoseAvailable: goldenDoseAvailable,
+      isOnGoldenDose: onGoldenDose,
     }
 
     return NextResponse.json(response)

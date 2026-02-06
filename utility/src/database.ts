@@ -14,6 +14,12 @@ const KNOWN_TABLES_IN_DELETE_ORDER = [
   'Session',
   'User',
   'BetaTester',
+  'ContactMessage',
+  'MedicationDosage',
+  'MedicationPenStrength',
+  'MedicationConfig',
+  'MicrodoseAmount',
+  'SystemConfig',
   'Item', // Example model from template
 ];
 
@@ -97,4 +103,26 @@ export async function executeQuery(query: string, params?: unknown[]): Promise<p
   }
 
   return pool.query(query, params);
+}
+
+export interface UserRecord {
+  id: string;
+  name: string;
+  email: string | null;
+  medication: string;
+  createdAt: Date;
+}
+
+export async function getAllUsers(): Promise<UserRecord[]> {
+  if (!pool) {
+    throw new Error('Not connected to database');
+  }
+
+  const result = await pool.query(`
+    SELECT id, name, email, medication, "createdAt"
+    FROM "User"
+    ORDER BY "createdAt" DESC
+  `);
+
+  return result.rows as UserRecord[];
 }

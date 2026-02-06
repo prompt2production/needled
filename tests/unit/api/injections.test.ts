@@ -46,6 +46,12 @@ describe('POST /api/injections', () => {
     injectionDay: 2, // Wednesday
     currentDosage: null,
     height: null,
+    dosingMode: 'STANDARD' as const,
+    penStrengthMg: null,
+    doseAmountMg: null,
+    dosesPerPen: 4,
+    tracksGoldenDose: false,
+    currentDoseInPen: 1,
     createdAt: new Date(),
     updatedAt: new Date(),
   }
@@ -56,6 +62,7 @@ describe('POST /api/injections', () => {
     site: 'ABDOMEN_LEFT',
     doseNumber: 1,
     dosageMg: null,
+    isGoldenDose: false,
     notes: null,
     date: new Date(),
     createdAt: new Date(),

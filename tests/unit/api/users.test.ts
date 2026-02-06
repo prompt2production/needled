@@ -64,6 +64,12 @@ describe('POST /api/users', () => {
     expoPushToken: null,
     pushTokenPlatform: null,
     pushTokenUpdatedAt: null,
+    dosingMode: 'STANDARD' as const,
+    penStrengthMg: null,
+    doseAmountMg: null,
+    dosesPerPen: 4,
+    tracksGoldenDose: false,
+    currentDoseInPen: 1,
     createdAt: new Date(),
     updatedAt: new Date(),
   }

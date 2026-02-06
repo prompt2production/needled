@@ -6,6 +6,7 @@ import { setSessionCookie } from '@/lib/cookies'
 import { sendEmail } from '@/lib/email'
 import { renderWelcomeEmail, getWelcomeEmailSubject } from '@/lib/email-templates/welcome'
 import { generateUnsubscribeToken } from '@/lib/unsubscribe-token'
+import { calculateDosesPerPen } from '@/lib/dose-tracking'
 import { z } from 'zod'
 import { Prisma } from '@prisma/client'
 
@@ -30,6 +31,11 @@ export async function POST(request: NextRequest) {
     // Hash the password
     const passwordHash = await hashPassword(validated.password)
 
+    // Calculate dosesPerPen for microdosers
+    const dosesPerPen = validated.dosingMode === 'MICRODOSE' && validated.penStrengthMg && validated.doseAmountMg
+      ? calculateDosesPerPen(validated.penStrengthMg, validated.doseAmountMg)
+      : validated.dosesPerPen ?? 4
+
     // Create the user with hashed password
     const user = await prisma.user.create({
       data: {
@@ -43,6 +49,12 @@ export async function POST(request: NextRequest) {
         injectionDay: validated.injectionDay,
         currentDosage: validated.startingDosage ?? null,
         height: validated.height ?? null,
+        dosingMode: validated.dosingMode ?? 'STANDARD',
+        penStrengthMg: validated.penStrengthMg ?? null,
+        doseAmountMg: validated.doseAmountMg ?? null,
+        dosesPerPen,
+        tracksGoldenDose: validated.tracksGoldenDose ?? false,
+        currentDoseInPen: validated.currentDoseInPen ?? 1,
       },
     })
 

@@ -48,6 +48,12 @@ model User {
   expoPushToken          String?                 // Expo push notification token
   pushTokenPlatform      PushTokenPlatform?      // ios or android
   pushTokenUpdatedAt     DateTime?               // When the push token was last updated
+  dosingMode             DosingMode              @default(STANDARD)
+  penStrengthMg          Decimal?                @db.Decimal(5, 2) // Pen strength in mg (for microdosing)
+  doseAmountMg           Decimal?                @db.Decimal(5, 2) // Dose amount in mg (for microdosing)
+  dosesPerPen            Int                     @default(4)       // Number of doses per pen
+  tracksGoldenDose       Boolean                 @default(false)   // Whether user tracks golden dose
+  currentDoseInPen       Int                     @default(1)       // Current dose position (1-based)
   createdAt              DateTime                @default(now())
   updatedAt              DateTime                @updatedAt
   weighIns               WeighIn[]
@@ -60,6 +66,11 @@ model User {
 enum PushTokenPlatform {
   ios
   android
+}
+
+enum DosingMode {
+  STANDARD
+  MICRODOSE
 }
 
 model Session {
@@ -109,16 +120,17 @@ enum InjectionSite {
 }
 
 model Injection {
-  id         String        @id @default(cuid())
-  userId     String
-  date       DateTime      @default(now())
-  site       InjectionSite
-  doseNumber Int           @default(1)
-  dosageMg   Decimal?      @db.Decimal(4, 2) // Medication dosage at time of injection
-  notes      String?
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
-  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String        @id @default(cuid())
+  userId       String
+  date         DateTime      @default(now())
+  site         InjectionSite
+  doseNumber   Int           @default(1)
+  dosageMg     Decimal?      @db.Decimal(4, 2) // Medication dosage at time of injection
+  isGoldenDose Boolean       @default(false)   // Whether this was a golden dose (leftover medication)
+  notes        String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, date])
 }
@@ -174,4 +186,69 @@ model ContactMessage {
   createdAt DateTime @default(now())
 
   @@index([createdAt])
+}
+
+// ===========================================
+// Medication Configuration Tables
+// ===========================================
+
+model MedicationConfig {
+  id                  String                    @id @default(cuid())
+  code                String                    @unique // e.g., "OZEMPIC", "WEGOVY"
+  name                String                    // Display name
+  manufacturer        String?                   // e.g., "Novo Nordisk", null for "Other"
+  supportsMicrodosing Boolean                   @default(true)
+  sortOrder           Int                       @default(0)
+  isActive            Boolean                   @default(true)
+  createdAt           DateTime                  @default(now())
+  updatedAt           DateTime                  @updatedAt
+  dosages             MedicationDosage[]
+  penStrengths        MedicationPenStrength[]
+
+  @@index([code])
+  @@index([isActive, sortOrder])
+}
+
+model MedicationDosage {
+  id                 String           @id @default(cuid())
+  medicationConfigId String
+  dosageMg           Decimal          @db.Decimal(5, 2) // Dosage in mg
+  sortOrder          Int              @default(0)
+  createdAt          DateTime         @default(now())
+  medicationConfig   MedicationConfig @relation(fields: [medicationConfigId], references: [id], onDelete: Cascade)
+
+  @@unique([medicationConfigId, dosageMg])
+  @@index([medicationConfigId, sortOrder])
+}
+
+model MedicationPenStrength {
+  id                 String           @id @default(cuid())
+  medicationConfigId String
+  strengthMg         Decimal          @db.Decimal(5, 2) // Pen strength in mg
+  sortOrder          Int              @default(0)
+  createdAt          DateTime         @default(now())
+  medicationConfig   MedicationConfig @relation(fields: [medicationConfigId], references: [id], onDelete: Cascade)
+
+  @@unique([medicationConfigId, strengthMg])
+  @@index([medicationConfigId, sortOrder])
+}
+
+model MicrodoseAmount {
+  id        String   @id @default(cuid())
+  amountMg  Decimal  @unique @db.Decimal(5, 2) // Microdose amount in mg
+  sortOrder Int      @default(0)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([isActive, sortOrder])
+}
+
+model SystemConfig {
+  id        String   @id @default(cuid())
+  key       String   @unique // e.g., "defaultDosesPerPen"
+  value     String   // Stored as string, parsed by application
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
 }
